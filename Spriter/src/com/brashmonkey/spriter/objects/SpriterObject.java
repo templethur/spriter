@@ -46,6 +46,7 @@ public class SpriterObject extends SpriterAbstractObject implements Comparable<S
 	}
 	
 	public void setRef(Reference ref){
+		if(ref == null) return;
 		this.ref = ref;
 		this.rect.set(ref.dimensions);
 	}

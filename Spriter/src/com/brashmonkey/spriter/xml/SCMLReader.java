@@ -195,6 +195,7 @@ public class SCMLReader {
 				AnimationObject object = new AnimationObject();
 				obj = k.getChildByName("object");
 				object.setAngle(new BigDecimal(obj.getFloat("angle", 0f)));
+				object.setA(new BigDecimal(obj.getFloat("a", 1f)));
 				object.setX(new BigDecimal(obj.getFloat("x", 0f)));
 				object.setY(new BigDecimal(obj.getFloat("y", 0f)));
 				object.setScaleX(new BigDecimal(obj.getFloat("scale_x", 1f)));
