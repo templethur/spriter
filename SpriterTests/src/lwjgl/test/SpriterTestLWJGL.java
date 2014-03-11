@@ -54,8 +54,9 @@ public class SpriterTestLWJGL {
 		
 		initGL();
 		
-		spriter = Spriter.getSpriter("assets/monster/basic.scml", loader);
+		spriter = Spriter.getSpriter("assets/monster/basic_002.scml", loader);
 		spriterPlayer = new SpriterPlayer(spriter.getSpriterData(), 0, loader);
+		spriterPlayer.characterMap = spriterPlayer.getEntity().getCharacterMapByName("standard");
 		
 		getDelta();
 		lastFPS = getTime(); 

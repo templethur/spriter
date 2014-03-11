@@ -33,8 +33,9 @@ public class SpriterSlickTest extends BasicGame{
 		//spriter = Spriter.getSpriter("monster/basic.scml",new ImageDrawer(loader,800,g),loader);
 		//spriter.playAnimation(2,true);
 		
-		spriter = Spriter.getSpriter("assets/monster/basic.scml", loader);
+		spriter = Spriter.getSpriter("assets/monster/basic_002.scml", loader);
 		spriterPlayer = new SpriterPlayer(spriter.getSpriterData(), 0, loader);
+		spriterPlayer.characterMap = spriterPlayer.getEntity().getCharacterMapByName("standard");
     }
  
     @Override
