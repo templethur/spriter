@@ -60,6 +60,7 @@ public class SpriterPlayer extends SpriterAbstractPlayer{
 	boolean transitionTempFixed = true;
 	private int fixCounter = 0;
 	private int fixMaxSteps = 100;
+	private final SpriterData data;
 	
 	
 	/**
@@ -70,10 +71,11 @@ public class SpriterPlayer extends SpriterAbstractPlayer{
 	 */
 	public SpriterPlayer(SpriterData data, Entity entity, FileLoader<?> loader){
 		super(loader, null);
+		this.data = data;
 		this.entity = entity;
 		this.frame = 0;
 		if(!alreadyLoaded(entity)){
-			this.animations = SpriterKeyFrameProvider.generateKeyFramePool(data, entity);
+			this.animations = SpriterKeyFrameProvider.generateKeyFramePool(this.data, entity);
 			loaded.put(entity, this);
 		}
 		else this.animations = loaded.get(entity).animations;
@@ -238,6 +240,15 @@ public class SpriterPlayer extends SpriterAbstractPlayer{
 	 */
 	public void setEntity(Entity entity) {
 		this.entity = entity;
+		if(!alreadyLoaded(entity)){
+			this.animations = SpriterKeyFrameProvider.generateKeyFramePool(this.data, entity);
+			loaded.put(entity, this);
+		}
+		else this.animations = loaded.get(entity).animations;
+	}
+	
+	public void setEntity(int index){
+		setEntity(data.getEntity().get(index));
 	}
 
 	

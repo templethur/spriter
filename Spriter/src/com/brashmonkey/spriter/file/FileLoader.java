@@ -20,6 +20,8 @@ package com.brashmonkey.spriter.file;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.discobeard.spriter.dom.CharacterMap;
+
 /**
  * A FileLoader is an object which takes the task to load the resources a Spriter entity needs.
  * This is an abstract implementation and you need to extend this class and specify the logic of {@link #load(Reference, String)}.
@@ -29,6 +31,7 @@ import java.util.HashMap;
 public abstract class FileLoader<I> {
 
 	public HashMap<Reference,I> files = new HashMap<Reference,I>();
+	public CharacterMap characterMap = null;
 
 	abstract public void load(Reference ref, String path);
 	
@@ -38,7 +41,8 @@ public abstract class FileLoader<I> {
 	public abstract void finishLoading();
 	
 	public I get(Reference ref){
-		return files.get(ref);
+		if(characterMap != null) return files.get(characterMap.get(ref));
+		else return files.get(ref);
 	}
 	
 	/**

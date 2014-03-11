@@ -18,7 +18,6 @@
 package com.brashmonkey.spriter.draw;
 
 import com.brashmonkey.spriter.SpriterRectangle;
-import com.brashmonkey.spriter.file.FileLoader;
 import com.brashmonkey.spriter.file.Reference;
 import com.brashmonkey.spriter.objects.SpriterObject;
 
@@ -26,7 +25,6 @@ import com.brashmonkey.spriter.objects.SpriterObject;
  * A DrawIntruction is an object which holds all information you need to draw the previous transformed objects.
  * @author Trixt0r
  */
-@SuppressWarnings("rawtypes")
 public class DrawInstruction {
 
 	public Reference ref;
@@ -39,13 +37,11 @@ public class DrawInstruction {
 	public float scaleX;
 	public float scaleY;
 	public SpriterObject obj = null;
-	public FileLoader loader = null;
 	public SpriterRectangle rect = null;
 	
 	public DrawInstruction(Reference ref, float x, float y, float pivotX,
 			float pivotY,float scaleX, float scaleY, float angle,float alpha) {
 		this.ref = ref;
-		//rect = new SpriterRectangle(ref.dimensions);
 		this.x = x;
 		this.y = y;
 		this.pivotX = pivotX;

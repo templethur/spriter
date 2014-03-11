@@ -32,14 +32,23 @@ import com.brashmonkey.spriter.player.SpriterAbstractPlayer;
  */
 public abstract class AbstractDrawer<L> {
 	
-	public FileLoader<L> loader;
+	private FileLoader<L> loader;
 	
 	public static float BONE_LENGTH = 200, BONE_WIDTH = 10;
 	
 	public boolean drawBones = true, drawBoxes = true;
 	
 	public AbstractDrawer(FileLoader<L> loader){
-		this.loader=loader;
+		setFileLoader(loader);
+	}
+	
+	public void setFileLoader(FileLoader<L> loader){
+		if(loader == null) throw new NullPointerException("A file loader can not be null!");
+		this.loader = loader;
+	}
+	
+	public FileLoader<L> getLoader(){
+		return this.loader;
 	}
 	
 	/**

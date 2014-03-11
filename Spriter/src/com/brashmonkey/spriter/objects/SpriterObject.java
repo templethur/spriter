@@ -20,7 +20,6 @@ package com.brashmonkey.spriter.objects;
 import com.brashmonkey.spriter.SpriterPoint;
 import com.brashmonkey.spriter.SpriterRectangle;
 import com.brashmonkey.spriter.draw.DrawInstruction;
-import com.brashmonkey.spriter.file.FileLoader;
 import com.brashmonkey.spriter.file.Reference;
 
 /**
@@ -28,14 +27,12 @@ import com.brashmonkey.spriter.file.Reference;
  * It also holds information about things which will be drawn on the screen, such as sprite, depth and transparency.
  * @author Trixt0r
  */
-@SuppressWarnings("rawtypes")
 public class SpriterObject extends SpriterAbstractObject implements Comparable<SpriterObject>{
 	
 	float pivotX, pivotY, alpha;
 	int zIndex;
 	boolean transientObject = false, visible = true;
 	Reference ref;
-	FileLoader loader = null;
 	SpriterRectangle rect = new SpriterRectangle(0,0,0,0);
 	private SpriterPoint[] boundingPoints; 
 	
@@ -101,23 +98,12 @@ public class SpriterObject extends SpriterAbstractObject implements Comparable<S
 		else return 0;
 	}
 	
-	public void setLoader(FileLoader loader){
-		this.loader = loader;
-	}
-	
-	public FileLoader getLoader(){
-		return this.loader;
-	}
-	
 	public boolean isVisible() {
 		return visible;
 	}
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-	/*public String toString(){
-		return "x: "+this.x+", y: "+this.y+", angle: "+this.alpha;
-	}*/
 	
 	@Override
 	public void copyValuesTo(SpriterAbstractObject object){
@@ -129,7 +115,7 @@ public class SpriterObject extends SpriterAbstractObject implements Comparable<S
 		((SpriterObject)object).setPivotY(pivotY);
 		((SpriterObject)object).setTransientObject(transientObject);
 		((SpriterObject)object).setZIndex(zIndex);
-		((SpriterObject)object).setLoader(loader);
+		//((SpriterObject)object).setLoader(loader);
 		((SpriterObject)object).setVisible(visible);
 		((SpriterObject)object).rect.set(this.rect);
 	}
@@ -144,7 +130,6 @@ public class SpriterObject extends SpriterAbstractObject implements Comparable<S
 		instruction.angle = this.angle;
 		instruction.alpha = this.alpha;
 		instruction.ref = this.ref;
-		instruction.loader = this.loader;
 		instruction.obj = this;
 	}
 	

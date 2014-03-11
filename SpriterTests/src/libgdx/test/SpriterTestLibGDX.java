@@ -2,13 +2,13 @@ package libgdx.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.brashmonkey.spriter.Spriter;
-import com.brashmonkey.spriter.player.SpriterAbstractPlayer;
 import com.brashmonkey.spriter.player.SpriterPlayer;
 import com.brashmonkey.spriter.xml.FileHandleSCMLReader;
 
@@ -16,7 +16,7 @@ public class SpriterTestLibGDX implements ApplicationListener{
 	
 	public static void main(String... args){
 		LwjglApplicationConfiguration cfg =  new LwjglApplicationConfiguration();
-		cfg.title = "Spriter test for LibGDX";
+		cfg.title = "Spriter test for LibGDX|Click to see character maps in action";
 		cfg.useGL20 = false;
 		cfg.width = 1280;
 		cfg.height = 720;
@@ -28,7 +28,7 @@ public class SpriterTestLibGDX implements ApplicationListener{
 	private OrthographicCamera cam;
 	private SpriteLoader loader;
 	private SpriteDrawer drawer;
-	private SpriterAbstractPlayer player;
+	private SpriterPlayer player;
 	private Spriter spriter;
 	
 	@Override
@@ -39,8 +39,18 @@ public class SpriterTestLibGDX implements ApplicationListener{
 		this.loader = new SpriteLoader(2048, 2048);
 		this.drawer = new SpriteDrawer(this.loader, this.batch);
 		
-		this.spriter = FileHandleSCMLReader.getSpriter(Gdx.files.internal("monster/basic.scml"), this.loader);
+		this.spriter = FileHandleSCMLReader.getSpriter(Gdx.files.absolute("assets/monster/basic_002.scml"), this.loader);
 		this.player = new SpriterPlayer(this.spriter.getSpriterData(), 0, this.loader);
+		
+		Gdx.input.setInputProcessor(new InputAdapter() {			
+			@Override
+			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+				if(player.characterMap == null)
+					player.characterMap = player.getEntity().getCharacterMapByName("standard");
+				else player.characterMap = null;
+				return false;
+			}
+		});
 	}
 
 	@Override

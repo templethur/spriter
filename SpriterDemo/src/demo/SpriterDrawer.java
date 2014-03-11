@@ -27,10 +27,8 @@ public class SpriterDrawer extends AbstractDrawer<Sprite> {
 		this.batch = batch;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void draw(DrawInstruction instruction) {
-		this.loader = instruction.loader;
 		draw(getFile(instruction.getRef()), instruction.getX(), instruction.getY(), instruction.getPivotX(),
 		instruction.getPivotY(), instruction.getScaleX(), instruction.getScaleY(), instruction.getAngle(),
 		instruction.getAlpha());

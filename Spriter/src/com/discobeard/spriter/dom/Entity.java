@@ -10,6 +10,7 @@ package com.discobeard.spriter.dom;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,6 +49,8 @@ public class Entity {
     protected Integer id;
     @XmlAttribute(name = "name")
     protected String name;
+	@XmlAttribute(name = "character_map")
+    protected List<CharacterMap> characterMaps;
 
     /**
      * Gets the value of the animation property.
@@ -76,6 +79,15 @@ public class Entity {
             animation = new ArrayList<Animation>();
         }
         return this.animation;
+    }
+    
+    /**
+     * @return all character maps, this entity has
+     */
+    public List<CharacterMap> getCharacterMaps() {
+        if (characterMaps == null)
+        	characterMaps = new ArrayList<CharacterMap>();
+        return this.characterMaps;
     }
 
     /**
@@ -124,6 +136,17 @@ public class Entity {
      */
     public void setName(String value) {
         this.name = value;
+    }
+    
+    /**
+     * Searches for a character map for the given name.
+     * @param name A name to search for.
+     * @return The character map if one was found with the given name, null otherwise.
+     */
+    public CharacterMap getCharacterMapByName(String name){
+    	for(CharacterMap map: this.getCharacterMaps())
+    		if(map.name.equals(name)) return map;
+    	return null;
     }
 
 }

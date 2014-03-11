@@ -17,27 +17,23 @@
 
 package com.brashmonkey.spriter.objects;
 
-import com.brashmonkey.spriter.file.FileLoader;
 import com.brashmonkey.spriter.file.Reference;
 
 /**
  * A SpriterModObject is an object which is able to manipulate animated bones and objects at runtime.
  * @author Trixt0r
  */
-@SuppressWarnings("rawtypes")
 public class SpriterModObject extends SpriterAbstractObject{
 	
 	private float alpha;
 	private String name;
 	private Reference ref;
-	private FileLoader loader;
 	private boolean active;
 	
 	public SpriterModObject(){
 		super();
 		this.alpha = 1f;
 		this.ref = null;
-		this.loader = null;
 		this.active = true;
 	}
 
@@ -63,14 +59,6 @@ public class SpriterModObject extends SpriterAbstractObject{
 
 	public void setRef(Reference ref) {
 		this.ref = ref;
-	}
-
-	public FileLoader getLoader() {
-		return loader;
-	}
-
-	public void setLoader(FileLoader loader) {
-		this.loader = loader;
 	}
 
 	public boolean isActive() {

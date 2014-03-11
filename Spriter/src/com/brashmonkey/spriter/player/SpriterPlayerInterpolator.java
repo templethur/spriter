@@ -122,7 +122,6 @@ public class SpriterPlayerInterpolator extends SpriterAbstractPlayer{
 	@Override
 	protected void setInstructionRef(DrawInstruction dI, SpriterObject obj1, SpriterObject obj2){
 		dI.ref = (this.weight <= 0.5f || obj2 == null) ? obj1.getRef(): obj2.getRef();
-		dI.loader = (this.weight <= 0.5f || obj2 == null) ? obj1.getLoader(): obj2.getLoader();
 		dI.obj = (this.weight <= 0.5f || obj2 == null) ? obj1: obj2;
 	}
 	

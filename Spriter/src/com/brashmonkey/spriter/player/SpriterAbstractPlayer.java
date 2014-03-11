@@ -34,6 +34,7 @@ import com.brashmonkey.spriter.objects.SpriterAbstractObject;
 import com.brashmonkey.spriter.objects.SpriterBone;
 import com.brashmonkey.spriter.objects.SpriterModObject;
 import com.brashmonkey.spriter.objects.SpriterObject;
+import com.discobeard.spriter.dom.CharacterMap;
 import com.discobeard.spriter.dom.SpriterData;
 
 /**
@@ -62,6 +63,7 @@ public abstract class SpriterAbstractPlayer {
 	SpriterRectangle rect;
 	public final FileLoader<?> loader;
 	public boolean updateObjects = true, updateBones = true;
+	public CharacterMap characterMap = null;
 	
 	/**
 	 * Constructs a new SpriterAbstractPlayer object which is able to animate SpriterBone instances and SpriterObject instances.
@@ -102,10 +104,8 @@ public abstract class SpriterAbstractPlayer {
 					maxObjectsFrameIndex = frame.getId();
 					maxObjectsAnimationIndex = animation.id;
 				}
-				for(SpriterObject o: frame.getObjects()){
-					o.setLoader(this.loader);
+				for(SpriterObject o: frame.getObjects())
 					o.setRef(this.loader.findReference(o.getRef()));
-				}
 			}
 		}
 		
@@ -204,8 +204,8 @@ public abstract class SpriterAbstractPlayer {
 	}
 	
 	protected void setInstructionRef(DrawInstruction dI, SpriterObject obj1, SpriterObject obj2){
-		dI.ref = obj1.getRef();
-		dI.loader = obj1.getLoader();
+		if(this.characterMap != null) dI.ref = characterMap.get(obj1.getRef());
+		else dI.ref = obj1.getRef();
 		dI.obj = obj1;
 	}
 	
@@ -273,7 +273,6 @@ public abstract class SpriterAbstractPlayer {
 		}
 		this.translateRelative(this.tempObjects[i], parent);
 		if(this.moddedObjects[currentObject.getId()].getRef() != null)	this.tempObjects[i].setRef(this.moddedObjects[currentObject.getId()].getRef());
-		if(this.moddedObjects[currentObject.getId()].getLoader() != null) this.tempObjects[i].setLoader(this.moddedObjects[currentObject.getId()].getLoader());
 		this.tempObjects[i].copyValuesTo(dI);
 		
 		this.setInstructionRef(dI, this.tempObjects[i], nextObject);

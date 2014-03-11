@@ -24,11 +24,11 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import com.brashmonkey.spriter.file.Reference;
 import com.discobeard.spriter.dom.*;
 
 /**
- * This class was implemented to give you the chance loading scml files on android with libGDX since JAXB does not run on android devices.
- * If you are using libGDX, you should use this class to load scml files.
+ * This class was implemented to give you the chance loading scml files on android since JAXB does not run on android devices.
  * @author Trixt0r
  */
 public class SCMLReader {
@@ -104,6 +104,18 @@ public class SCMLReader {
 			entity.setId(e.getInt("id")); entity.setName(e.getAttribute("name", ""));
 			data.getEntity().add(entity);
 			loadAnimations(e.getChildrenByName("animation"), entity);
+			loadCharacterMaps(e.getChildrenByName("character_map"), entity);
+		}
+	}
+	
+	private static void loadCharacterMaps(ArrayList<XmlReader.Element> maps, Entity entity){
+		for(int i = 0; i< maps.size(); i++){
+			XmlReader.Element map = maps.get(i);
+			CharacterMap charMap = new CharacterMap(map.getInt("id"), map.getAttribute("name", "charMap"+i));
+			entity.getCharacterMaps().add(charMap);
+			ArrayList<XmlReader.Element> mappings = map.getChildrenByName("map");
+			for(XmlReader.Element mapping: mappings)
+				charMap.put(new Reference(mapping.getInt("folder"), mapping.getInt("file")), new Reference(mapping.getInt("target_folder"), mapping.getInt("target_file")));
 		}
 	}
 	
