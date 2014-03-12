@@ -72,14 +72,8 @@ public class SpriterPlayer extends SpriterAbstractPlayer{
 	public SpriterPlayer(SpriterData data, Entity entity, FileLoader<?> loader){
 		super(loader, null);
 		this.data = data;
-		this.entity = entity;
 		this.frame = 0;
-		if(!alreadyLoaded(entity)){
-			this.animations = SpriterKeyFrameProvider.generateKeyFramePool(this.data, entity);
-			loaded.put(entity, this);
-		}
-		else this.animations = loaded.get(entity).animations;
-		this.generateData();
+		this.setEntity(entity);
 		this.animation = this.animations.get(0);
 		this.firstKeyFrame = this.animation.frames.get(0);
 		this.update(0, 0);
@@ -239,16 +233,33 @@ public class SpriterPlayer extends SpriterAbstractPlayer{
 	 * @param entity the entity to set
 	 */
 	public void setEntity(Entity entity) {
+		if(this.entity == entity) return;
 		this.entity = entity;
 		if(!alreadyLoaded(entity)){
 			this.animations = SpriterKeyFrameProvider.generateKeyFramePool(this.data, entity);
 			loaded.put(entity, this);
 		}
 		else this.animations = loaded.get(entity).animations;
+		this.generateData();
 	}
 	
+	/**
+	 * Sets the entity by index.
+	 * @param index
+	 */
 	public void setEntity(int index){
 		setEntity(data.getEntity().get(index));
+	}
+	
+	/**
+	 * Sets the character map to the character map with the given name,
+	 * specified in the current set entity ({@link #setEntity(Entity)}).
+	 * If no character map exists with the given name,
+	 * the standard character map is applied.
+	 * @param name
+	 */
+	public void setCharacterMap(String name){
+		super.characterMap = this.entity.getCharacterMapByName(name);
 	}
 
 	

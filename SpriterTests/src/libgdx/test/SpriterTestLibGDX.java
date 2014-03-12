@@ -45,8 +45,7 @@ public class SpriterTestLibGDX implements ApplicationListener{
 		Gdx.input.setInputProcessor(new InputAdapter() {			
 			@Override
 			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				if(player.characterMap == null)
-					player.characterMap = player.getEntity().getCharacterMapByName("standard");
+				if(player.characterMap == null) player.setCharacterMap("standard");
 				else player.characterMap = null;
 				return false;
 			}
