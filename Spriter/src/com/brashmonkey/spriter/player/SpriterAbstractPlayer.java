@@ -28,8 +28,6 @@ import com.brashmonkey.spriter.animation.SpriterAnimation;
 import com.brashmonkey.spriter.animation.SpriterKeyFrame;
 import com.brashmonkey.spriter.draw.DrawInstruction;
 import com.brashmonkey.spriter.file.FileLoader;
-import com.brashmonkey.spriter.interpolation.SpriterInterpolator;
-import com.brashmonkey.spriter.interpolation.SpriterLinearInterpolator;
 import com.brashmonkey.spriter.objects.SpriterAbstractObject;
 import com.brashmonkey.spriter.objects.SpriterBone;
 import com.brashmonkey.spriter.objects.SpriterModObject;
@@ -48,7 +46,6 @@ public abstract class SpriterAbstractPlayer {
 	
 	public final SpriterKeyFrame lastFrame,lastTempFrame;
 	public boolean transitionFixed = true, drawn = false;
-	protected SpriterInterpolator interpolator;
 	protected int currenObjectsToDraw, flipX = 1, flipY = 1, frameSpeed = 10, zIndex = 0, currentBonesToAnimate;
 	protected DrawInstruction[] instructions;
 	protected SpriterModObject[] moddedObjects,moddedBones;
@@ -80,7 +77,6 @@ public abstract class SpriterAbstractPlayer {
 		this.tempParent.setName("playerRoot");
 		this.lastFrame = new SpriterKeyFrame();
 		this.lastTempFrame = new SpriterKeyFrame();
-		this.interpolator = SpriterLinearInterpolator.interpolator;
 		this.players = new LinkedList<SpriterAbstractPlayer>();
 		rect = new SpriterRectangle(0,0,0,0);
 	}
@@ -196,9 +192,10 @@ public abstract class SpriterAbstractPlayer {
 		if(!this.updateObjects) return;
 		this.updateTransformedTempObjects(nextFrame.getObjects(), this.tempObjects2);
 		this.updateTempObjects(currentFrame.getObjects(), this.nonTransformedTempObjects);
-		
+
+		float t = SpriterCalculator.getNormalizedTime(currentFrame.getTime(), nextFrame.getTime(), this.frame);
 		for (int i = 0; i < this.currenObjectsToDraw; i++)
-			if(this.tempObjects[i].active) this.tweenObject(this.nonTransformedTempObjects[i], nextFrame.getObjectFor(this.nonTransformedTempObjects[i]), i, currentFrame.getTime(), nextFrame.getTime());
+			if(this.tempObjects[i].active) this.tweenObject(this.nonTransformedTempObjects[i], nextFrame.getObjectFor(this.nonTransformedTempObjects[i]), i, t);
 			//else this.tweenObject(this.animations.get(0).frames.get(0).getObjectFor(this.nonTransformedTempObjects[i]), nextFrame.getObjectFor(this.nonTransformedTempObjects[i]), i, currentFrame.getTime(), nextFrame.getTime());
 			
 	}
@@ -231,14 +228,15 @@ public abstract class SpriterAbstractPlayer {
 		
 		this.updateTransformedTempObjects(nextFrame.getBones(), this.tempBones2);
 		this.updateTempObjects(currentFrame.getBones(), this.nonTransformedTempBones);
-		
+
+		float t = SpriterCalculator.getNormalizedTime(currentFrame.getTime(), nextFrame.getTime(), this.frame);
 		for (int i = 0; i < this.nonTransformedTempBones.length; i++) {
-			if(this.tempBones[i].active) this.tweenBone(this.nonTransformedTempBones[i], nextFrame.getBoneFor(this.nonTransformedTempBones[i]), i, currentFrame.getTime(), nextFrame.getTime());
+			if(this.tempBones[i].active) this.tweenBone(this.nonTransformedTempBones[i], nextFrame.getBoneFor(this.nonTransformedTempBones[i]), i, t);
 			//else this.tweenBone(this.nonTransformedTempBones[i], this.animations.get(0).frames.get(0).getBoneFor(this.nonTransformedTempBones[i]), i, currentFrame.getTime(), nextFrame.getTime());
 		}
 	}
 	
-	private void tweenObject(SpriterObject currentObject, SpriterObject nextObject, int i, long startTime, long endTime){
+	private void tweenObject(SpriterObject currentObject, SpriterObject nextObject, int i, float t){
 		DrawInstruction dI = this.instructions[i];
 		currentObject.copyValuesTo(this.tempObjects[i]);
 		SpriterAbstractObject parent = null;
@@ -258,7 +256,7 @@ public abstract class SpriterAbstractPlayer {
 					SpriterCalculator.reTranslateRelative(parent, nextObject);
 					nextObject.setAngle(nextObject.getAngle()*this.flipX*this.flipY);
 				}					
-				if(this.tempObjects[i].active) this.interpolateSpriterObject(this.tempObjects[i], currentObject, nextObject, startTime, endTime);
+				if(this.tempObjects[i].active) this.interpolateSpriterObject(this.tempObjects[i], currentObject, nextObject, t);
 			}
 			
 			this.moddedObjects[currentObject.getId()].modSpriterObject(this.tempObjects[i]);
@@ -278,7 +276,7 @@ public abstract class SpriterAbstractPlayer {
 		this.setInstructionRef(dI, this.tempObjects[i], nextObject);
 	}
 	
-	private void tweenBone(SpriterBone currentBone, SpriterBone nextBone, int i, long startTime, long endTime){
+	private void tweenBone(SpriterBone currentBone, SpriterBone nextBone, int i, float t){
 		currentBone.copyValuesTo(this.tempBones[i]);
 		this.tempBones[i].setTimeline((nextBone != null) ? currentBone.getTimeline() : -1);
 		SpriterAbstractObject parent = (this.tempBones[i].hasParent()) ?  this.tempBones[this.tempBones[i].getParentId()]: this.tempParent;
@@ -294,9 +292,8 @@ public abstract class SpriterAbstractPlayer {
 				SpriterCalculator.reTranslateRelative(parent, nextBone);
 				nextBone.setAngle(nextBone.getAngle()*this.flipX*this.flipY);
 			}
-			if(this.tempBones[i].active) this.interpolateAbstractObject(this.tempBones[i], currentBone, nextBone, startTime, endTime);
-		} /*else
-			System.err.println("Could not get second bone to tween");*/
+			if(this.tempBones[i].active) this.interpolateAbstractObject(this.tempBones[i], currentBone, nextBone, t);
+		}
 		
 		this.moddedBones[currentBone.getId()].modSpriterBone(this.tempBones[i]);
 		
@@ -353,21 +350,21 @@ public abstract class SpriterAbstractPlayer {
 		return null;
 	}
 	
-	private void interpolateAbstractObject(SpriterAbstractObject target, SpriterAbstractObject obj1, SpriterAbstractObject obj2, float startTime, float endTime){
+	protected void interpolateAbstractObject(SpriterAbstractObject target, SpriterAbstractObject obj1, SpriterAbstractObject obj2, float t){
 		if(obj2 == null) return;
-		target.setX(this.interpolate(obj1.getX(), obj2.getX(), startTime, endTime, this.frame));
-		target.setY(this.interpolate(obj1.getY(), obj2.getY(), startTime, endTime, this.frame));
-		target.setScaleX(this.interpolate(obj1.getScaleX(), obj2.getScaleX(), startTime, endTime, this.frame));
-		target.setScaleY(this.interpolate(obj1.getScaleY(), obj2.getScaleY(), startTime, endTime, this.frame));
-		target.setAngle(this.interpolateAngle(obj1.getAngle(), obj2.getAngle(), startTime, endTime, this.frame));
+		target.setX(obj1.curve.tween(obj1.getX(), obj2.getX(), t));
+		target.setY(obj1.curve.tween(obj1.getY(), obj2.getY(), t));
+		target.setScaleX(obj1.curve.tween(obj1.getScaleX(), obj2.getScaleX(), t));
+		target.setScaleY(obj1.curve.tween(obj1.getScaleY(), obj2.getScaleY(), t));
+		target.setAngle(obj1.curve.tweenAngle(obj1.getAngle(), obj2.getAngle(), t/*, obj1.getSpin()*/));
 	}
 	
-	private void interpolateSpriterObject(SpriterObject target, SpriterObject obj1, SpriterObject obj2, float startTime, float endTime){
+	protected void interpolateSpriterObject(SpriterObject target, SpriterObject obj1, SpriterObject obj2, float t){
 		if(obj2 == null) return;
-		this.interpolateAbstractObject(target, obj1, obj2, startTime, endTime);
-		target.setPivotX(this.interpolate(obj1.getPivotX(), obj2.getPivotX(), startTime, endTime, this.frame));
-		target.setPivotY(this.interpolate(obj1.getPivotY(), obj2.getPivotY(), startTime, endTime, this.frame));
-		target.setAlpha(this.interpolateAngle(obj1.getAlpha(), obj2.getAlpha(), startTime, endTime, this.frame));
+		this.interpolateAbstractObject(target, obj1, obj2, t);
+		target.setPivotX((obj1.curve.tween(obj1.getPivotX(), obj2.getPivotX(), t)));
+		target.setPivotY((obj1.curve.tween(obj1.getPivotY(), obj2.getPivotY(), t)));
+		target.setAlpha((obj1.curve.tween(obj1.getAlpha(), obj2.getAlpha(), t)));
 	}
 	
 	private void translateRelative(SpriterAbstractObject object, SpriterAbstractObject parent){
@@ -375,25 +372,7 @@ public abstract class SpriterAbstractPlayer {
 		object.setScaleX(object.getScaleX() * parent.getScaleX());
 		object.setScaleY(object.getScaleY() * parent.getScaleY());
 		SpriterCalculator.translateRelative(parent, object);
-	}
-
-	
-	/**
-	 * See {@link SpriterCalculator#calculateInterpolation(float, float, float, float, long)}
-	 * Can be inherited, to handle other interpolation techniques. Standard is linear interpolation.
-	 */
-	protected float interpolate(float a, float b, float timeA, float timeB, float currentTime){
-		return this.interpolator.interpolate(a, b, timeA, timeB, currentTime);
-	}
-	
-	/**
-	 * See {@link SpriterCalculator#calculateInterpolation(float, float, float, float, long)}
-	 * Can be inherited, to handle other interpolation techniques. Standard is linear interpolation.
-	 */
-	protected float interpolateAngle(float a, float b, float timeA, float timeB, float currentTime){
-		return this.interpolator.interpolateAngle(a, b, timeA, timeB, currentTime);
-	}
-	
+	}	
 
 	
 	/**
@@ -699,22 +678,6 @@ public abstract class SpriterAbstractPlayer {
 		int i = this.getObjectIndexByName(name);
 		if(i != -1) return this.getRuntimeObjects()[i];
 		else return null;
-	}
-
-	/**
-	 * @return the current interpolator. See #SpriterInterpolator. You can implement your own one,
-	 * which interpolates the animations as you wish.
-	 */
-	public SpriterInterpolator getInterpolator() {
-		return interpolator;
-	}
-
-	/**
-	 * @param interpolator the interpolator to set. See #SpriterInterpolator. You can implement your own one,
-	 * which interpolates the animations as you wish.
-	 */
-	public void setInterpolator(SpriterInterpolator interpolator) {
-		this.interpolator = interpolator;
 	}
 	
 	/**

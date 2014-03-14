@@ -17,9 +17,10 @@
 
 package com.brashmonkey.spriter.player;
 
-import com.brashmonkey.spriter.SpriterCalculator;
 import com.brashmonkey.spriter.animation.SpriterKeyFrame;
 import com.brashmonkey.spriter.draw.DrawInstruction;
+import com.brashmonkey.spriter.interpolation.SpriterCurve;
+import com.brashmonkey.spriter.objects.SpriterAbstractObject;
 import com.brashmonkey.spriter.objects.SpriterObject;
 
 /**
@@ -36,6 +37,7 @@ public class SpriterPlayerInterpolator extends SpriterAbstractPlayer{
 	private SpriterAbstractPlayer first, second;
 	private float weight;
 	public boolean updatePlayers = true;
+	private SpriterCurve curve = new SpriterCurve();
 
 	/**
 	 * Returns an instance of this class, which will manage the interpolation between two #SpriterAbstractPlayer instances.
@@ -124,37 +126,24 @@ public class SpriterPlayerInterpolator extends SpriterAbstractPlayer{
 		dI.ref = (this.weight <= 0.5f || obj2 == null) ? obj1.getRef(): obj2.getRef();
 		dI.obj = (this.weight <= 0.5f || obj2 == null) ? obj1: obj2;
 	}
-	
-	/**
-	 * See {@link SpriterCalculator#calculateInterpolation(float, float, float, float, long)}
-	 * Can be inherited, to handle other interpolation techniques. Standard is linear interpolation.
-	 */
+
 	@Override
-	protected float interpolate(float a, float b, float timeA, float timeB, float currentTime){
-		return this.interpolator.interpolate(a, b, 0, 1, this.weight);
+	protected void interpolateAbstractObject(SpriterAbstractObject target, SpriterAbstractObject obj1, SpriterAbstractObject obj2, float t){
+		if(obj2 == null) return;
+		target.setX(curve.tween(obj1.getX(), obj2.getX(), this.weight));
+		target.setY(curve.tween(obj1.getY(), obj2.getY(), this.weight));
+		target.setScaleX(curve.tween(obj1.getScaleX(), obj2.getScaleX(), this.weight));
+		target.setScaleY(curve.tween(obj1.getScaleY(), obj2.getScaleY(), this.weight));
+		//target.setAngle(SpriterCalculator.calculateAngleInterpolation(obj1.getAngle(), obj2.getAngle(), 0, 1, this.weight));
+		target.setAngle(curve.tweenAngle(obj1.getAngle(), obj2.getAngle(), this.weight/*, (int) -SpriterCalculator.angleDifference(obj1.getAngle(), obj2.getAngle())*/));
 	}
-	
-	/**
-	 * See {@link SpriterCalculator#calculateInterpolation(float, float, float, float, long)}
-	 * Can be inherited, to handle other interpolation techniques. Standard is linear interpolation.
-	 */
+
 	@Override
-	protected float interpolateAngle(float a, float b, float timeA, float timeB, float currentTime){
-		return this.interpolator.interpolateAngle(a, b, 0, 1, this.weight);
+	protected void interpolateSpriterObject(SpriterObject target, SpriterObject obj1, SpriterObject obj2, float t){
+		if(obj2 == null) return;
+		this.interpolateAbstractObject(target, obj1, obj2, this.weight);
+		target.setPivotX((curve.tween(obj1.getPivotX(), obj2.getPivotX(), this.weight)));
+		target.setPivotY((curve.tween(obj1.getPivotY(), obj2.getPivotY(), this.weight)));
+		target.setAlpha((curve.tween(obj1.getAlpha(), obj2.getAlpha(), this.weight)));
 	}
-	
-	/**
-	 * @return true if this player also interpolates the speed of both players. false if not.
-	 */
-	/*public boolean interpolatesSpeed(){
-		return this.interpolateSpeed;
-	}*/
-	
-	/**
-	 * @param inter indicates whether this player has to interpolate the speed of bother players or not.
-	 * If it set to false, this player will set for both players the speed which this player has. See {@link #setFrameSpeed(int)}
-	 */
-	/*public void setInterpolateSpeed(boolean inter){
-		this.interpolateSpeed = inter;
-	}*/
 }

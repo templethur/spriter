@@ -78,9 +78,9 @@ public class SpriterKeyFrameProvider {
 				SpriterKeyFrame firstFrame = spriterAnimation.frames.get(0);
 		        SpriterKeyFrame lastFrame =  new SpriterKeyFrame();
 		        lastFrame.setId(spriterAnimation.frames());
-		        lastFrame.setBones(new SpriterBone[firstFrame.getBones().length]);
-		        lastFrame.setObjects(new SpriterObject[firstFrame.getObjects().length]);
-		        for(int j = 0; j< lastFrame.getBones().length; j++){
+		        lastFrame.setBones(firstFrame.getBones());
+		        lastFrame.setObjects(firstFrame.getObjects());
+		        /*for(int j = 0; j< lastFrame.getBones().length; j++){
 		          SpriterBone bone = new SpriterBone();
 		          firstFrame.getBones()[j].copyValuesTo(bone);
 		          lastFrame.getBones()[j] = bone;
@@ -89,7 +89,7 @@ public class SpriterKeyFrameProvider {
 		          SpriterObject object = new SpriterObject();
 		          firstFrame.getObjects()[j].copyValuesTo(object);
 		          lastFrame.getObjects()[j] = object;
-		        }
+		        }*/
 		        lastFrame.setTime(anim.getLength());
 		        spriterAnimation.frames.add(lastFrame); 
 			}

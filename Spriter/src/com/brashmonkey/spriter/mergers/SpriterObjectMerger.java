@@ -18,6 +18,7 @@
 package com.brashmonkey.spriter.mergers;
 
 import com.brashmonkey.spriter.file.Reference;
+import com.brashmonkey.spriter.interpolation.SpriterCurve;
 import com.brashmonkey.spriter.objects.SpriterObject;
 import com.discobeard.spriter.dom.AnimationObject;
 import com.discobeard.spriter.dom.AnimationObjectRef;
@@ -27,8 +28,12 @@ public class SpriterObjectMerger implements ISpriterMerger<AnimationObjectRef, K
 
 	public SpriterObject merge(AnimationObjectRef ref, Key key) {
 		AnimationObject obj = key.getObject().get(0); 
-		
 		SpriterObject spriterObject = new SpriterObject();
+		spriterObject.curve = new SpriterCurve(SpriterCurve.getType(key.curveType));
+		spriterObject.curve.c1 = key.c1;
+		spriterObject.curve.c2 = key.c2;
+		spriterObject.curve.c3 = key.c3;
+		spriterObject.curve.c4 = key.c4;
 		spriterObject.setId(ref.getId().intValue());
 		spriterObject.setParentId((ref.getParent() == null) ? -1 : ref.getParent().intValue());
 		spriterObject.setTimeline(ref.getTimeline().intValue());

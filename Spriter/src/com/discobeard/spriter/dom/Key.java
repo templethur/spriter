@@ -63,6 +63,9 @@ public class Key {
     protected Long time;
     @XmlAttribute(name = "spin")
     protected Integer spin;
+    @XmlAttribute(name = "curve_type")
+    public String curveType;
+    public float c1, c2, c3, c4;
 
     /**
      * Gets the value of the object property.

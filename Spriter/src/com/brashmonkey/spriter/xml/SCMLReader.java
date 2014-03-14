@@ -146,6 +146,11 @@ public class SCMLReader {
 			key.setId(k.getInt("id"));
 			int time = k.getInt("time",-1);
 			key.setTime((time == -1) ? null: new Long(time));
+			key.curveType = k.getAttribute("curve_type", "linear");
+			key.c1 = k.getFloat("c1", 0f);
+			key.c2 = k.getFloat("c2", 0f);
+			key.c3 = k.getFloat("c3", 0f);
+			key.c4 = k.getFloat("c4", 0f);
 			main.getKey().add(key);
 			loadRefs(k.getChildrenByName("object_ref"),k.getChildrenByName("bone_ref"),key);
 		}
@@ -192,6 +197,11 @@ public class SCMLReader {
 			Key key = new Key();
 			key.setId(k.getInt("id")); key.setSpin(k.getInt("spin", 1));
 			key.setTime(new Long(k.getInt("time", 0)));
+			key.curveType = k.getAttribute("curve_type", "linear");
+			key.c1 = k.getFloat("c1", 0f);
+			key.c2 = k.getFloat("c2", 0f);
+			key.c3 = k.getFloat("c3", 0f);
+			key.c4 = k.getFloat("c4", 0f);
 			String name = k.getParent().getAttribute("name");
 			timeline.setName(name);
 			if(obj != null){

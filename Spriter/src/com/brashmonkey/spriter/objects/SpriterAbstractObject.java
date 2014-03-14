@@ -17,6 +17,8 @@
 
 package com.brashmonkey.spriter.objects;
 
+import com.brashmonkey.spriter.interpolation.SpriterCurve;
+
 /**
  * A SpriterAbstractObject is, as the name says, an abstract object which holds the same properties a #SpriterObject and a #SpriterBone have.
  * Such as x,y coordinates, angle, id, parent, scale and the timeline.
@@ -28,6 +30,7 @@ public abstract class SpriterAbstractObject {
 	protected SpriterAbstractObject parent;
 	protected String name;
 	public boolean active = true;
+	public SpriterCurve curve;
 
 	public SpriterAbstractObject(){
 		this.x = 0;
@@ -203,6 +206,7 @@ public abstract class SpriterAbstractObject {
 		object.setTimeline(timeline);
 		object.setSpin(spin);
 		object.setName(name);
+		object.curve = curve;
 	}
 	
 	/**

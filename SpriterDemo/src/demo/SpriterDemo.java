@@ -36,7 +36,7 @@ public class SpriterDemo implements ApplicationListener{
 				false, this.batch);
 		Gdx.input.setInputProcessor(this.uiStage);
 		this.loader = new SpriterLoaderMultithreaded(true);
-		this.drawer = new SpriterDrawer(this.batch);
+		this.drawer = new SpriterDrawer(this.loader, this.batch);
 		this.drawer.renderer = this.shapeRenderer;
 		this.skin = new Skin(Gdx.files.internal("data/buttons.json"));
 		if(this.loadAsynchronus){

@@ -2,12 +2,13 @@ package libgdx.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.brashmonkey.spriter.Spriter;
 import com.brashmonkey.spriter.player.SpriterPlayer;
 import com.brashmonkey.spriter.xml.FileHandleSCMLReader;
@@ -25,6 +26,7 @@ public class SpriterTestLibGDX implements ApplicationListener{
 	}
 
 	private SpriteBatch batch;
+	private ShapeRenderer renderer;
 	private OrthographicCamera cam;
 	private SpriteLoader loader;
 	private SpriteDrawer drawer;
@@ -34,28 +36,33 @@ public class SpriterTestLibGDX implements ApplicationListener{
 	@Override
 	public void create() {
 		this.batch = new SpriteBatch();
+		this.renderer = new ShapeRenderer();
 		this.cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
 		this.loader = new SpriteLoader(2048, 2048);
 		this.drawer = new SpriteDrawer(this.loader, this.batch);
+		this.drawer.renderer = this.renderer;
+		this.drawer.drawBoxes = false;
 		
 		this.spriter = FileHandleSCMLReader.getSpriter(Gdx.files.absolute("assets/monster/basic_002.scml"), this.loader);
 		this.player = new SpriterPlayer(this.spriter.getSpriterData(), 0, this.loader);
+		this.player.setFrameSpeed(17);
 		
-		Gdx.input.setInputProcessor(new InputAdapter() {			
+		/*Gdx.input.setInputProcessor(new InputAdapter() {			
 			@Override
 			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 				if(player.characterMap == null) player.setCharacterMap("standard");
 				else player.characterMap = null;
 				return false;
 			}
-		});
+		});*/
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		this.cam.setToOrtho(false, width, height);
 		this.batch.setProjectionMatrix(this.cam.combined);
+		this.renderer.setProjectionMatrix(this.cam.combined);
 	}
 
 	@Override
@@ -67,6 +74,10 @@ public class SpriterTestLibGDX implements ApplicationListener{
 		this.batch.begin();
 			this.drawer.draw(player);
 		this.batch.end();
+		
+		this.renderer.begin(ShapeType.Line);
+			this.drawer.debugDraw(player);
+		this.renderer.end();
 	}
 
 	@Override
@@ -80,6 +91,7 @@ public class SpriterTestLibGDX implements ApplicationListener{
 	@Override
 	public void dispose() {
 		this.batch.dispose();
+		this.renderer.dispose();
 		this.loader.dispose();
 	}
 

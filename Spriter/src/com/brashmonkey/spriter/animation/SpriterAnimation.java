@@ -74,6 +74,7 @@ public class SpriterAnimation {
 	}
 	
 	public SpriterKeyFrame getNextFrameFor(SpriterAbstractObject object, SpriterKeyFrame currentFrame, int direction){
+		if(currentFrame == null) return null;
 		SpriterKeyFrame nextFrame = null;
 		int cnt = 0;
 		boolean isBone = object instanceof SpriterBone;

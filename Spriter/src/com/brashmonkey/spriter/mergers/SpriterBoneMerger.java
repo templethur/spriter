@@ -17,6 +17,7 @@
 
 package com.brashmonkey.spriter.mergers;
 
+import com.brashmonkey.spriter.interpolation.SpriterCurve;
 import com.brashmonkey.spriter.objects.SpriterBone;
 import com.discobeard.spriter.dom.Bone;
 import com.discobeard.spriter.dom.BoneRef;
@@ -29,6 +30,12 @@ public class SpriterBoneMerger implements ISpriterMerger<BoneRef,Key,SpriterBone
 		Bone obj = key.getBone();
 		
 		SpriterBone bone = new SpriterBone();
+		SpriterCurve.Type t = SpriterCurve.getType(key.curveType);
+		bone.curve = new SpriterCurve(t);
+		bone.curve.c1 = key.c1;
+		bone.curve.c2 = key.c2;
+		bone.curve.c3 = key.c3;
+		bone.curve.c4 = key.c4;
 		bone.setTimeline(ref.getTimeline().intValue());
 		bone.setId(ref.getId().intValue());
 		bone.setParentId((ref.getParent() == null) ? -1 : ref.getParent().intValue());

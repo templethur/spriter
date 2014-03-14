@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import com.brashmonkey.spriter.SpriterCalculator;
 import com.brashmonkey.spriter.animation.SpriterAnimation;
 import com.brashmonkey.spriter.animation.SpriterKeyFrame;
-import com.brashmonkey.spriter.interpolation.SpriterLinearInterpolator;
+import com.brashmonkey.spriter.interpolation.SpriterCurve;
 import com.brashmonkey.spriter.objects.SpriterAbstractObject;
 //import com.brashmonkey.spriter.converters.SpriterObjectConverter;
 import com.brashmonkey.spriter.objects.SpriterBone;
@@ -68,11 +68,16 @@ public class SpriterAnimationBuilder {
 			SpriterKeyFrame frame = new SpriterKeyFrame();
 			frame.setTime(mainlineKey.getTime());
 			frame.setId(mainlineKey.getId());
-			
+			SpriterCurve subCurve = new SpriterCurve(SpriterCurve.getType(mainlineKey.curveType));
+			subCurve.c1 = mainlineKey.c1;
+			subCurve.c2 = mainlineKey.c2;
+			subCurve.c3 = mainlineKey.c3;
+			subCurve.c4 = mainlineKey.c4;
 			for(BoneRef boneRef : mainlineKey.getBoneRef()){
 				TimeLine timeline = timeLines.get(boneRef.getTimeline());
 				Key timelineKey = timeline.getKey().get(boneRef.getKey());
 				SpriterBone bone = boneMerger.merge(boneRef, timelineKey);
+				bone.curve.subCurve = subCurve;
 				bone.setName(timeline.getName());
 				if(mainlineKey.getTime() != timelineKey.getTime()) bonesToTween.put(bone, k);
 				else tempBones.add(bone);
@@ -91,6 +96,7 @@ public class SpriterAnimationBuilder {
 				TimeLine timeline = timeLines.get(objectRef.getTimeline());
 				Key timelineKey = timeline.getKey().get(objectRef.getKey());
 				SpriterObject object = objectMerger.merge(objectRef, timelineKey);
+				object.curve.subCurve = subCurve;
 				object.setName(timeline.getName());
 				if(mainlineKey.getTime() != timelineKey.getTime()) objectsToTween.put(object, k);
 				else tempObjects.add(object);
@@ -129,7 +135,7 @@ public class SpriterAnimationBuilder {
 			SpriterKeyFrame nextFrame = animation.getNextFrameFor(toTween, currentFrame, 1);
 			if(nextFrame != currentFrame){
 				SpriterBone bone1 = currentFrame.getBoneFor(toTween), bone2 = nextFrame.getBoneFor(toTween);
-				this.interpolateAbstractObject(toTween, bone1, bone2, currentFrame.getTime(), nextFrame.getTime(), time);
+				this.interpolateAbstractObject(toTween, bone1, bone2, SpriterCalculator.getNormalizedTime(currentFrame.getTime(), nextFrame.getTime(), time));
 			}
 			SpriterBone[] bones = new SpriterBone[frame.getBones().length+1];
 			for(int i = 0; i < bones.length-1; i++)
@@ -148,7 +154,7 @@ public class SpriterAnimationBuilder {
 			SpriterKeyFrame nextFrame = animation.getNextFrameFor(toTween, currentFrame, 1);
 			if(nextFrame != currentFrame){
 				SpriterObject object1 = currentFrame.getObjectFor(toTween), object2 = nextFrame.getObjectFor(toTween);
-				this.interpolateSpriterObject(toTween, object1, object2, currentFrame.getTime(), nextFrame.getTime(), time);
+				this.interpolateSpriterObject(toTween, object1, object2, SpriterCalculator.getNormalizedTime(currentFrame.getTime(), nextFrame.getTime(), time));
 			}
 			SpriterObject[] objects = new SpriterObject[frame.getObjects().length+1];
 			for(int i = 0; i < objects.length-1; i++)
@@ -158,37 +164,21 @@ public class SpriterAnimationBuilder {
 		}
 	}
 	
-	private void interpolateAbstractObject(SpriterAbstractObject target, SpriterAbstractObject obj1, SpriterAbstractObject obj2, float startTime, float endTime, float frame){
+	private void interpolateAbstractObject(SpriterAbstractObject target, SpriterAbstractObject obj1, SpriterAbstractObject obj2, float t){
 		if(obj2 == null) return;
-		target.setX(this.interpolate(obj1.getX(), obj2.getX(), startTime, endTime, frame));
-		target.setY(this.interpolate(obj1.getY(), obj2.getY(), startTime, endTime, frame));
-		target.setScaleX(this.interpolate(obj1.getScaleX(), obj2.getScaleX(), startTime, endTime, frame));
-		target.setScaleY(this.interpolate(obj1.getScaleY(), obj2.getScaleY(), startTime, endTime, frame));
-		target.setAngle(this.interpolateAngle(obj1.getAngle(), obj2.getAngle(), startTime, endTime, frame));
+		target.setX(obj1.curve.tween(obj1.getX(), obj2.getX(), t));
+		target.setY(obj1.curve.tween(obj1.getY(), obj2.getY(), t));
+		target.setScaleX(obj1.curve.tween(obj1.getScaleX(), obj2.getScaleX(), t));
+		target.setScaleY(obj1.curve.tween(obj1.getScaleY(), obj2.getScaleY(), t));
+		target.setAngle(obj1.curve.tweenAngle(obj1.getAngle(), obj2.getAngle(), t, obj1.getSpin()));
 	}
 	
-	private void interpolateSpriterObject(SpriterObject target, SpriterObject obj1, SpriterObject obj2, float startTime, float endTime, float frame){
+	private void interpolateSpriterObject(SpriterObject target, SpriterObject obj1, SpriterObject obj2, float t){
 		if(obj2 == null) return;
-		this.interpolateAbstractObject(target, obj1, obj2, startTime, endTime, frame);
-		target.setPivotX(this.interpolate(obj1.getPivotX(), obj2.getPivotX(), startTime, endTime, frame));
-		target.setPivotY(this.interpolate(obj1.getPivotY(), obj2.getPivotY(), startTime, endTime, frame));
-		target.setAlpha(this.interpolateAngle(obj1.getAlpha(), obj2.getAlpha(), startTime, endTime, frame));
-	}
-	
-	/**
-	 * See {@link SpriterCalculator#calculateInterpolation(float, float, float, float, long)}
-	 * Can be inherited, to handle other interpolation techniques. Standard is linear interpolation.
-	 */
-	protected float interpolate(float a, float b, float timeA, float timeB, float currentTime){
-		return SpriterLinearInterpolator.interpolator.interpolate(a, b, timeA, timeB, currentTime);
-	}
-	
-	/**
-	 * See {@link SpriterCalculator#calculateInterpolation(float, float, float, float, long)}
-	 * Can be inherited, to handle other interpolation techniques. Standard is linear interpolation.
-	 */
-	protected float interpolateAngle(float a, float b, float timeA, float timeB, float currentTime){
-		return SpriterLinearInterpolator.interpolator.interpolateAngle(a, b, timeA, timeB, currentTime);
+		this.interpolateAbstractObject(target, obj1, obj2, t);
+		target.setPivotX((obj1.curve.tween(obj1.getPivotX(), obj2.getPivotX(), t)));
+		target.setPivotY((obj1.curve.tween(obj1.getPivotY(), obj2.getPivotY(), t)));
+		target.setAlpha((obj1.curve.tween(obj1.getAlpha(), obj2.getAlpha(), t)));
 	}
 	
 	/*private SpriterBone searchForParentBone(SpriterKeyFrame frame, Integer parentId){

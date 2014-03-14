@@ -87,7 +87,7 @@ public class SpriterKeyFrame {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Returns whether this frame has information about the given object.
 	 * @param object 
