@@ -1,7 +1,5 @@
-Spriter
-=======
-(WIP)
-
+Spriter (WIP)
+=============
 A Generic Java library for Spriter animation files.
 
 [Checkout the features video.](http://www.youtube.com/watch?v=i_OxqopvMH0)
@@ -172,4 +170,23 @@ If you do not want the resolver to apply IK for some reason, just call:
 yourResolver.activateEffectors(yourPlayer);//Activates all effectors which where mapped before
 //or
 yourResolver.activateAlll(yourPlayer);//To activate all bones, no matter if they were mapped or not
+```
+
+Character Maps
+--------------
+Changing sprites on the fly is as easy as in Spriter itself.
+To get a character map, you need an entity from the loaded SpriterData instance and then get a map either via index or by name:
+```
+CharacterMap yourCharacterMap = yourSpriterInstance.spriterData.getEntity().get(0).getCharacterMapByName(name);
+//or
+CharacterMap yourCharacterMap = yourSpriterInstance.spriterData.getEntity().get(0).getCharacterMaps().get(charMapIndex);
+```
+
+Character maps can be assigned to any SpriterAbstractPlayer class.
+There are two possibilities to assign a character map to a player object:
+```
+//1. version just assign a character map to the public field in SpriterAbstractPlayer
+player.characterMap = yourCharacterMap;
+//2. if your player is a SpriterPlayer instance, just use the setCharacterMap() method
+player.setCharacterMap("nameOfYourCharacterMap");
 ```
