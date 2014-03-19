@@ -38,7 +38,9 @@ public class SpriterObjectMerger implements ISpriterMerger<AnimationObjectRef, K
 		spriterObject.setParentId((ref.getParent() == null) ? -1 : ref.getParent().intValue());
 		spriterObject.setTimeline(ref.getTimeline().intValue());
 		spriterObject.setAngle(obj.getAngle().floatValue());
+		//if(obj.getFolder() != -1 && obj.getFile() != -1)
 		spriterObject.setRef(new Reference(obj.getFolder(),obj.getFile()));
+		spriterObject.info = obj.info;
 		spriterObject.setPivotX(obj.getPivotX().floatValue());
 		spriterObject.setPivotY(obj.getPivotY().floatValue());
 		spriterObject.setX(obj.getX().floatValue());

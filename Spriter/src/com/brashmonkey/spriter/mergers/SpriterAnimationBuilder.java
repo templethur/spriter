@@ -42,7 +42,6 @@ public class SpriterAnimationBuilder {
 
 	final private SpriterBoneMerger boneMerger = new SpriterBoneMerger();
 	final private SpriterObjectMerger objectMerger = new SpriterObjectMerger();
-	//final private SpriterObjectConverter objectConverter = new SpriterObjectConverter();
 	
 	HashMap<SpriterBone, Integer> bonesToTween;
 	HashMap<SpriterObject, Integer> objectsToTween;
@@ -58,7 +57,8 @@ public class SpriterAnimationBuilder {
 		objectsToTween = new HashMap<SpriterObject, Integer>();
 		
 		SpriterAnimation spriterAnimation = new SpriterAnimation(animation.getId(), animation.getName(), animation.getLength());
-		
+
+		boolean found = false;
 		for(int k=0;k<keyFrames.size();k++){
 			Key mainlineKey = keyFrames.get(k);
 			
@@ -68,28 +68,24 @@ public class SpriterAnimationBuilder {
 			SpriterKeyFrame frame = new SpriterKeyFrame();
 			frame.setTime(mainlineKey.getTime());
 			frame.setId(mainlineKey.getId());
+			if(!found) found = frame.getTime() == animation.getLength();
+			
 			SpriterCurve subCurve = new SpriterCurve(SpriterCurve.getType(mainlineKey.curveType));
 			subCurve.c1 = mainlineKey.c1;
 			subCurve.c2 = mainlineKey.c2;
 			subCurve.c3 = mainlineKey.c3;
 			subCurve.c4 = mainlineKey.c4;
+			
 			for(BoneRef boneRef : mainlineKey.getBoneRef()){
 				TimeLine timeline = timeLines.get(boneRef.getTimeline());
 				Key timelineKey = timeline.getKey().get(boneRef.getKey());
 				SpriterBone bone = boneMerger.merge(boneRef, timelineKey);
 				bone.curve.subCurve = subCurve;
 				bone.setName(timeline.getName());
-				if(mainlineKey.getTime() != timelineKey.getTime()) bonesToTween.put(bone, k);
-				else tempBones.add(bone);
-				/*if(key.getTime() == timeLines.get(boneRef.getTimeline()).getKey().get(boneRef.getKey()).getTime()){
-					if(bone.hasParent()){
-						SpriterBone parent = null;
-						for(int i = 0; i< spriterAnimation.frames() && parent == null; i++){
-							parent = this.searchForParentBone(spriterAnimation.frames.get(i), bone.getParentId());
-							bone.setParent(parent);
-						}
-					}*/
-				//}
+				if(mainlineKey.getTime() != timelineKey.getTime())
+					bonesToTween.put(bone, k);
+				else
+					tempBones.add(bone);
 			}
 			
 			for(AnimationObjectRef objectRef : mainlineKey.getObjectRef()){
@@ -100,24 +96,23 @@ public class SpriterAnimationBuilder {
 				object.setName(timeline.getName());
 				if(mainlineKey.getTime() != timelineKey.getTime()) objectsToTween.put(object, k);
 				else tempObjects.add(object);
-				/*if(key.getTime() == timeLines.get(objectRef.getTimeline()).getKey().get(objectRef.getKey()).getTime()){
-					if(object.hasParent()){
-						SpriterBone parent = null;
-						for(int i = 0; i< spriterAnimation.frames() && parent == null; i++){
-							parent = this.searchForParentBone(spriterAnimation.frames.get(i), object.getParentId());
-							object.setParent(parent);
-						}
-					}*/
-				//}
 			}
-			
-			/*for(AnimationObject object : key.getObject()){
-				tempObjects.add(objectConverter.convert(object));
-			}*/
 			frame.setObjects(tempObjects.toArray(new SpriterObject[tempObjects.size()]));
 			frame.setBones(tempBones.toArray(new SpriterBone[tempBones.size()]));
 			
 			spriterAnimation.frames.add(frame);
+		}
+		
+		if(!found){
+			SpriterKeyFrame firstFrame;
+			if(animation.isLooping())firstFrame = spriterAnimation.frames.get(0);
+			else firstFrame = spriterAnimation.frames.get(spriterAnimation.frames()-1);
+			SpriterKeyFrame lastFrame =  new SpriterKeyFrame();
+	        lastFrame.setId(spriterAnimation.frames());
+	        lastFrame.setBones(firstFrame.getBones());
+	        lastFrame.setObjects(firstFrame.getObjects());
+	        lastFrame.setTime(animation.getLength());
+	        spriterAnimation.frames.add(lastFrame);
 		}
 		
 		this.tweenBones(spriterAnimation);

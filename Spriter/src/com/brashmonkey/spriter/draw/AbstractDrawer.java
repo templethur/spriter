@@ -36,7 +36,7 @@ public abstract class AbstractDrawer<L> {
 	
 	public static float BONE_LENGTH = 200, BONE_WIDTH = 10;
 	
-	public boolean drawBones = true, drawBoxes = true;
+	public boolean drawBones = true, drawBoxes = true, drawPoints;
 	
 	public AbstractDrawer(FileLoader<L> loader){
 		setFileLoader(loader);
@@ -69,15 +69,16 @@ public abstract class AbstractDrawer<L> {
 	protected void drawBones(SpriterAbstractPlayer player){
 		for(int i = 0; i < player.getBonesToAnimate(); i++){
 			SpriterBone bone = player.getRuntimeBones()[i];
+			if(bone.info == null) continue;
 			if(bone.active) this.setDrawColor(1, 0, 0, 1);
 			else this.setDrawColor(0, 1, 1, 1);
 			float xx = bone.getX()+(float)Math.cos(Math.toRadians(bone.getAngle()))*5;
 			float yy = bone.getY()+(float)Math.sin(Math.toRadians(bone.getAngle()))*5;
-			float x2 = (float)Math.cos(Math.toRadians(bone.getAngle()+90))*(BONE_WIDTH/2)*bone.getScaleY();
-			float y2 = (float)Math.sin(Math.toRadians(bone.getAngle()+90))*(BONE_WIDTH/2)*bone.getScaleY();
+			float x2 = (float)Math.cos(Math.toRadians(bone.getAngle()+90))*(bone.info.height/2)*bone.getScaleY();
+			float y2 = (float)Math.sin(Math.toRadians(bone.getAngle()+90))*(bone.info.height/2)*bone.getScaleY();
 			
-			float targetX = bone.getX()+(float)Math.cos(Math.toRadians(bone.getAngle()))*BONE_LENGTH*bone.getScaleX(),
-					targetY = bone.getY()+(float)Math.sin(Math.toRadians(bone.getAngle()))*BONE_LENGTH*bone.getScaleX();
+			float targetX = bone.getX()+(float)Math.cos(Math.toRadians(bone.getAngle()))*bone.info.width*bone.getScaleX(),
+					targetY = bone.getY()+(float)Math.sin(Math.toRadians(bone.getAngle()))*bone.info.width*bone.getScaleX();
 			float upperPointX = xx+x2, upperPointY = yy+y2;
 			this.drawLine(bone.getX(), bone.getY(), upperPointX, upperPointY);
 			this.drawLine(upperPointX, upperPointY, targetX, targetY);
@@ -91,8 +92,19 @@ public abstract class AbstractDrawer<L> {
 	
 	protected void drawBoxes(SpriterAbstractPlayer player){
 		this.setDrawColor(.25f, 1f, .25f, 1f);
-		this.drawRectangle(player.getBoundingBox().left, player.getBoundingBox().bottom, player.getBoundingBox().width, player.getBoundingBox().height);
+		//this.drawRectangle(player.getBoundingBox().left, player.getBoundingBox().bottom, player.getBoundingBox().width, player.getBoundingBox().height);
 		
+		for(int j = 0; j< player.getObjectsToDraw(); j++){
+			SpriterPoint[] points = player.getRuntimeObjects()[j].getBoundingBox();
+			this.drawLine(points[0].x, points[0].y, points[1].x, points[1].y);
+			this.drawLine(points[1].x, points[1].y, points[3].x, points[3].y);
+			this.drawLine(points[3].x, points[3].y, points[2].x, points[2].y);
+			this.drawLine(points[2].x, points[2].y, points[0].x, points[0].y);
+		}
+	}
+	
+	protected void drawPoints(SpriterAbstractPlayer player){
+		this.setDrawColor(.25f, 1f, .25f, 1f);		
 		for(int j = 0; j< player.getObjectsToDraw(); j++){
 			SpriterPoint[] points = player.getRuntimeObjects()[j].getBoundingBox();
 			this.drawLine(points[0].x, points[0].y, points[1].x, points[1].y);

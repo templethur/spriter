@@ -61,18 +61,19 @@ public class SpriterCurve {
 	
 	private float lastCubicSolution = 0f;
 	public float tween(float a, float b, float t){
+		t = tweenSub(0f,1f,t);
 		switch(curveType){
 		case Instant: return a;
-		case Linear: return linear(a, b, tweenSub(0f,1f,t));
-		case Quadratic: return quadratic(a, linear(a, b, c1), b, tweenSub(0f,1f,t));
-		case Cubic: return cubic(a, linear(a, b, c1), linear(a, b, c2), b, tweenSub(0f,1f,t));
-		case Quartic: return quartic(a, linear(a, b, c1), linear(a, b, c2),	linear(a, b, c3), b, tweenSub(0f,1f,t));
-		case Quintic: return quintic(a, linear(a, b, c1), linear(a, b, c2),	linear(a, b, c3), linear(a, b, c4), b, tweenSub(0f,1f,t));
-		case Bezier: Float cubicSolution = solveCubic(3f*(c1-c3) + 1f, 3f*(c3-2f*c1), 3f*c1, -tweenSub(0f,1f,t));
+		case Linear: return linear(a, b, t);
+		case Quadratic: return quadratic(a, linear(a, b, c1), b, t);
+		case Cubic: return cubic(a, linear(a, b, c1), linear(a, b, c2), b, t);
+		case Quartic: return quartic(a, linear(a, b, c1), linear(a, b, c2),	linear(a, b, c3), b, t);
+		case Quintic: return quintic(a, linear(a, b, c1), linear(a, b, c2),	linear(a, b, c3), linear(a, b, c4), b, t);
+		case Bezier: Float cubicSolution = solveCubic(3f*(c1-c3) + 1f, 3f*(c3-2f*c1), 3f*c1, -t);
 					 if(cubicSolution == null) cubicSolution = lastCubicSolution;
 					 else lastCubicSolution = cubicSolution;
 					 return linear(a, b, bezier(cubicSolution, 0f, c2, c4, 1f));
-		default: return linear(a, b, tweenSub(0f,1f,t));
+		default: return linear(a, b, t);
 		}
 	}
 	
@@ -97,17 +98,18 @@ public class SpriterCurve {
 	}
 	
 	public float tweenAngle(float a, float b, float t){
+		t = tweenSub(0f,1f,t);
 		switch(curveType){
 		case Instant: return a;
-		case Quadratic: return quadraticAngle(a, linearAngle(a, b, c1), b, tweenSub(0f,1f,t));
-		case Cubic: return cubicAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2), b, tweenSub(0f,1f,t));
-		case Quartic: return quarticAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2),	linearAngle(a, b, c3), b, tweenSub(0f,1f,t));
-		case Quintic: return quinticAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2),	linearAngle(a, b, c3), linearAngle(a, b, c4), b, tweenSub(0f,1f,t));
-		case Bezier: Float cubicSolution = solveCubic(3f*(c1-c3) + 1f, 3f*(c3-2f*c1), 3f*c1, -tweenSub(0f,1f,t));
+		case Quadratic: return quadraticAngle(a, linearAngle(a, b, c1), b, t);
+		case Cubic: return cubicAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2), b, t);
+		case Quartic: return quarticAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2),	linearAngle(a, b, c3), b, t);
+		case Quintic: return quinticAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2),	linearAngle(a, b, c3), linearAngle(a, b, c4), b, t);
+		case Bezier: Float cubicSolution = solveCubic(3f*(c1-c3) + 1f, 3f*(c3-2f*c1), 3f*c1, -t);
 					 if(cubicSolution == null) cubicSolution = lastCubicSolution;
 					 else lastCubicSolution = cubicSolution;
 					 return linearAngle(a, b, bezier(cubicSolution, 0f, c2, c4, 1f));
-		default: return linearAngle(a, b, tweenSub(0f,1f,t));
+		default: return linearAngle(a, b, t);
 		}
 	}
 

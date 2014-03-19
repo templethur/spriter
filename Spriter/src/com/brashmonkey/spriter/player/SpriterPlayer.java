@@ -192,6 +192,10 @@ public class SpriterPlayer extends SpriterAbstractPlayer{
 		this.setAnimatioIndex(index, transitionSpeed, transitionSteps);
 	}
 	
+	public void setAnimation(String animationName){
+		this.setAnimation(animationName, 1, 1);
+	}
+	
 	/**
 	 * Searches for the animation index with the given name and returns the right one
 	 * @param name name of the animation.

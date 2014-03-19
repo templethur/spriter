@@ -26,6 +26,8 @@ import java.util.ArrayList;
 
 import com.brashmonkey.spriter.file.Reference;
 import com.discobeard.spriter.dom.*;
+import com.discobeard.spriter.dom.Entity.ObjectInfo;
+import com.discobeard.spriter.dom.Entity.ObjectInfoType;
 
 /**
  * This class was implemented to give you the chance loading scml files on android since JAXB does not run on android devices.
@@ -105,6 +107,22 @@ public class SCMLReader {
 			data.getEntity().add(entity);
 			loadAnimations(e.getChildrenByName("animation"), entity);
 			loadCharacterMaps(e.getChildrenByName("character_map"), entity);
+			loadObjectInfos(e.getChildrenByName("obj_info"), entity);
+		}
+	}
+	
+	private static void loadObjectInfos(ArrayList<XmlReader.Element> infos, Entity entity){
+		for(int i = 0; i< infos.size(); i++){
+			XmlReader.Element info = infos.get(i);
+			ObjectInfo objInfo = new ObjectInfo(info.get("name","info"+i),
+									ObjectInfoType.getObjectInfoFor(info.get("type","")),
+									info.getFloat("w", 0f),info.getFloat("h", 0f));
+			entity.addInfo(objInfo);
+			XmlReader.Element frames = info.getChildByName("frames");
+			if(frames == null) continue;
+			ArrayList<XmlReader.Element> frameIndices = frames.getChildrenByName("i");
+			for(XmlReader.Element index: frameIndices)
+				objInfo.frames.add(new Reference(index.getInt("folder", 0), index.getInt("file", 0)));
 		}
 	}
 	
@@ -114,8 +132,11 @@ public class SCMLReader {
 			CharacterMap charMap = new CharacterMap(map.getInt("id"), map.getAttribute("name", "charMap"+i));
 			entity.getCharacterMaps().add(charMap);
 			ArrayList<XmlReader.Element> mappings = map.getChildrenByName("map");
-			for(XmlReader.Element mapping: mappings)
-				charMap.put(new Reference(mapping.getInt("folder"), mapping.getInt("file")), new Reference(mapping.getInt("target_folder"), mapping.getInt("target_file")));
+			for(XmlReader.Element mapping: mappings){
+				int folder = mapping.getInt("folder");
+				int file =  mapping.getInt("file");
+				charMap.put(new Reference(folder, file), new Reference(mapping.getInt("target_folder", folder), mapping.getInt("target_file", file)));
+			}
 		}
 	}
 	
@@ -126,7 +147,7 @@ public class SCMLReader {
 			animation.setId(a.getInt("id"));
 			animation.setName(a.getAttribute("name", ""));
 			animation.setLength((long)a.getInt("length"));
-			animation.setLooping(a.getBoolean("looping", false));
+			animation.setLooping(a.getBoolean("looping", true));
 			entity.getAnimation().add(animation);
 			loadMainline(a.getChildByName("mainline"), animation);
 			loadTimelines(a.getChildrenByName("timeline"), animation);
@@ -186,6 +207,7 @@ public class SCMLReader {
 			TimeLine timeline = new TimeLine();
 			timeline.setId(timelines.get(i).getInt("id"));
 			animation.getTimeline().add(timeline);
+			timeline.objectType = timelines.get(i).get("object_type", "sprite");
 			loadTimelineKeys(timelines.get(i).getChildrenByName("key"), timeline);
 		}
 	}
@@ -222,11 +244,19 @@ public class SCMLReader {
 				object.setY(new BigDecimal(obj.getFloat("y", 0f)));
 				object.setScaleX(new BigDecimal(obj.getFloat("scale_x", 1f)));
 				object.setScaleY(new BigDecimal(obj.getFloat("scale_y", 1f)));
-				object.setFolder(obj.getInt("folder")); 
-				object.setFile(obj.getInt("file"));
-				File f = data.getFolder().get(object.getFolder()).getFile().get(object.getFile());
-				object.setPivotX(new BigDecimal(obj.getFloat("pivot_x", f.getPivotX())));
-				object.setPivotY(new BigDecimal(obj.getFloat("pivot_y", f.getPivotY())));
+				object.setFolder(obj.getInt("folder", -1)); 
+				object.setFile(obj.getInt("file", -1));
+				ObjectInfoType type = ObjectInfoType.getObjectInfoFor(timeline.objectType);
+				if(type == ObjectInfoType.Point)
+					object.info = new ObjectInfo(timeline.getName(), type, 10f,10f);
+				if(object.getFile() != -1 && object.getFolder() != -1){
+					File f = data.getFolder().get(object.getFolder()).getFile().get(object.getFile());
+					object.setPivotX(new BigDecimal(obj.getFloat("pivot_x", f.getPivotX())));
+					object.setPivotY(new BigDecimal(obj.getFloat("pivot_y", f.getPivotY())));
+				} else{
+					object.setPivotX(new BigDecimal(obj.getFloat("pivot_x", .5f)));
+					object.setPivotY(new BigDecimal(obj.getFloat("pivot_y", .5f)));
+				}
 				key.getObject().add(object);
 			}
 			timeline.getKey().add(key);

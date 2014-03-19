@@ -48,6 +48,7 @@ public class TimeLine {
     protected Integer id;
     @XmlAttribute(name = "name")
     protected String name;
+    public String objectType;
 
     /**
      * Gets the value of the key property.

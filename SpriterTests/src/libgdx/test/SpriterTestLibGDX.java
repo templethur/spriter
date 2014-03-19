@@ -2,6 +2,8 @@ package libgdx.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,20 +44,23 @@ public class SpriterTestLibGDX implements ApplicationListener{
 		this.loader = new SpriteLoader(2048, 2048);
 		this.drawer = new SpriteDrawer(this.loader, this.batch);
 		this.drawer.renderer = this.renderer;
-		this.drawer.drawBoxes = false;
+		this.drawer.drawBoxes = true;
 		
-		this.spriter = FileHandleSCMLReader.getSpriter(Gdx.files.absolute("assets/monster/basic_002.scml"), this.loader);
+		this.spriter = FileHandleSCMLReader.getSpriter(Gdx.files.absolute(/*"assets/monster/basic_002.scml"*/"C:/Users/Trixt0r/SCML files/test.scml"), this.loader);
 		this.player = new SpriterPlayer(this.spriter.getSpriterData(), 0, this.loader);
-		this.player.setFrameSpeed(17);
+		this.player.setFrameSpeed(15);
 		
-		/*Gdx.input.setInputProcessor(new InputAdapter() {			
+		Gdx.input.setInputProcessor(new InputAdapter() {			
 			@Override
 			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				if(player.characterMap == null) player.setCharacterMap("standard");
-				else player.characterMap = null;
+				//if(player.characterMap == null) player.setCharacterMap("standard");
+				//else player.characterMap = null;
+				if(button == Buttons.RIGHT)
+					player.setAnimationIndex((player.getAnimationIndex()-1 + player.getEntity().getAnimation().size())%player.getEntity().getAnimation().size());
+				else player.setAnimationIndex((player.getAnimationIndex()+1)%player.getEntity().getAnimation().size());
 				return false;
 			}
-		});*/
+		});
 	}
 
 	@Override
@@ -70,6 +75,7 @@ public class SpriterTestLibGDX implements ApplicationListener{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		this.player.update(this.cam.viewportWidth/2, this.cam.viewportHeight/2);
+		this.player.calcBoundingBox(null);
 		
 		this.batch.begin();
 			this.drawer.draw(player);

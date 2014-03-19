@@ -356,7 +356,7 @@ public abstract class SpriterAbstractPlayer {
 		target.setY(obj1.curve.tween(obj1.getY(), obj2.getY(), t));
 		target.setScaleX(obj1.curve.tween(obj1.getScaleX(), obj2.getScaleX(), t));
 		target.setScaleY(obj1.curve.tween(obj1.getScaleY(), obj2.getScaleY(), t));
-		target.setAngle(obj1.curve.tweenAngle(obj1.getAngle(), obj2.getAngle(), t/*, obj1.getSpin()*/));
+		target.setAngle(obj1.curve.tweenAngle(obj1.getAngle(), obj2.getAngle(), t, obj1.getSpin()));
 	}
 	
 	protected void interpolateSpriterObject(SpriterObject target, SpriterObject obj1, SpriterObject obj2, float t){

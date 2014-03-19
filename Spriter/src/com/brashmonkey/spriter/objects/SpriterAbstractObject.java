@@ -17,87 +17,21 @@
 
 package com.brashmonkey.spriter.objects;
 
-import com.brashmonkey.spriter.interpolation.SpriterCurve;
+import com.discobeard.spriter.dom.Entity.ObjectInfo;
 
 /**
  * A SpriterAbstractObject is, as the name says, an abstract object which holds the same properties a #SpriterObject and a #SpriterBone have.
  * Such as x,y coordinates, angle, id, parent, scale and the timeline.
  * @author Trixt0r
  */
-public abstract class SpriterAbstractObject {
-	protected float x, y, angle, scaleX, scaleY;
-	protected int id, parentId, timeline, spin;
-	protected SpriterAbstractObject parent;
-	protected String name;
-	public boolean active = true;
-	public SpriterCurve curve;
+public abstract class SpriterAbstractObject extends SpriterPoint{
+	protected float scaleX, scaleY;
+	public ObjectInfo info;
 
 	public SpriterAbstractObject(){
-		this.x = 0;
-		this.y = 0;
-		this.angle = 0f;
+		super();
 		this.scaleX = 1f;
 		this.scaleY = 1f;
-		this.id = -1;
-		this.parentId = -1;
-		this.name = "";
-		this.parent = null;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/**
-	 * @return the x
-	 */
-	public float getX() {
-		return x;
-	}
-
-	/**
-	 * @param x the x to set
-	 */
-	public void setX(float x) {
-		this.x = x;
-	}
-
-	/**
-	 * @return the y
-	 */
-	public float getY() {
-		return y;
-	}
-
-	/**
-	 * @param y the y to set
-	 */
-	public void setY(float y) {
-		this.y = y;
-	}
-
-	/**
-	 * @return the angle
-	 */
-	public float getAngle() {
-		return angle;
-	}
-
-	/**
-	 * @param angle the angle to set
-	 */
-	public void setAngle(float angle) {
-		this.angle = angle;
 	}
 
 	/**
@@ -127,106 +61,15 @@ public abstract class SpriterAbstractObject {
 	public void setScaleY(float scaleY) {
 		this.scaleY = scaleY;
 	}
-	public int getSpin() {
-		return spin;
-	}
-	public void setSpin(int spin) {
-		this.spin = spin;
-	}
-	
-	/**
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the parent
-	 */
-	public SpriterAbstractObject getParent() {
-		return parent;
-	}
-
-	/**
-	 * @param parent the parent to set
-	 */
-	public void setParent(SpriterAbstractObject parent) {
-		this.parent = parent;
-	}
-
-	/**
-	 * @return the parentId
-	 */
-	public Integer getParentId() {
-		return parentId;
-	}
-
-	/**
-	 * @param parentId the parentId to set
-	 */
-	public void setParentId(int parentId) {
-		this.parentId = parentId;
-	}
-
-	/**
-	 * @return the timeline
-	 */
-	public Integer getTimeline() {
-		return timeline;
-	}
-
-	/**
-	 * @param timeline the timeline to set
-	 */
-	public void setTimeline(int timeline) {
-		this.timeline = timeline;
-	}
 
 	/**
 	 * Sets the values of this instance to the given one.
 	 * @param object which has to be manipulated.
 	 */
 	public void copyValuesTo(SpriterAbstractObject object){
-		object.setAngle(angle);
+		super.copyValuesTo(object);
 		object.setScaleX(scaleX);
 		object.setScaleY(scaleY);
-		object.setX(x);
-		object.setY(y);
-		object.setId(id);
-		object.setParentId(parentId);
-		object.setParent(parent);
-		object.setTimeline(timeline);
-		object.setSpin(spin);
-		object.setName(name);
-		object.curve = curve;
-	}
-	
-	/**
-	 * @param object to compare with
-	 * @return true if both objects have the same id.
-	 */
-	public boolean equals(SpriterAbstractObject object){
-		if(object == null) return false;
-		return this.timeline == object.getTimeline();
-	}
-	
-	/**
-	 * @return whether this has a parent or not.
-	 */
-	public boolean hasParent(){
-		return this.parentId != -1;
-	}
-	
-	@Override
-	public String toString(){
-		return "id: "+ this.id+", name: "+this.name+", parent: "+ this.parentId +", x: "+this.x+", y: "+this.y+", angle:"+ this.angle+" timeline: "+this.timeline;
+		object.info = info;
 	}
 }

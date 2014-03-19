@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
+import com.brashmonkey.spriter.file.Reference;
+
 
 /**
  * <p>Java class for Entity complex type.
@@ -51,6 +53,7 @@ public class Entity {
     protected String name;
 	@XmlAttribute(name = "character_map")
     protected List<CharacterMap> characterMaps;
+	protected List<ObjectInfo> objectInfos;
 
     /**
      * Gets the value of the animation property.
@@ -147,6 +150,65 @@ public class Entity {
     	for(CharacterMap map: this.getCharacterMaps())
     		if(map.name.equals(name)) return map;
     	return null;
+    }
+    
+    public void addInfo(ObjectInfo info){
+    	if(this.objectInfos == null) this.objectInfos = new ArrayList<ObjectInfo>();
+    	this.objectInfos.add(info);
+    }
+    
+    public ObjectInfo getInfo(int index){
+    	if(this.objectInfos == null) return null;
+    	return this.objectInfos.get(index);
+    }
+    
+    public ObjectInfo getInfo(String name){
+    	if(this.objectInfos == null) return null;
+    	for(ObjectInfo info: this.objectInfos)
+    		if(info.name.equals(name)) return info;
+    	return null;
+    }
+    
+    public ObjectInfo getInfo(String name, ObjectInfoType type){
+    	ObjectInfo info = this.getInfo(name);
+    	if(info.type == type) return info;
+    	else return null;
+    }
+    
+    public static enum ObjectInfoType{
+    	Sprite, Bone, Box, Point;
+    	
+    	public static ObjectInfoType getObjectInfoFor(String type){
+    		switch(type){
+    		case "bone": return Bone;
+    		case "box": return Box;
+    		case "point": return Point;
+    		default: return Sprite;
+    		}
+    	}
+    }
+    
+    public static class ObjectInfo{
+    	public final ObjectInfoType type;
+    	public final List<Reference> frames;
+    	public final String name;
+    	public final float width, height;
+    	
+    	public ObjectInfo(String name, ObjectInfoType type, float width, float height, List<Reference> frames){
+    		this.type = type;
+    		this.frames = frames;
+    		this.name = name;
+    		this.width = width;
+    		this.height = height;
+    	}
+    	
+    	public ObjectInfo(String name, ObjectInfoType type, float width, float height){
+    		this(name, type, width, height, new ArrayList<Reference>());
+    	}
+    	
+    	public ObjectInfo(String name, ObjectInfoType type, List<Reference> frames){
+    		this(name, type, 0, 0, frames);
+    	}
     }
 
 }

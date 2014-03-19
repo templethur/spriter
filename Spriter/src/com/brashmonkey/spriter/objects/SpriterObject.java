@@ -21,16 +21,16 @@ import com.brashmonkey.spriter.SpriterPoint;
 import com.brashmonkey.spriter.SpriterRectangle;
 import com.brashmonkey.spriter.draw.DrawInstruction;
 import com.brashmonkey.spriter.file.Reference;
+import com.discobeard.spriter.dom.Entity.ObjectInfoType;
 
 /**
  * A SpriterObject is an object which holds the transformations for an object which was animated in the Spriter editor.
  * It also holds information about things which will be drawn on the screen, such as sprite, depth and transparency.
  * @author Trixt0r
  */
-public class SpriterObject extends SpriterAbstractObject implements Comparable<SpriterObject>{
+public class SpriterObject extends SpriterBox{
 	
-	float pivotX, pivotY, alpha;
-	int zIndex;
+	float alpha;
 	boolean transientObject = false, visible = true;
 	Reference ref;
 	SpriterRectangle rect = new SpriterRectangle(0,0,0,0);
@@ -49,27 +49,6 @@ public class SpriterObject extends SpriterAbstractObject implements Comparable<S
 	}
 	public Reference getRef(){
 		return this.ref;
-	}
-	public float getPivotX() {
-		return pivotX;
-	}
-	public void setPivotX(float pivotX) {
-		this.pivotX = pivotX;
-	}
-	public float getPivotY() {
-		return pivotY;
-	}
-	public void setPivotY(float pivotY) {
-		this.pivotY = pivotY;
-	}
-	public int getZIndex() {
-		return zIndex;
-	}
-	public void setZIndex(int zIndex) {
-		this.zIndex = zIndex;
-	}
-	public void setAngle(float angle) {
-		this.angle = angle;
 	}
 
 	public float getAlpha() {
@@ -111,11 +90,7 @@ public class SpriterObject extends SpriterAbstractObject implements Comparable<S
 		if(!(object instanceof SpriterObject)) return;
 		((SpriterObject)object).setAlpha(alpha);
 		((SpriterObject)object).setRef(ref);
-		((SpriterObject)object).setPivotX(pivotX);
-		((SpriterObject)object).setPivotY(pivotY);
 		((SpriterObject)object).setTransientObject(transientObject);
-		((SpriterObject)object).setZIndex(zIndex);
-		//((SpriterObject)object).setLoader(loader);
 		((SpriterObject)object).setVisible(visible);
 		((SpriterObject)object).rect.set(this.rect);
 	}
@@ -134,8 +109,13 @@ public class SpriterObject extends SpriterAbstractObject implements Comparable<S
 	}
 	
 	public SpriterPoint[] getBoundingBox(){
-		float width = this.ref.dimensions.width*this.scaleX,
-		height = this.ref.dimensions.height*this.scaleY;
+		float width = this.ref.dimensions.width,
+		height = this.ref.dimensions.height;
+		
+		if(info.type != ObjectInfoType.Point){
+			width *= this.scaleX;
+			height *= this.scaleY;
+		}
 		
 		float pivotX = width*this.pivotX;
 		float pivotY = height*this.pivotY;

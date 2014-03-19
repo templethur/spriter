@@ -9,10 +9,13 @@
 package com.discobeard.spriter.dom;
 
 import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+
+import com.discobeard.spriter.dom.Entity.ObjectInfo;
 
 
 /**
@@ -68,6 +71,7 @@ public class AnimationObject {
     protected BigDecimal a;
     @XmlAttribute(name = "z_index")
     protected Integer zIndex;
+    public ObjectInfo info;
 
     /**
      * Gets the value of the folder property.

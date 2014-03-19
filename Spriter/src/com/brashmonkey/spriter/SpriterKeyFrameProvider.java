@@ -55,43 +55,26 @@ public class SpriterKeyFrameProvider {
 		SpriterAnimationBuilder frameBuilder = new SpriterAnimationBuilder();
 		for(Animation anim: animations){
 			SpriterAnimation spriterAnimation = frameBuilder.buildAnimation(anim);
-			boolean found = false;
 			for(SpriterKeyFrame key: spriterAnimation.frames){
-				if(!found) found = key.getTime() == anim.getLength();
 				Arrays.sort(key.getObjects());
 				for(SpriterBone bone: key.getBones()){
+					bone.info = entity.getInfo(bone.getName());
 					for(SpriterBone bone2: key.getBones()){
 						if(bone2.getParentId() != null)
 							if(!bone2.equals(bone) && bone2.getParentId() == bone.getId())
 								bone.addChildBone(bone2);
 					}
 					for(SpriterObject object: key.getObjects()){
+						if(object.info == null)	object.info = entity.getInfo(object.getName());
 						Reference ref = object.getRef();
-						File f = data.getFolder().get(ref.folder).getFile().get(ref.file);
-						ref.dimensions = new SpriterRectangle(0, f.getHeight(), f.getWidth(), 0f);
+						if(ref.folder != -1 && ref.file != -1){
+							File f = data.getFolder().get(ref.folder).getFile().get(ref.file);
+							ref.dimensions = new SpriterRectangle(0, f.getHeight(), f.getWidth(), 0f);
+						} else ref.dimensions = new SpriterRectangle(0, object.info.height, object.info.width, 0f);
 						if(bone.getId()== object.getParentId())
 							bone.addChildObject(object);
 					}
 				}
-			}
-			if(!found){
-				SpriterKeyFrame firstFrame = spriterAnimation.frames.get(0);
-		        SpriterKeyFrame lastFrame =  new SpriterKeyFrame();
-		        lastFrame.setId(spriterAnimation.frames());
-		        lastFrame.setBones(firstFrame.getBones());
-		        lastFrame.setObjects(firstFrame.getObjects());
-		        /*for(int j = 0; j< lastFrame.getBones().length; j++){
-		          SpriterBone bone = new SpriterBone();
-		          firstFrame.getBones()[j].copyValuesTo(bone);
-		          lastFrame.getBones()[j] = bone;
-		        }
-		        for(int j = 0; j< lastFrame.getObjects().length; j++){
-		          SpriterObject object = new SpriterObject();
-		          firstFrame.getObjects()[j].copyValuesTo(object);
-		          lastFrame.getObjects()[j] = object;
-		        }*/
-		        lastFrame.setTime(anim.getLength());
-		        spriterAnimation.frames.add(lastFrame); 
 			}
 			spriterAnimations.add(spriterAnimation);
 		}
