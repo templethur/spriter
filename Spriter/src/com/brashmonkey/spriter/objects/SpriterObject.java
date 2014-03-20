@@ -112,7 +112,7 @@ public class SpriterObject extends SpriterBox{
 		float width = this.ref.dimensions.width,
 		height = this.ref.dimensions.height;
 		
-		if(info.type != ObjectInfoType.Point){
+		if(info != null && info.type != ObjectInfoType.Point){
 			width *= this.scaleX;
 			height *= this.scaleY;
 		}
