@@ -71,10 +71,7 @@ public class SpriterAnimationBuilder {
 			if(!found) found = frame.getTime() == animation.getLength();
 			
 			SpriterCurve subCurve = new SpriterCurve(SpriterCurve.getType(mainlineKey.curveType));
-			subCurve.c1 = mainlineKey.c1;
-			subCurve.c2 = mainlineKey.c2;
-			subCurve.c3 = mainlineKey.c3;
-			subCurve.c4 = mainlineKey.c4;
+			subCurve.constraints.set(mainlineKey.c1, mainlineKey.c2,mainlineKey.c3,mainlineKey.c4);
 			
 			for(BoneRef boneRef : mainlineKey.getBoneRef()){
 				TimeLine timeline = timeLines.get(boneRef.getTimeline());

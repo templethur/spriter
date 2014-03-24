@@ -53,6 +53,10 @@ public class Reference {
 		return (folder+","+file).hashCode();
 	}
 	
+	public String toString(){
+		return "folder: "+folderName+"("+folder+"), file: "+fileName+"("+file+")";
+	}
+	
 	@Override
 	public boolean equals(Object ref){
 		if(! (ref instanceof Reference)) return false;

@@ -13,18 +13,24 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.brashmonkey.spriter.Spriter;
 import com.brashmonkey.spriter.player.SpriterPlayer;
+import com.brashmonkey.spriter.update.SCMLReader;
+import com.brashmonkey.spriter.update.SpriterData;
 import com.brashmonkey.spriter.xml.FileHandleSCMLReader;
 
 public class SpriterTestLibGDX implements ApplicationListener{
 	
 	public static void main(String... args){
-		LwjglApplicationConfiguration cfg =  new LwjglApplicationConfiguration();
+		/*LwjglApplicationConfiguration cfg =  new LwjglApplicationConfiguration();
 		cfg.title = "Spriter test for LibGDX|Click to see character maps in action";
 		cfg.useGL20 = false;
 		cfg.width = 1280;
 		cfg.height = 720;
 		cfg.resizable = false;
-		new LwjglApplication(new SpriterTestLibGDX(), cfg);
+		new LwjglApplication(new SpriterTestLibGDX(), cfg);*/
+		long time = System.currentTimeMillis();
+		SpriterData data = new SCMLReader("C:/Users/Trixt0r/SCML files/AdventurePlatfortmerPack_Essentials/PlatformerPack/player.scml").getSpriterData();
+		System.out.println(System.currentTimeMillis()-time+"ms");
+		//System.out.println(data);
 	}
 
 	private SpriteBatch batch;
@@ -46,7 +52,7 @@ public class SpriterTestLibGDX implements ApplicationListener{
 		this.drawer.renderer = this.renderer;
 		this.drawer.drawBoxes = true;
 		
-		this.spriter = FileHandleSCMLReader.getSpriter(Gdx.files.absolute(/*"assets/monster/basic_002.scml"*/"C:/Users/Trixt0r/SCML files/test.scml"), this.loader);
+		this.spriter = FileHandleSCMLReader.getSpriter(Gdx.files.absolute(/*"assets/monster/basic_002.scml"*/"C:/Users/Trixt0r/SCML files/AdventurePlatfortmerPack_Essentials/PlatformerPack/player.scml"), this.loader);
 		this.player = new SpriterPlayer(this.spriter.getSpriterData(), 0, this.loader);
 		this.player.setFrameSpeed(15);
 		

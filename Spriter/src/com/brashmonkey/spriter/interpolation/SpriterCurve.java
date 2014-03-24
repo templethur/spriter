@@ -3,6 +3,8 @@ package com.brashmonkey.spriter.interpolation;
 import static com.brashmonkey.spriter.interpolation.SpriterInterpolator.*;
 import static  com.brashmonkey.spriter.SpriterCalculator.*;
 
+import com.brashmonkey.spriter.SpriterPoint;
+
 /**
  * Represents a curve in Spriter.
  * An instance of this class is responsible for tweening given data.
@@ -32,9 +34,9 @@ public class SpriterCurve {
 		}
 	}
 	
-	private Type curveType;
+	private Type type;
 	public SpriterCurve subCurve;
-	public float c1, c2, c3, c4;
+	public final Constraints constraints = new Constraints(0, 0, 0, 0);
 	
 	public SpriterCurve(){
 		this(Type.Linear);
@@ -45,36 +47,40 @@ public class SpriterCurve {
 	}
 	
 	public SpriterCurve(Type type, SpriterCurve subCurve){
-		this.setCurveType(type);
+		this.setType(type);
 		this.subCurve = subCurve;
 	}
 	
-	public void setCurveType(Type type){
+	public void setType(Type type){
 		if(type == null) throw new NullPointerException("The type of a curve cannot be null!");
-		this.curveType = type;
+		this.type = type;
 	}
 	
 	public Type getType(){
-		return this.curveType;
+		return this.type;
 	}
 
 	
 	private float lastCubicSolution = 0f;
 	public float tween(float a, float b, float t){
 		t = tweenSub(0f,1f,t);
-		switch(curveType){
+		switch(type){
 		case Instant: return a;
 		case Linear: return linear(a, b, t);
-		case Quadratic: return quadratic(a, linear(a, b, c1), b, t);
-		case Cubic: return cubic(a, linear(a, b, c1), linear(a, b, c2), b, t);
-		case Quartic: return quartic(a, linear(a, b, c1), linear(a, b, c2),	linear(a, b, c3), b, t);
-		case Quintic: return quintic(a, linear(a, b, c1), linear(a, b, c2),	linear(a, b, c3), linear(a, b, c4), b, t);
-		case Bezier: Float cubicSolution = solveCubic(3f*(c1-c3) + 1f, 3f*(c3-2f*c1), 3f*c1, -t);
+		case Quadratic: return quadratic(a, linear(a, b, constraints.c1), b, t);
+		case Cubic: return cubic(a, linear(a, b, constraints.c1), linear(a, b, constraints.c2), b, t);
+		case Quartic: return quartic(a, linear(a, b, constraints.c1), linear(a, b, constraints.c2),	linear(a, b, constraints.c3), b, t);
+		case Quintic: return quintic(a, linear(a, b, constraints.c1), linear(a, b, constraints.c2),	linear(a, b, constraints.c3), linear(a, b, constraints.c4), b, t);
+		case Bezier: Float cubicSolution = solveCubic(3f*(constraints.c1-constraints.c3) + 1f, 3f*(constraints.c3-2f*constraints.c1), 3f*constraints.c1, -t);
 					 if(cubicSolution == null) cubicSolution = lastCubicSolution;
 					 else lastCubicSolution = cubicSolution;
-					 return linear(a, b, bezier(cubicSolution, 0f, c2, c4, 1f));
+					 return linear(a, b, bezier(cubicSolution, 0f, constraints.c2, constraints.c4, 1f));
 		default: return linear(a, b, t);
 		}
+	}
+	
+	public void tweenPoint(SpriterPoint a, SpriterPoint b, float t, SpriterPoint target){
+		target.set(this.tween(a.x, b.x, t), this.tween(a.y, b.y, t));
 	}
 	
 	private float tweenSub(float a, float b, float t){
@@ -99,17 +105,40 @@ public class SpriterCurve {
 	
 	public float tweenAngle(float a, float b, float t){
 		t = tweenSub(0f,1f,t);
-		switch(curveType){
+		switch(type){
 		case Instant: return a;
-		case Quadratic: return quadraticAngle(a, linearAngle(a, b, c1), b, t);
-		case Cubic: return cubicAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2), b, t);
-		case Quartic: return quarticAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2),	linearAngle(a, b, c3), b, t);
-		case Quintic: return quinticAngle(a, linearAngle(a, b, c1), linearAngle(a, b, c2),	linearAngle(a, b, c3), linearAngle(a, b, c4), b, t);
-		case Bezier: Float cubicSolution = solveCubic(3f*(c1-c3) + 1f, 3f*(c3-2f*c1), 3f*c1, -t);
+		case Quadratic: return quadraticAngle(a, linearAngle(a, b, constraints.c1), b, t);
+		case Cubic: return cubicAngle(a, linearAngle(a, b, constraints.c1), linearAngle(a, b, constraints.c2), b, t);
+		case Quartic: return quarticAngle(a, linearAngle(a, b, constraints.c1), linearAngle(a, b, constraints.c2),	linearAngle(a, b, constraints.c3), b, t);
+		case Quintic: return quinticAngle(a, linearAngle(a, b, constraints.c1), linearAngle(a, b, constraints.c2),	linearAngle(a, b, constraints.c3), linearAngle(a, b, constraints.c4), b, t);
+		case Bezier: Float cubicSolution = solveCubic(3f*(constraints.c1-constraints.c3) + 1f, 3f*(constraints.c3-2f*constraints.c1), 3f*constraints.c1, -t);
 					 if(cubicSolution == null) cubicSolution = lastCubicSolution;
 					 else lastCubicSolution = cubicSolution;
-					 return linearAngle(a, b, bezier(cubicSolution, 0f, c2, c4, 1f));
+					 return linearAngle(a, b, bezier(cubicSolution, 0f, constraints.c2, constraints.c4, 1f));
 		default: return linearAngle(a, b, t);
+		}
+	}
+	
+	public String toString(){
+		return getClass().getSimpleName()+"|["+type+":"+constraints+", subCurve: "+subCurve+"]";
+	}
+	
+	public static class Constraints{
+		public float c1, c2, c3, c4;
+		
+		public Constraints(float c1, float c2, float c3, float c4){
+			this.set(c1, c2, c3, c4);
+		}
+		
+		public void set(float c1, float c2, float c3, float c4){
+			this.c1 = c1;
+			this.c2 = c2;
+			this.c3 = c3;
+			this.c4 = c4;
+		}
+		
+		public String toString(){
+			return getClass().getSimpleName()+"| [c1:"+c1+", c2:"+c2+", c3:"+c3+", c4:"+c4+"]";
 		}
 	}
 

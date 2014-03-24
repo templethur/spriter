@@ -32,10 +32,7 @@ public class SpriterBoneMerger implements ISpriterMerger<BoneRef,Key,SpriterBone
 		SpriterBone bone = new SpriterBone();
 		SpriterCurve.Type t = SpriterCurve.getType(key.curveType);
 		bone.curve = new SpriterCurve(t);
-		bone.curve.c1 = key.c1;
-		bone.curve.c2 = key.c2;
-		bone.curve.c3 = key.c3;
-		bone.curve.c4 = key.c4;
+		bone.curve.constraints.set(key.c1, key.c2,key.c3,key.c4);
 		bone.setTimeline(ref.getTimeline().intValue());
 		bone.setId(ref.getId().intValue());
 		bone.setParentId((ref.getParent() == null) ? -1 : ref.getParent().intValue());
