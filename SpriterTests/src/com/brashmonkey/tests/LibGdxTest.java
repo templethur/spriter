@@ -26,10 +26,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
-import com.brashmonkey.spriter.SpriterRectangle;
-import com.brashmonkey.spriter.update.*;
-import com.brashmonkey.spriter.update.Timeline.Key.Object;
+import com.brashmonkey.spriter.BoundingBox;
+import com.brashmonkey.spriter.Drawer;
+import com.brashmonkey.spriter.FileReference;
+import com.brashmonkey.spriter.Loader;
+import com.brashmonkey.spriter.Player;
+import com.brashmonkey.spriter.SCMLReader;
+import com.brashmonkey.spriter.SpriterData;
+import com.brashmonkey.spriter.Rectangle;
+import com.brashmonkey.spriter.Timeline.Key.Object;
 
 
 public class LibGdxTest implements ApplicationListener{
@@ -106,7 +111,7 @@ public class LibGdxTest implements ApplicationListener{
 		renderer.setProjectionMatrix(cam.combined);
 		batch.setProjectionMatrix(cam.combined);
 	}
-	SpriterRectangle bbox;
+	Rectangle bbox;
 	@Override
 	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -125,7 +130,8 @@ public class LibGdxTest implements ApplicationListener{
 				
 				drawer.setColor(1, 1, 1, 1);
 				bbox = player.getBoundingRectangle(null);
-				drawer.rectangle(bbox.left, bbox.bottom, bbox.width, bbox.height);
+				drawer.rectangle(bbox.left, bbox.bottom, bbox.size.width, bbox.size.height);
+				drawer.drawBoxes(player);
 			renderer.end();
 		}
 		if(Gdx.input.isKeyPressed(Keys.ENTER))

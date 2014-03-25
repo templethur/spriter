@@ -7,13 +7,13 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Image;
 
-import com.brashmonkey.spriter.update.Drawer;
-import com.brashmonkey.spriter.update.FileReference;
-import com.brashmonkey.spriter.update.Loader;
-import com.brashmonkey.spriter.update.Player;
-import com.brashmonkey.spriter.update.SCMLReader;
-import com.brashmonkey.spriter.update.SpriterData;
-import com.brashmonkey.spriter.update.Timeline.Key.Object;
+import com.brashmonkey.spriter.Drawer;
+import com.brashmonkey.spriter.FileReference;
+import com.brashmonkey.spriter.Loader;
+import com.brashmonkey.spriter.Player;
+import com.brashmonkey.spriter.SCMLReader;
+import com.brashmonkey.spriter.SpriterData;
+import com.brashmonkey.spriter.Timeline.Key.Object;
 
 public class Slick2DTest extends BasicGame{
 	
