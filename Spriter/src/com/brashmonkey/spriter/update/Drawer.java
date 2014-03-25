@@ -17,7 +17,7 @@ public abstract class Drawer<R> {
 	}
 	
 	public void drawBones(Player player){
-		this.setDrawColor(1, 0, 0, 1);
+		this.setColor(1, 0, 0, 1);
 		for(Mainline.Key.BoneRef ref: player.getCurrentKey().boneRefs){
 			Timeline.Key key = player.unmappedTweenedKeys.get(ref.timeline);
 			Timeline.Key.Bone bone = key.object();
@@ -35,16 +35,18 @@ public abstract class Drawer<R> {
 			float targetX = bone.position.x+(float)Math.cos(Math.toRadians(bone.angle))*size.width*bone.scale.x,
 					targetY = bone.position.y+(float)Math.sin(Math.toRadians(bone.angle))*size.width*bone.scale.x;
 			float upperPointX = xx+x2, upperPointY = yy+y2;
-			this.drawLine(bone.position.x, bone.position.y, upperPointX, upperPointY);
-			this.drawLine(upperPointX, upperPointY, targetX, targetY);
+			this.line(bone.position.x, bone.position.y, upperPointX, upperPointY);
+			this.line(upperPointX, upperPointY, targetX, targetY);
 
 			float lowerPointX = xx-x2, lowerPointY = yy-y2;
-			this.drawLine(bone.position.x, bone.position.y, lowerPointX, lowerPointY);
-			this.drawLine(lowerPointX, lowerPointY, targetX, targetY);
-			this.drawLine(bone.position.x, bone.position.y, targetX, targetY);
+			this.line(bone.position.x, bone.position.y, lowerPointX, lowerPointY);
+			this.line(lowerPointX, lowerPointY, targetX, targetY);
+			this.line(bone.position.x, bone.position.y, targetX, targetY);
 		}
-		
-		this.setDrawColor(0f, 1f, 0f, 1f);
+	}
+	
+	public void drawBoxes(Player player){
+		this.setColor(0f, 1f, 0f, 1f);
 		for(Mainline.Key.BoneRef ref: player.getCurrentKey().boneRefs){
 			Timeline.Key key = player.unmappedTweenedKeys.get(ref.timeline);
 			if(!key.active || player.animation.getTimeline(ref.timeline).objectInfo.type == ObjectType.Point) continue;
@@ -70,8 +72,8 @@ public abstract class Drawer<R> {
 			Timeline.Key.Bone bone = key.object();
 			float x = bone.position.x+(float)(Math.cos(Math.toRadians(bone.angle))*pointRadius);
 			float y = bone.position.y+(float)(Math.sin(Math.toRadians(bone.angle))*pointRadius);
-			drawCircle(bone.position.x, bone.position.y, pointRadius);
-			drawLine(bone.position.x, bone.position.y, x,y);
+			circle(bone.position.x, bone.position.y, pointRadius);
+			line(bone.position.x, bone.position.y, x,y);
 		}
 	}
 	
@@ -94,15 +96,15 @@ public abstract class Drawer<R> {
 	}
 	
 	public void drawBBox(BoundingBox box){
-		this.drawLine(box.boundingPoints[0].x, box.boundingPoints[0].y, box.boundingPoints[1].x, box.boundingPoints[1].y);
-		this.drawLine(box.boundingPoints[1].x, box.boundingPoints[1].y, box.boundingPoints[3].x, box.boundingPoints[3].y);
-		this.drawLine(box.boundingPoints[3].x, box.boundingPoints[3].y, box.boundingPoints[2].x, box.boundingPoints[2].y);
-		this.drawLine(box.boundingPoints[2].x, box.boundingPoints[2].y, box.boundingPoints[0].x, box.boundingPoints[0].y);
+		this.line(box.boundingPoints[0].x, box.boundingPoints[0].y, box.boundingPoints[1].x, box.boundingPoints[1].y);
+		this.line(box.boundingPoints[1].x, box.boundingPoints[1].y, box.boundingPoints[3].x, box.boundingPoints[3].y);
+		this.line(box.boundingPoints[3].x, box.boundingPoints[3].y, box.boundingPoints[2].x, box.boundingPoints[2].y);
+		this.line(box.boundingPoints[2].x, box.boundingPoints[2].y, box.boundingPoints[0].x, box.boundingPoints[0].y);
 	}
 	
-	public abstract void setDrawColor(float r, float g, float b, float a);
-	public abstract void drawLine(float x1, float y1, float x2, float y2);
-	public abstract void drawRectangle(float x, float y, float width, float height);
-	public abstract void drawCircle(float x, float y, float radius);
+	public abstract void setColor(float r, float g, float b, float a);
+	public abstract void line(float x1, float y1, float x2, float y2);
+	public abstract void rectangle(float x, float y, float width, float height);
+	public abstract void circle(float x, float y, float radius);
 	public abstract void draw(Timeline.Key.Object object);
 }

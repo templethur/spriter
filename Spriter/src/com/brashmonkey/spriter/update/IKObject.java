@@ -5,7 +5,7 @@ import com.brashmonkey.spriter.SpriterPoint;
 
 public class IKObject extends SpriterPoint {
 	
-	int chainLength, iterations;
+	public int chainLength, iterations;
 
 	public IKObject(float x, float y, int length, int iterations) {
 		super(x, y);

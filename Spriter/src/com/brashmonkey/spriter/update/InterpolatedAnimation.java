@@ -1,7 +1,5 @@
 package com.brashmonkey.spriter.update;
 
-import java.util.ArrayDeque;
-
 import com.brashmonkey.spriter.SpriterException;
 import com.brashmonkey.spriter.interpolation.SpriterCurve;
 import com.brashmonkey.spriter.update.Mainline.Key.BoneRef;
@@ -17,6 +15,7 @@ public class InterpolatedAnimation extends Animation{
 	private Animation anim1, anim2;
 	public Animation baseAnimation;
 	public BoneRef base = null;
+	public boolean tweenSprites = false;
 
 	public InterpolatedAnimation(Entity entity) {
 		super(-1, "interpolatedAnimation", 0, true);
@@ -28,30 +27,30 @@ public class InterpolatedAnimation extends Animation{
 	public Mainline.Key getCurrentKey(){
 		return this.currentKey;
 	}
-
-	ArrayDeque<Timeline> tempTimelines = new ArrayDeque<Timeline>();
 	@Override
 	public void update(int time, Bone root){
 		super.currentKey = onFirstMainLine() ? anim1.currentKey: anim2.currentKey;
     	for(Timeline.Key timelineKey: this.mappedTweenedKeys)
 			timelineKey.active = false;
-    	if(base != null){
-        	//Animation currentAnim = onFirstMainLine() ? anim1: anim2;
+    	if(base != null){//TODO: Sprites not working properly because of different timeline naming
+        	Animation currentAnim = onFirstMainLine() ? anim1: anim2;
         	Animation baseAnim = baseAnimation == null ? (onFirstMainLine() ? anim1:anim2) : baseAnimation;
-	    	for(BoneRef ref: baseAnim.currentKey.boneRefs){
+	    	for(BoneRef ref: currentKey.boneRefs){
+	        	Timeline timeline = baseAnim.getSimilarTimeline(currentAnim.getTimeline(ref.timeline));
+	        	if(timeline == null) continue;
 	    		Timeline.Key key, mappedKey;
-    			key = baseAnim.tweenedKeys[ref.timeline];
-    			mappedKey = baseAnim.mappedTweenedKeys[ref.timeline];
+    			key = baseAnim.tweenedKeys[timeline.id];
+    			mappedKey = baseAnim.mappedTweenedKeys[timeline.id];
 	    		this.tweenedKeys[ref.timeline].active = key.active;
 	    		this.tweenedKeys[ref.timeline].object().set(key.object());
 	    		this.mappedTweenedKeys[ref.timeline].active = mappedKey.active;
 				this.unmapTimelineObject(ref.timeline, false,(ref.parent != null) ?
 						this.mappedTweenedKeys[ref.parent.timeline].object(): root);
 	    	}
-	    	for(ObjectRef ref: currentKey.objectRefs){//TODO: Sprite mapping works not properly...
-	        	Timeline timeline = baseAnim.getSimilarTimeline(ref, tempTimelines);
+	    	/*for(ObjectRef ref: baseAnim.currentKey.objectRefs){
+	        	Timeline timeline = baseAnim.getTimeline(ref.timeline);//getSimilarTimeline(ref, tempTimelines);
 	        	if(timeline != null){
-	        		tempTimelines.addLast(timeline);
+	        		//tempTimelines.addLast(timeline);
 	        		Timeline.Key key = baseAnim.tweenedKeys[timeline.id];
 	        		Timeline.Key mappedKey = baseAnim.mappedTweenedKeys[timeline.id];
 	        		Object obj = (Object) key.object();
@@ -62,25 +61,24 @@ public class InterpolatedAnimation extends Animation{
 					this.unmapTimelineObject(ref.timeline, true,(ref.parent != null) ?
 							this.mappedTweenedKeys[ref.parent.timeline].object(): root);
 	        	}
-	    	}
-	    	tempTimelines.clear();
+	    	}*/
+	    	//tempTimelines.clear();
     	}
     		
-    	this.tweenRefs(base, root);
+    	this.tweenBoneRefs(base, root);
+		for(ObjectRef ref: super.currentKey.objectRefs){
+			//if(ref.parent == base)
+				this.update(ref, root, 0);
+		}
     }
 	
-	private void tweenRefs(BoneRef base, Bone root){
+	private void tweenBoneRefs(BoneRef base, Bone root){
     	int startIndex = base == null ? -1 : base.id-1;
     	int length = super.currentKey.boneRefs.size();
 		for(int i = startIndex+1; i < length; i++){
 			BoneRef ref = currentKey.boneRefs.get(i);
-			if(ref.parent != base) continue;
-			this.update(ref, root, 0);
-			this.tweenRefs(ref, root);
-		}
-		for(ObjectRef ref: super.currentKey.objectRefs){
-			if(ref.parent == base)
-				this.update(ref, root, 0);
+			if(base == ref || ref.parent == base) this.update(ref, root, 0);
+			if(base == ref.parent) this.tweenBoneRefs(ref, root);
 		}
 	}
 	
@@ -95,7 +93,7 @@ public class InterpolatedAnimation extends Animation{
     	if(t1 != null) bone1 = anim1.tweenedKeys[t1.id].object();
     	if(t2 != null) bone2 = anim2.tweenedKeys[t2.id].object();
     	if(targetTimeline != null) tweenTarget = this.tweenedKeys[targetTimeline.id].object();
-    	if(isObject){
+    	if(isObject && (t2 == null || !tweenSprites)){
     		if(!onFirstMainLine()) bone1 = bone2;
     		else bone2 = bone1;
     	}

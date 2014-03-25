@@ -14,7 +14,6 @@ import com.brashmonkey.spriter.update.Timeline.Key.Object;
 
 public class Player {
 	
-	public final SpriterPoint position;
 	private Entity entity;
 	Animation animation;
 	int time;
@@ -26,7 +25,6 @@ public class Player {
 	private BoundingBox box;
 	
 	public Player(Entity entity){
-		this.position = new SpriterPoint(0f,0f);
 		this.speed = 15;
 		this.rect = new SpriterRectangle(0,0,0,0);
 		this.box = new BoundingBox();

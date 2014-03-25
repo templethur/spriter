@@ -51,6 +51,10 @@ public class SpriterData {
     	return getFile(this.getFolder(folder), file);
     }
     
+    public File getFile(FileReference ref){
+    	return this.getFile(ref.folder, ref.file);
+    }
+    
     public String toString(){
     	String toReturn = getClass().getSimpleName()+"|[Version: "+scmlVersion+", Generator: "+generator+" ("+generatorVersion+")]";
     	for(Folder folder: folders)
