@@ -33,7 +33,7 @@ import com.brashmonkey.spriter.XmlReader.*;
  */
 public class SCMLReader {
 	
-	protected SpriterData data;
+	protected Data data;
 	
 	public SCMLReader(String filename){
 		this.data = this.load(filename);
@@ -48,7 +48,7 @@ public class SCMLReader {
 	 * @param filename Path to scml file.
 	 * @return Spriter data in form of lists.
 	 */
-	public SpriterData load(String filename){
+	public Data load(String filename){
 		try {
 			return load(new FileInputStream(filename));
 		} catch (FileNotFoundException e) {
@@ -57,13 +57,13 @@ public class SCMLReader {
 		return null;
 	}
 	
-	public SpriterData load(InputStream stream){
+	public Data load(InputStream stream){
 		XmlReader reader = new XmlReader();
 		try {
 			Element root = reader.parse(stream);
 			ArrayList<Element> folders = root.getChildrenByName("folder");
 			ArrayList<Element> entities = root.getChildrenByName("entity");
-			data = new SpriterData(root.get("scml_version"), root.get("generator"),root.get("generator_version"),
+			data = new Data(root.get("scml_version"), root.get("generator"),root.get("generator_version"),
 					new ArrayList<Folder>(folders.size()),
 					new ArrayList<Entity>(entities.size()));
 			loadFolders(folders);
@@ -235,7 +235,7 @@ public class SCMLReader {
 		}
 	}
 	
-	public SpriterData getSpriterData(){
+	public Data getSpriterData(){
 		return data;
 	}
 	

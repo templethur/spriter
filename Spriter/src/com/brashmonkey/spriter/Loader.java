@@ -5,10 +5,10 @@ import java.util.HashMap;
 public abstract class Loader<R> {
 	
 	protected final HashMap<FileReference, R> resources;
-	protected final SpriterData data;
+	protected final Data data;
 	protected String root = "";
 	
-	public Loader(SpriterData data){
+	public Loader(Data data){
 		this.data = data;
 		this.resources = new HashMap<FileReference, R>(50);
 	}

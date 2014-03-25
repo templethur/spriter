@@ -12,7 +12,7 @@ import com.brashmonkey.spriter.FileReference;
 import com.brashmonkey.spriter.Loader;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
-import com.brashmonkey.spriter.SpriterData;
+import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.Timeline.Key.Object;
 
 public class Slick2DTest extends BasicGame{
@@ -29,7 +29,7 @@ public class Slick2DTest extends BasicGame{
     @Override
     public void init(final GameContainer gc) throws SlickException {
     	
-		SpriterData data = new SCMLReader("assets/monster/basic_002.scml").getSpriterData();
+		Data data = new SCMLReader("assets/monster/basic_002.scml").getSpriterData();
 		player = new Player(data.getEntity(0));
 		player.update();
 		player.root.position.set(640, 480);

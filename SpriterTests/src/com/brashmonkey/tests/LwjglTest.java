@@ -26,7 +26,7 @@ import com.brashmonkey.spriter.FileReference;
 import com.brashmonkey.spriter.Loader;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
-import com.brashmonkey.spriter.SpriterData;
+import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.Timeline.Key.Object;
 
 
@@ -37,7 +37,7 @@ public class LwjglTest {
 	private Player player;
 	
 	public LwjglTest(){
-		SpriterData data = new SCMLReader("assets/monster/basic_002.scml").getSpriterData();
+		Data data = new SCMLReader("assets/monster/basic_002.scml").getSpriterData();
 		player = new Player(data.getEntity(0));
 		player.root.position.set(640, 360);
 		loader = new Loader<Texture>(data){

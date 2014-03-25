@@ -3,17 +3,17 @@ package com.brashmonkey.spriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpriterData {
+public class Data {
 
 	public final List<Folder> folders;
     public final List<Entity> entities;
     public final String scmlVersion, generator, generatorVersion;
     
-    public SpriterData(String scmlVersion, String generator, String generatorVersion){
+    public Data(String scmlVersion, String generator, String generatorVersion){
     	this(scmlVersion, generator, generatorVersion, new ArrayList<Folder>(), new ArrayList<Entity>());
     }
     
-    public SpriterData(String scmlVersion, String generator, String generatorVersion, List<Folder> folders, List<Entity> entities){
+    public Data(String scmlVersion, String generator, String generatorVersion, List<Folder> folders, List<Entity> entities){
     	this.scmlVersion = scmlVersion;
     	this.generator = generator;
     	this.generatorVersion = generatorVersion;

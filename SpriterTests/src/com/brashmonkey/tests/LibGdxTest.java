@@ -32,7 +32,7 @@ import com.brashmonkey.spriter.FileReference;
 import com.brashmonkey.spriter.Loader;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
-import com.brashmonkey.spriter.SpriterData;
+import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.Rectangle;
 import com.brashmonkey.spriter.Timeline.Key.Object;
 
@@ -54,7 +54,7 @@ public class LibGdxTest implements ApplicationListener{
 		renderer = new ShapeRenderer();
 		batch = new SpriteBatch();
 		FileHandle handle = Gdx.files.absolute("assets/monster/basic_002.scml");
-		SpriterData data = new FileHandleSCMLReader(handle).getSpriterData();
+		Data data = new FileHandleSCMLReader(handle).getSpriterData();
 		player = new Player(data.getEntity(0));
 		
 		this.loader = new SpriteLoader(data);
@@ -172,16 +172,16 @@ public class LibGdxTest implements ApplicationListener{
 		private boolean pack;
 		private int atlasWidth, atlasHeight;
 		
-		public SpriteLoader(SpriterData data){
+		public SpriteLoader(Data data){
 			this(data, true);
 		}
 		
-		public SpriteLoader(SpriterData data, boolean pack){
+		public SpriteLoader(Data data, boolean pack){
 			this(data, 2048, 2048);
 			this.pack = pack;
 		}
 
-		public SpriteLoader(SpriterData data, int atlasWidth, int atlasHeight) {
+		public SpriteLoader(Data data, int atlasWidth, int atlasHeight) {
 			super(data);
 			this.pack = true;
 			this.atlasWidth = atlasWidth;
