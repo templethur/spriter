@@ -15,12 +15,13 @@ public abstract class Loader<R> {
 	
 	protected abstract R loadResource(FileReference ref);
 	
-	protected void finishLoading(){
-		
-	}
+	protected void finishLoading(){}
+	protected void beginLoading(){}
+	
 	
 	public void load(String root){
 		this.root = root;
+		this.beginLoading();
 		for(Folder folder: data.folders){
 			for(File file: folder.files){
 				FileReference ref = new FileReference(folder.id, file.id);
@@ -28,6 +29,10 @@ public abstract class Loader<R> {
 			}
 		}
 		this.finishLoading();
+	}
+	
+	public void load(java.io.File file){
+		this.load(file.getParent());
 	}
 	
 	public R get(FileReference ref){

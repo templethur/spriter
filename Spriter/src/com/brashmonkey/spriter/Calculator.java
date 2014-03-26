@@ -91,9 +91,19 @@ public class Calculator {
 	 * @return Distance between the two given points.
 	 */
 	public static float distanceBetween(float x1, float y1, float x2, float y2){
-	    return (float)sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+		float xDiff = x2-x1;
+		float yDiff = y2-y1;
+	    return (float)sqrt(xDiff*xDiff+yDiff*yDiff);
 	}
 	
+	/**
+	 * Solves the equation a*x^3 + b*x^2 + c*x +d = 0
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @param d
+	 * @return
+	 */
 	public static Float solveCubic(float a, float b, float c, float d) {
         if (a == 0) return solveQuadratic(b, c, d);
         if (d == 0) return 0f;
@@ -101,21 +111,22 @@ public class Calculator {
         b /= a;
         c /= a;
         d /= a;
-        float q = (3f * c - Squared(b)) / 9f;
-        float r = (-27f * d + b * (9f * c - 2f * Squared(b))) / 54f;
-        float disc = Cubed(q) + Squared(r);
+        float squaredB = squared(b);
+        float q = (3f * c - squaredB) / 9f;
+        float r = (-27f * d + b * (9f * c - 2f * squaredB)) / 54f;
+        float disc = cubed(q) + squared(r);
         float term1 = b / 3f;
 
         if (disc > 0) {
             float s = r + sqrt(disc);
-            s = (s < 0) ? -CubicRoot(-s) : CubicRoot(s);
+            s = (s < 0) ? -cubicRoot(-s) : cubicRoot(s);
             float t = r - sqrt(disc);
-            t = (t < 0) ? -CubicRoot(-t) : CubicRoot(t);
+            t = (t < 0) ? -cubicRoot(-t) : cubicRoot(t);
 
             float result = -term1 + s + t;
             if (result >= 0 && result <= 1) return result;
         } else if (disc == 0) {
-            float r13 = (r < 0) ? -CubicRoot(-r) : CubicRoot(r);
+            float r13 = (r < 0) ? -cubicRoot(-r) : cubicRoot(r);
 
             float result = -term1 + 2f * r13;
             if (result >= 0 && result <= 1) return result;
@@ -141,19 +152,29 @@ public class Calculator {
         return null;
     }
 	
+	/**
+	 * Solves the equation a*x^2 + b*x + c = 0
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @return
+	 */
 	public static Float solveQuadratic(float a, float b, float c) {
-        float result = (-b + sqrt(Squared(b) - 4 * a * c)) / (2 * a);
+		float squaredB = squared(b);
+		float twoA = 2 * a;
+		float fourAC = 4 * a * c;
+        float result = (-b + sqrt(squaredB - fourAC)) / twoA;
         if (result >= 0 && result <= 1) return result;
 
-        result = (-b - sqrt(Squared(b) - 4 * a * c)) / (2 * a);
+        result = (-b - sqrt(squaredB - fourAC)) / twoA;
         if (result >= 0 && result <= 1) return result;
 
         return null;
     }
 	
-	public static float Squared(float f) { return f * f; }
-	public static float Cubed(float f) { return f * f * f; }
-	public static float CubicRoot(float f) { return (float) pow(f, 1f / 3f); }
+	public static float squared(float f) { return f * f; }
+	public static float cubed(float f) { return f * f * f; }
+	public static float cubicRoot(float f) { return (float) pow(f, 1f / 3f); }
 	public static float sqrt(float x){ return (float)Math.sqrt(x); }
 	public static float cos(float x){ return (float)Math.cos(x); }
 	public static float sin(float x){ return (float)Math.sin(x); }

@@ -11,7 +11,7 @@ import com.brashmonkey.spriter.Timeline.Key.Object;
 
 public class Player {
 	
-	private Entity entity;
+	protected Entity entity;
 	Animation animation;
 	int time;
 	public int speed;
@@ -115,8 +115,8 @@ public class Player {
 	
 	private void increaseTime(){
 		time += speed;
-		if(time > animation.length)	time = 0;
-		if(time < 0) time = animation.length;
+		if(time > animation.length)	time = time-animation.length;
+		if(time < 0) time += animation.length;
 	}
 	
 	public Entity getEntity(){
@@ -124,10 +124,10 @@ public class Player {
 	}
 	
 	public void setAnimation(Animation animation){
+		if(animation == this.animation) return;
 		if(animation == null) throw new SpriterException("animation can not be null!");
 		if(animation != this.animation) time = 0;
 		this.animation = animation;
-		this.animation.prepare();
 		for(int i = this.tweenedKeys.size(); i < animation.tweenedKeys.length; i++){
 			Timeline.Key key = new Timeline.Key(i);
 			Timeline.Key keyU = new Timeline.Key(i);
@@ -136,6 +136,10 @@ public class Player {
 			this.tweenedKeys.add(key);
 			this.unmappedTweenedKeys.add(keyU);
 		}
+		int tempTime = this.time;
+		this.time = 0;
+		this.update();
+		this.time = tempTime;
 	}
 	
 	public Animation getAnimation(){

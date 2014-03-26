@@ -1,4 +1,4 @@
-package com.brashmonkey.tests;
+package com.brashmonkey.spriter.tests.backend;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -37,7 +37,7 @@ public class LwjglTest {
 	private Player player;
 	
 	public LwjglTest(){
-		Data data = new SCMLReader("assets/monster/basic_002.scml").getSpriterData();
+		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
 		player = new Player(data.getEntity(0));
 		player.root.position.set(640, 360);
 		loader = new Loader<Texture>(data){

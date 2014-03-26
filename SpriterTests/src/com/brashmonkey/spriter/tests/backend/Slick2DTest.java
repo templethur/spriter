@@ -1,4 +1,4 @@
-package com.brashmonkey.tests;
+package com.brashmonkey.spriter.tests.backend;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -29,7 +29,7 @@ public class Slick2DTest extends BasicGame{
     @Override
     public void init(final GameContainer gc) throws SlickException {
     	
-		Data data = new SCMLReader("assets/monster/basic_002.scml").getSpriterData();
+		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
 		player = new Player(data.getEntity(0));
 		player.update();
 		player.root.position.set(640, 480);

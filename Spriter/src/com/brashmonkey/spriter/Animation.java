@@ -40,6 +40,7 @@ public class Animation {
     	this.timelines = timelines;
     	this.prepared = false;
     	this.nameToTimeline = new HashMap<String, Timeline>();
+    	//this.currentKey = mainline.getKey(0);
     }
     
     public Animation(Mainline mainline, int id, String name, int length){
@@ -207,6 +208,7 @@ public class Animation {
 			this.tweenedKeys[i].setObject(new Timeline.Key.Object(new Point(0,0)));
 			this.mappedTweenedKeys[i].setObject(new Timeline.Key.Object(new Point(0,0)));
 		}
+		this.currentKey = mainline.getKey(0);
 		this.prepared = true;
 	}
 

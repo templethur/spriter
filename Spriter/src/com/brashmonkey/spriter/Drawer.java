@@ -15,6 +15,11 @@ public abstract class Drawer<R> {
 		this.box = new BoundingBox();
 	}
 	
+	public void setLoader(Loader<R> loader){
+		if(loader == null) throw new SpriterException("The loader instance can not be null!");
+		this.loader = loader;
+	}
+	
 	public void drawBones(Player player){
 		this.setColor(1, 0, 0, 1);
 		for(Mainline.Key.BoneRef ref: player.getCurrentKey().boneRefs){

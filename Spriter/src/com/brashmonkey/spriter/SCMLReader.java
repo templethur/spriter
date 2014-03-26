@@ -149,6 +149,7 @@ public class SCMLReader {
 			entity.addAnimation(animation);
 			loadMainline(a.getChildByName("mainline"), animation);
 			loadTimelines(timelines, animation, entity);
+			animation.prepare();
 		}
 	}
 	
@@ -235,7 +236,7 @@ public class SCMLReader {
 		}
 	}
 	
-	public Data getSpriterData(){
+	public Data getData(){
 		return data;
 	}
 	
