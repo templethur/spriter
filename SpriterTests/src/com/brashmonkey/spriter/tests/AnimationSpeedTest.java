@@ -15,8 +15,7 @@ public class AnimationSpeedTest {
 		test = new ApplicationAdapter() {
 			Player player;
 			public void create(){
-				player = new Player(data.getEntity(0));
-				players.add(player);
+				player = createPlayer(data.getEntity(0));
 				
 				addInputProcessor(new AnimationSpeedChanger(player));
 				addInputProcessor(new AnimationSwitchTest.AnimationSwitcher(player));

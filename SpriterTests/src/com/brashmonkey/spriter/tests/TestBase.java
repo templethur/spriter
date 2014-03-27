@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.brashmonkey.spriter.Data;
+import com.brashmonkey.spriter.Entity;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
 
@@ -42,8 +43,14 @@ public class TestBase implements ApplicationListener{
 	public static ApplicationListener test;
 	public static BitmapFont font;
 	public static String information = "";
-	public static Vector2 infoPosition = new Vector2();
+	public static Vector2 infoPosition = new Vector2(0, 0);
 	private static final InputMultiplexer input = new InputMultiplexer();
+	
+	public static Player createPlayer(Entity entity){
+		Player player = new Player(entity);
+		players.add(player);
+		return player;
+	}
 	
 	public TestBase(String path, LwjglApplicationConfiguration cfg){
 		this.path = path;

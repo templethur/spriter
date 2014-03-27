@@ -78,10 +78,22 @@ public class Mainline {
     			if(boneRef.timeline == ref.timeline) return boneRef;
         	return null;
         }
+        
+        public BoneRef getBoneRefTimeline(int timeline){
+    		for(BoneRef boneRef: this.boneRefs)
+    			if(boneRef.timeline == timeline) return boneRef;
+        	return null;
+        }
     	
         public ObjectRef getObjectRef(ObjectRef ref){
     		for(ObjectRef objRef: this.objectRefs)
     			if(objRef.timeline == ref.timeline) return objRef;
+        	return null;
+        }
+        
+        public BoneRef getObjectRefTimeline(int timeline){
+    		for(ObjectRef objRef: this.objectRefs)
+    			if(objRef.timeline == timeline) return objRef;
         	return null;
         }
     	

@@ -34,7 +34,7 @@ public class Java2DTest extends JFrame{
 	public Java2DTest(){
 		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
 		player = new Player(data.getEntity(0));
-		player.root.position.set(640, 360);
+		player.setPosition(640, 360);
 		this.loader = new Loader<BufferedImage>(data) {
 			
 			@Override

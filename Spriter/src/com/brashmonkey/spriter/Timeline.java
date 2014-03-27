@@ -91,8 +91,16 @@ public class Timeline {
         		this.pivot = pivot;
         	}
         	
+        	public Bone(Bone bone){
+        		this(bone.position.copy(), bone.scale.copy(), bone.pivot.copy(), bone.angle);
+        	}
+        	
         	public Bone(Point position){
         		this(position, new Point(1f,1f), new Point(0f, 1f), 0f);
+        	}
+        	
+        	public Bone(){
+        		this(new Point());
         	}
         	
         	public boolean isBone(){
@@ -110,6 +118,13 @@ public class Timeline {
 				this.pivot.set(bone.pivot);
         	}
         	
+        	public void set(float x, float y, float angle, float scaleX, float scaleY, float pivotX, float pivotY){
+        		this.angle = angle;
+        		this.position.set(x, y);
+        		this.scale.set(scaleX, scaleY);
+        		this.pivot.set(pivotX, pivotY);
+        	}
+        	
         	public void unmap(Bone parent){
         		this.angle *= Math.signum(parent.scale.x)*Math.signum(parent.scale.y);
         		this.angle += parent.angle;
@@ -120,19 +135,11 @@ public class Timeline {
         	}
         	
         	public void map(Bone parent){
-        		this.position.translate(- parent.position.x, - parent.position.y);
+        		this.position.translate(-parent.position.x, -parent.position.y);
         		this.position.rotate(-parent.angle);
         		this.position.scale(1f/parent.scale.x, 1f/parent.scale.y);
         		this.scale.scale(1f/parent.scale.x, 1f/parent.scale.y);
         		this.angle -=parent.angle;
-    			/*float xx = this.position.x - parent.position.x;
-    			float yy = this.position.y - parent.position.y;
-    			float angle = (float) toRadians(parent.angle); 
-    			float cos = (float) Math.cos(angle);
-    			float sin = (float) Math.sin(angle);
-    			float newX = yy * sin + xx * cos;
-    			float newY = yy * cos - xx * sin;*/
-    			//this.position.set(this.position.x/parent.scale.x, this.position.y/parent.scale.y);
     			this.angle *= Math.signum(parent.scale.x)*Math.signum(parent.scale.y);
         	}
     	}
@@ -152,6 +159,14 @@ public class Timeline {
 				this(position, new Point(1f,1f), new Point(0f,1f), 0f, 1f, new FileReference(-1,-1));
 			}
 			
+			public Object(Object object){
+				this(object.position.copy(), object.scale.copy(),object.pivot.copy(),object.angle,object.alpha,object.ref);
+			}
+			
+			public Object(){
+				this(new Point());
+			}
+			
 			public String toString(){
 				return super.toString()+", pivot: "+pivot+", alpha: "+alpha+", reference: "+ref;
 			}
@@ -160,6 +175,13 @@ public class Timeline {
 				super.set(object);
 				this.alpha = object.alpha;
 				this.ref.set(object.ref);
+			}
+			
+			public void set(float x, float y, float angle, float scaleX, float scaleY, float pivotX, float pivotY, float alpha, int folder, int file){
+				super.set(x, y, angle, scaleX, scaleY, pivotX, pivotY);
+				this.alpha = alpha;
+				this.ref.folder = folder;
+				this.ref.file = file;
 			}
     		
     	}

@@ -39,7 +39,7 @@ public class LwjglTest {
 	public LwjglTest(){
 		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
 		player = new Player(data.getEntity(0));
-		player.root.position.set(640, 360);
+		player.setPosition(640, 360);
 		loader = new Loader<Texture>(data){
 
 			@Override

@@ -16,8 +16,7 @@ public class AnimationSwitchTest {
 		test = new ApplicationAdapter() {
 			Player player;
 			public void create(){
-				player = new Player(data.getEntity(0));
-				players.add(player);
+				player = createPlayer(data.getEntity(0));
 				information = "Press left/right mouse button to switch animations. Current animation: "+player.getAnimation().name;
 				addInputProcessor(new AnimationSwitcher(player));
 			}

@@ -32,7 +32,7 @@ public class Slick2DTest extends BasicGame{
 		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
 		player = new Player(data.getEntity(0));
 		player.update();
-		player.root.position.set(640, 480);
+		player.setPosition(640, 480);
     	final Graphics g = gc.getGraphics();
 		
     	Loader<Image> loader = new Loader<Image>(data){

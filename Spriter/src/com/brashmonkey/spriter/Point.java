@@ -4,6 +4,10 @@ public class Point {
 	
 	public float x,y;
 	
+	public Point(){
+		this(0,0);
+	}
+	
 	public Point(float x, float y){
 		this.set(x, y);
 	}
@@ -45,6 +49,10 @@ public class Point {
 		
 		this.x = xx;
 		this.y = yy;
+	}
+	
+	public Point copy(){
+		return new Point(x,y);
 	}
 	
 	public String toString(){

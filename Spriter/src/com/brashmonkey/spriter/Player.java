@@ -17,6 +17,9 @@ public class Player {
 	public int speed;
 	public List<Timeline.Key> tweenedKeys, unmappedTweenedKeys;
 	public Timeline.Key.Bone root = new Timeline.Key.Bone(new Point(0,0));
+	private final Point position = new Point(0,0), pivot = new Point(0,0);
+	private float angle;
+	private boolean dirty = true;
 	public CharacterMap characterMap;
 	private Rectangle rect;
 	private BoundingBox box;
@@ -31,6 +34,7 @@ public class Player {
 	}
 	
 	public void update(){
+		if(dirty) this.updateRoot();
 		this.animation.update(time, root);
 		for(Timeline.Key key: animation.tweenedKeys){
 			this.tweenedKeys.get(key.id).active = key.active;
@@ -41,22 +45,18 @@ public class Player {
 		this.increaseTime();
 	}
 	
-	public void setBone(int index, Bone bone){
-		this.animation.setBone(index, bone, root);
+	private void increaseTime(){
+		time += speed;
+		if(time > animation.length)	time = time-animation.length;
+		if(time < 0) time += animation.length;
 	}
 	
-	public void setBone(String name, Bone bone){
-		int targetIndex = getBoneIndex(name);
-		this.animation.setBone(targetIndex, bone, root);
-	}
-	
-	public void setObject(int index, Object obj){
-		this.animation.setObject(index, obj);
-	}
-	
-	public void setObject(String name, Object obj){
-		int targetIndex = getObjectIndex(name);
-		this.animation.setObject(targetIndex, obj);
+	private void updateRoot(){
+		this.root.angle = angle;
+		this.root.position.set(pivot);
+		this.root.position.rotate(angle);
+		this.root.position.translate(position);
+		dirty = false;
 	}
 	
 	public Bone getBone(int index){
@@ -85,22 +85,115 @@ public class Player {
 		return -1;
 	}
 	
+	public void setBone(String name, float x, float y, float angle, float scaleX, float scaleY){
+		int index = getBoneIndex(name);
+		if(index == -1) throw new SpriterException("No bone found for name \""+name+"\"");
+		BoneRef ref = getCurrentKey().getBoneRef(index);
+		Bone bone = getBone(index);
+		bone.set(x, y, angle, scaleX, scaleY, 0f, 0f);
+		unmapObjects(ref);
+	}
+	
+	public void setBone(String name, Point position, float angle, Point scale){
+		this.setBone(name, position.x, position.y, angle, scale.x, scale.y);
+	}
+	
+	public void setBone(String name, float x, float y, float angle){
+		Bone b = getBone(name);
+		setBone(name, x, y, angle, b.scale.x, b.scale.y);
+	}
+	
+	public void setBone(String name, Point position, float angle){
+		Bone b = getBone(name);
+		setBone(name, position.x, position.y, angle, b.scale.x, b.scale.y);
+	}
+	
+	public void setBone(String name, float x, float y){
+		Bone b = getBone(name);
+		setBone(name, x, y, b.angle);
+	}
+	
+	public void setBone(String name, Point position){
+		setBone(name, position.x, position.y);
+	}
+	
+	public void setBone(String name, float angle){
+		Bone b = getBone(name);
+		setBone(name, b.position.x, b.position.y, angle);
+	}
+	
+	public void setBone(String name, Bone bone){
+		setBone(name, bone.position, bone.angle, bone.scale);
+	}
+	
+	public void setObject(String name, float x, float y, float angle, float scaleX, float scaleY, float pivotX, float pivotY, float alpha, int folder, int file){
+		int index = getObjectIndex(name);
+		if(index == -1) throw new SpriterException("No bone found for name \""+name+"\"");
+		ObjectRef ref = getCurrentKey().getObjectRef(index);
+		Object object = getObject(index);
+		object.set(x, y, angle, scaleX, scaleY, pivotX, pivotY, alpha, folder, file);
+		unmapObjects(ref);
+	}
+	
+	public void setObject(String name, Point position, float angle, Point scale, Point pivot, float alpha, FileReference ref){
+		this.setObject(name, position.x, position.y, angle, scale.x, scale.y, pivot.x, pivot.y, alpha, ref.folder, ref.file);
+	}
+	
+	public void setObject(String name, float x, float y, float angle, float scaleX, float scaleY){
+		Object b = getObject(name);
+		setObject(name, x, y, angle, scaleX, scaleY, b.pivot.x, b.pivot.y, b.alpha, b.ref.folder, b.ref.file);
+	}
+	
+	public void setObject(String name, float x, float y, float angle){
+		Object b = getObject(name);
+		setObject(name, x, y, angle, b.scale.x, b.scale.y);
+	}
+	
+	public void setObject(String name, Point position, float angle){
+		Object b = getObject(name);
+		setObject(name, position.x, position.y, angle, b.scale.x, b.scale.y);
+	}
+	
+	public void setObject(String name, float x, float y){
+		Object b = getObject(name);
+		setObject(name, x, y, b.angle);
+	}
+	
+	public void setObject(String name, Point position){
+		setObject(name, position.x, position.y);
+	}
+	
+	public void setObject(String name, float angle){
+		Object b = getObject(name);
+		setObject(name, b.position.x, b.position.y, angle);
+	}
+	
+	public void setObject(String name, float alpha, int folder, int file){
+		Object b = getObject(name);
+		setObject(name, b.position.x, b.position.y, b.angle, b.scale.x, b.scale.y, b.pivot.x, b.pivot.y, alpha, folder, file);
+	}
+	
+	public void setObject(String name, Object object){
+		setObject(name, object.position, object.angle, object.scale, object.pivot, object.alpha, object.ref);
+	}
+	
+	
 	public Object getObject(String name){
 		return (Object)this.unmappedTweenedKeys.get(animation.getTimeline(name).id).object();
 	}
 	
 	public void unmapObjects(BoneRef base){
-		int start = base == null ? -1 : base.id;
+		int start = base == null ? -1 : base.id-1;
     	for(int i = start+1; i < getCurrentKey().boneRefs.size(); i++){
     		BoneRef ref = getCurrentKey().getBoneRef(i);
-    		if(ref.parent != base) continue;
+    		if(ref.parent != base && base != null) continue;
 			Bone parent = ref.parent == null ? this.root : this.unmappedTweenedKeys.get(ref.parent.timeline).object();
 			unmappedTweenedKeys.get(ref.timeline).object().set(tweenedKeys.get(ref.timeline).object());
 			unmappedTweenedKeys.get(ref.timeline).object().unmap(parent);
 			unmapObjects(ref);
 		}
 		for(ObjectRef ref: getCurrentKey().objectRefs){
-    		if(ref.parent != base) continue;
+    		if(ref.parent != base && base != null) continue;
 			Bone parent = ref.parent == null ? this.root : this.unmappedTweenedKeys.get(ref.parent.timeline).object();
 			unmappedTweenedKeys.get(ref.timeline).object().set(tweenedKeys.get(ref.timeline).object());
 			unmappedTweenedKeys.get(ref.timeline).object().unmap(parent);
@@ -111,12 +204,6 @@ public class Player {
 		if(entity == null) throw new SpriterException("entity can not be null!");
 		this.entity = entity;
 		this.setAnimation(entity.getAnimation(0));
-	}
-	
-	private void increaseTime(){
-		time += speed;
-		if(time > animation.length)	time = time-animation.length;
-		if(time < 0) time += animation.length;
 	}
 	
 	public Entity getEntity(){
@@ -142,28 +229,8 @@ public class Player {
 		this.time = tempTime;
 	}
 	
-	public Animation getAnimation(){
-		return this.animation;
-	}
-	
-	public Mainline.Key getCurrentKey(){
-		return this.animation.currentKey;
-	}
-
-	public int getTime() {
-		return time;
-	}
-	
-	public void setPosition(float x, float y){
-		this.root.position.set(x,y);
-	}
-	
-	public void setScale(float scale){
-		this.root.scale.set(scale, scale);
-	}
-	
-	public void setAngle(float angle){
-		this.root.angle = angle;
+	public void setAnimation(String name){
+		this.setAnimation(entity.getAnimation(name));
 	}
 	
 	public Rectangle getBoundingRectangle(BoneRef root){
@@ -188,6 +255,125 @@ public class Player {
 			this.box.updateFor(bone, animation.getTimeline(ref.timeline).objectInfo);
 			Rectangle.setBiggerRectangle(rect, this.box.getBoundingRect(), rect);
 		}
+	}
+	
+	public Animation getAnimation(){
+		return this.animation;
+	}
+	
+	public Mainline.Key getCurrentKey(){
+		return this.animation.currentKey;
+	}
+
+	public int getTime() {
+		return time;
+	}
+	
+	public void setTime(int time){
+		this.time = time;
+		int prevSpeed = this.speed;
+		this.speed = 0;
+		this.increaseTime();
+		this.speed = prevSpeed;
+	}
+	
+	public void setScale(float scale){
+		this.root.scale.set(scale*flippedX(), scale*flippedY());
+	}
+	
+	public void scale(float scale){
+		this.root.scale.scale(scale, scale);
+	}
+	
+	public float getScale(){
+		return root.scale.x;
+	}
+	
+	public void flip(boolean x, boolean y){
+		if(x) this.flipX();
+		if(y) this.flipY();
+	}
+	
+	public void flipX(){
+		this.root.scale.x *= -1;
+	}
+	
+	public void flipY(){
+		this.root.scale.y *= -1;
+	}
+	
+	public int flippedX(){
+		return (int) Math.signum(root.scale.x);
+	}
+	
+	public int flippedY(){
+		return (int) Math.signum(root.scale.y);
+	}
+	
+	public Player setPosition(float x, float y){
+		this.dirty = true;
+		this.position.set(x,y);
+		return this;
+	}
+	
+	public Player setPosition(Point point){
+		return this.setPosition(point.x, point.y);
+	}
+	
+	public Player translatePosition(float x, float y){
+		return this.setPosition(position.x+x, position.y+y);
+	}
+	
+	public Player translate(Point point){
+		return this.translatePosition(point.x, point.y);
+	}
+	
+	public float getX(){
+		return position.x;
+	}
+	
+	public float getY(){
+		return position.y;
+	}
+	
+	public Player setAngle(float angle){
+		this.dirty = true;
+		this.angle = angle;
+		return this;
+	}
+	
+	public Player rotate(float angle){
+		return this.setAngle(angle+this.angle);
+	}
+	
+	public float getAngle(){
+		return this.angle;
+	}
+	
+	public Player setPivot(float x, float y){
+		this.dirty = true;
+		this.pivot.set(x, y);
+		return this;
+	}
+	
+	public Player setPivot(Point p){
+		return this.setPivot(p.x, p.y);
+	}
+	
+	public Player translatePivot(float x, float y){
+		return this.setPivot(pivot.x+x, pivot.y+y);
+	}
+	
+	public Player translatePivot(Point point){
+		return this.translatePivot(point.x, point.y);
+	}
+	
+	public float getPivotX(){
+		return pivot.x;
+	}
+	
+	public float getPivotY(){
+		return pivot.y;
 	}
 
 }

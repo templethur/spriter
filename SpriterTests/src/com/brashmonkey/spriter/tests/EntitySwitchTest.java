@@ -18,8 +18,7 @@ public class EntitySwitchTest {
 			Player player;
 			LibGdxLoader loader;
 			public void create(){
-				player = new Player(data.getEntity(0));
-				players.add(player);
+				player = createPlayer(data.getEntity(0));
 
 				final Data guyData = new SCMLReader(Gdx.files.internal("GreyGuy/player.scml").read()).getData();
 				loader = new LibGdxLoader(guyData);
@@ -32,7 +31,7 @@ public class EntitySwitchTest {
 						if(keycode == Keys.ENTER){
 							if(player.getEntity() == data.getEntity(0)){
 								player.setEntity(guyData.getEntity(0));
-								drawer.setLoader(loader); //We have to set the loader because the entities are not in the same file
+								drawer.setLoader(loader); //We have to set the loader because the entities are not from the same file
 							}
 							else{
 								player.setEntity(data.getEntity(0));
@@ -53,5 +52,4 @@ public class EntitySwitchTest {
 			}
 		};
 	}
-
 }
