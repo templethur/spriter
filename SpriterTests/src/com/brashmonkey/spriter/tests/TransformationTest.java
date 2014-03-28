@@ -84,9 +84,9 @@ public class TransformationTest {
 							+ "Press ctrl and right mouse button to change the pivot point of the entity. Current pivot position: "+player.getPivotX()+", "+player.getPivotY()+"\n"
 							+ "Press left/right up/down to flip the entity. Press enter to reset all values.";
 				renderer.setColor(1, 0, 0, 1);
-				renderer.begin(ShapeType.Line);
-					renderer.circle(player.getX(), player.getY(), 5f);
-				renderer.end();
+				//renderer.begin(ShapeType.Line);
+				renderer.circle(player.getX(), player.getY(), 5f);
+				//renderer.end();
 			}
 		};
 	}

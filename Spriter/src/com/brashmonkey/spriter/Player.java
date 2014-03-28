@@ -29,6 +29,7 @@ public class Player {
 	public final BoundingBox prevBBox;
 	private BoneIterator boneIterator;
 	private ObjectIterator objectIterator;
+	private Mainline.Key currentKey;
 	
 	public Player(Entity entity){
 		this.boneIterator = new BoneIterator();
@@ -44,6 +45,7 @@ public class Player {
 	public void update(){
 		if(dirty) this.updateRoot();
 		this.animation.update(time, root);
+		this.currentKey = this.animation.currentKey;
 		for(Timeline.Key key: animation.tweenedKeys){
 			this.tweenedKeys.get(key.id).active = key.active;
 			this.unmappedTweenedKeys.get(key.id).active = animation.mappedTweenedKeys[key.id].active;
@@ -285,7 +287,7 @@ public class Player {
 	}
 	
 	public Mainline.Key getCurrentKey(){
-		return this.animation.currentKey;
+		return this.currentKey;
 	}
 
 	public int getTime() {
