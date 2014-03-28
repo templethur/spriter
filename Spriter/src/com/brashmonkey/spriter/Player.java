@@ -19,7 +19,7 @@ public class Player {
 	int time;
 	public int speed;
 	public List<Timeline.Key> tweenedKeys, unmappedTweenedKeys;
-	public Timeline.Key.Bone root = new Timeline.Key.Bone(new Point(0,0));
+	Timeline.Key.Bone root = new Timeline.Key.Bone(new Point(0,0));
 	private final Point position = new Point(0,0), pivot = new Point(0,0);
 	private final HashMap<Object, Timeline.Key> objToTimeline = new HashMap<Object, Timeline.Key>();
 	private float angle;

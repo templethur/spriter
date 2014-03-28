@@ -6,8 +6,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.math.MathUtils;
-import com.brashmonkey.spriter.InterpolatedAnimation;
 import com.brashmonkey.spriter.Player;
+import com.brashmonkey.spriter.PlayerInterpolator;
 
 public class InterpolationTest {
 	public static void main(String[] args){
@@ -17,18 +17,15 @@ public class InterpolationTest {
 						+"Press right mouse button to change right animation.\n"
 						+"Scroll to change interpolation weight.";
 		test = new ApplicationAdapter() {
-			Player player1, player2, player3;
-			InterpolatedAnimation inter;
+			Player player1, player2;
+			PlayerInterpolator inter;
 			
 			public void create(){
 				player1 = createPlayer(data.getEntity(0));
 				player1.setPosition(-400, 0);
 				player2 = createPlayer(data.getEntity(0));
 				player2.setPosition(400, 0);
-				player3 = createPlayer(data.getEntity(0));
-				inter = new InterpolatedAnimation(data.getEntity(0));
-				inter.setAnimations(player1.getAnimation(), player2.getAnimation());
-				player3.setAnimation(inter);
+				inter = new PlayerInterpolator(player1, player2);
 				
 				final AnimationSwitchTest.AnimationSwitcher switcher = new AnimationSwitchTest.AnimationSwitcher(player1);
 				
@@ -50,7 +47,9 @@ public class InterpolationTest {
 			}
 			
 			public void render(){
-				inter.setAnimations(player1.getAnimation(), player2.getAnimation());
+				inter.update();
+				
+				drawer.draw(inter.getInterpolatedPlayer());
 			}
 		};
 	}
