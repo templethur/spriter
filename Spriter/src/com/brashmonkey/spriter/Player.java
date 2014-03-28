@@ -103,6 +103,12 @@ public class Player {
 		return this.animation.getTimeline(objToTimeline.get(bone).id).objectInfo;
 	}
 
+	public BoundingBox getBox(Bone bone){
+		ObjectInfo info = getObjectInfoFor(bone);
+		this.prevBBox.calcFor(bone, info);
+		return this.prevBBox;
+	}
+	
 	public boolean collidesFor(Bone bone, float x, float y){
 		ObjectInfo info = getObjectInfoFor(bone);
 		this.prevBBox.calcFor(bone, info);

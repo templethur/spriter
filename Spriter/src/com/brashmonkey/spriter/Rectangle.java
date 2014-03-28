@@ -16,8 +16,12 @@ public class Rectangle {
 		this(rect.left, rect.top, rect.right, rect.bottom);
 	}
 	
-	public boolean isInisde(float x, float y){
+	public boolean isInside(float x, float y){
 		return x >= this.left && x <= this.right && y <= this.top && y >= this.bottom; 
+	}
+	
+	public boolean isInside(Point point){
+		return isInside(point.x, point.y);
 	}
 	
 	public void calculateSize(){
@@ -41,8 +45,8 @@ public class Rectangle {
 	}
 	
 	public static boolean areIntersecting(Rectangle rect1, Rectangle rect2){
-		return rect1.isInisde(rect2.left, rect2.top) || rect1.isInisde(rect2.right, rect2.top)
-				|| rect1.isInisde(rect2.left, rect2.bottom) || rect1.isInisde(rect2.right, rect2.bottom);
+		return rect1.isInside(rect2.left, rect2.top) || rect1.isInside(rect2.right, rect2.top)
+				|| rect1.isInside(rect2.left, rect2.bottom) || rect1.isInside(rect2.right, rect2.bottom);
 	}
 	
 	public static void setBiggerRectangle(Rectangle rect1, Rectangle rect2, Rectangle target){

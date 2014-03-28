@@ -1,5 +1,7 @@
 package com.brashmonkey.spriter;
 
+import java.util.Iterator;
+
 import com.brashmonkey.spriter.Entity.CharacterMap;
 import com.brashmonkey.spriter.Entity.ObjectInfo;
 import com.brashmonkey.spriter.Entity.ObjectType;
@@ -86,12 +88,12 @@ public abstract class Drawer<R> {
 	}
 	
 	public void draw(Player player, CharacterMap map){
-		for(Mainline.Key.ObjectRef ref: player.getCurrentKey().objectRefs){
-			Timeline.Key key = player.unmappedTweenedKeys.get(ref.timeline);
-			if(!key.active) continue;
-			Timeline.Key.Bone bone = key.object();
-			if(bone.isBone()) continue;
-			Timeline.Key.Object object = (Timeline.Key.Object)bone;
+		this.draw(player.objectIterator(), map);
+	}
+	
+	public void draw(Iterator<Timeline.Key.Object> it, CharacterMap map){
+		while(it.hasNext()){
+			Timeline.Key.Object object = it.next();
 			if(object.ref.hasFile()){
 				if(map != null) object.ref.set(map.get(object.ref));
 				this.draw(object);
@@ -100,10 +102,10 @@ public abstract class Drawer<R> {
 	}
 	
 	public void drawBBox(BoundingBox box){
-		this.line(box.boundingPoints[0].x, box.boundingPoints[0].y, box.boundingPoints[1].x, box.boundingPoints[1].y);
-		this.line(box.boundingPoints[1].x, box.boundingPoints[1].y, box.boundingPoints[3].x, box.boundingPoints[3].y);
-		this.line(box.boundingPoints[3].x, box.boundingPoints[3].y, box.boundingPoints[2].x, box.boundingPoints[2].y);
-		this.line(box.boundingPoints[2].x, box.boundingPoints[2].y, box.boundingPoints[0].x, box.boundingPoints[0].y);
+		this.line(box.points[0].x, box.points[0].y, box.points[1].x, box.points[1].y);
+		this.line(box.points[1].x, box.points[1].y, box.points[3].x, box.points[3].y);
+		this.line(box.points[3].x, box.points[3].y, box.points[2].x, box.points[2].y);
+		this.line(box.points[2].x, box.points[2].y, box.points[0].x, box.points[0].y);
 	}
 	
 	public abstract void setColor(float r, float g, float b, float a);

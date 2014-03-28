@@ -57,8 +57,6 @@ public class CollisionTest {
 			public void render(){
 				mouse.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
 				camera.unproject(mouse);
-				if(Gdx.input.isKeyPressed(Keys.SPACE)) iterator = player.boneIterator();
-				else iterator = player.objectIterator();
 				
 				player.update();
 				
@@ -73,6 +71,10 @@ public class CollisionTest {
 				drawer.drawBoxes(player);
 				
 				drawer.setColor(1f, 0, 0, 1);
+				
+				if(Gdx.input.isKeyPressed(Keys.SPACE)) iterator = player.boneIterator();
+				else iterator = player.objectIterator();
+				
 				while(iterator.hasNext())
 					if(player.collidesFor(iterator.next(), mouse.x, mouse.y))
 						drawer.drawBBox(player.prevBBox);
