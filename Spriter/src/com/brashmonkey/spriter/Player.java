@@ -1,9 +1,12 @@
 package com.brashmonkey.spriter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.brashmonkey.spriter.Entity.CharacterMap;
+import com.brashmonkey.spriter.Entity.ObjectInfo;
 import com.brashmonkey.spriter.Mainline.Key.BoneRef;
 import com.brashmonkey.spriter.Mainline.Key.ObjectRef;
 import com.brashmonkey.spriter.Timeline.Key.Bone;
@@ -18,16 +21,21 @@ public class Player {
 	public List<Timeline.Key> tweenedKeys, unmappedTweenedKeys;
 	public Timeline.Key.Bone root = new Timeline.Key.Bone(new Point(0,0));
 	private final Point position = new Point(0,0), pivot = new Point(0,0);
+	private final HashMap<Object, Timeline.Key> objToTimeline = new HashMap<Object, Timeline.Key>();
 	private float angle;
 	private boolean dirty = true;
 	public CharacterMap characterMap;
 	private Rectangle rect;
-	private BoundingBox box;
+	public final BoundingBox prevBBox;
+	private BoneIterator boneIterator;
+	private ObjectIterator objectIterator;
 	
 	public Player(Entity entity){
+		this.boneIterator = new BoneIterator();
+		this.objectIterator = new ObjectIterator();
 		this.speed = 15;
 		this.rect = new Rectangle(0,0,0,0);
-		this.box = new BoundingBox();
+		this.prevBBox = new BoundingBox();
 		this.tweenedKeys = new ArrayList<Timeline.Key>();
 		this.unmappedTweenedKeys = new ArrayList<Timeline.Key>();
 		this.setEntity(entity);
@@ -85,6 +93,20 @@ public class Player {
 		return -1;
 	}
 	
+	public String getNameFor(Bone bone){
+		return this.animation.getTimeline(objToTimeline.get(bone).id).name;
+	}
+	
+	public ObjectInfo getObjectInfoFor(Bone bone){
+		return this.animation.getTimeline(objToTimeline.get(bone).id).objectInfo;
+	}
+
+	public boolean collidesFor(Bone bone, float x, float y){
+		ObjectInfo info = getObjectInfoFor(bone);
+		this.prevBBox.calcFor(bone, info);
+		return this.prevBBox.collides(bone, info, x, y);
+	}
+	
 	public void setBone(String name, float x, float y, float angle, float scaleX, float scaleY){
 		int index = getBoneIndex(name);
 		if(index == -1) throw new SpriterException("No bone found for name \""+name+"\"");
@@ -128,7 +150,7 @@ public class Player {
 	
 	public void setObject(String name, float x, float y, float angle, float scaleX, float scaleY, float pivotX, float pivotY, float alpha, int folder, int file){
 		int index = getObjectIndex(name);
-		if(index == -1) throw new SpriterException("No bone found for name \""+name+"\"");
+		if(index == -1) throw new SpriterException("No object found for name \""+name+"\"");
 		ObjectRef ref = getCurrentKey().getObjectRef(index);
 		Object object = getObject(index);
 		object.set(x, y, angle, scaleX, scaleY, pivotX, pivotY, alpha, folder, file);
@@ -222,6 +244,7 @@ public class Player {
 			keyU.setObject(new Timeline.Key.Object(new Point(0,0)));
 			this.tweenedKeys.add(key);
 			this.unmappedTweenedKeys.add(keyU);
+			this.objToTimeline.put((Object) keyU.object(), keyU);
 		}
 		int tempTime = this.time;
 		this.time = 0;
@@ -245,15 +268,15 @@ public class Player {
 		for(BoneRef ref: getCurrentKey().boneRefs){
 			if(ref.parent != root && root != null) continue;
 			Bone bone = this.unmappedTweenedKeys.get(ref.timeline).object();
-			this.box.updateFor(bone, animation.getTimeline(ref.timeline).objectInfo);
-			Rectangle.setBiggerRectangle(rect, this.box.getBoundingRect(), rect);
+			this.prevBBox.calcFor(bone, animation.getTimeline(ref.timeline).objectInfo);
+			Rectangle.setBiggerRectangle(rect, this.prevBBox.getBoundingRect(), rect);
 			this.calcBoundingRectangle(ref);
 		}
 		for(ObjectRef ref: getCurrentKey().objectRefs){
 			if(ref.parent != root) continue;
 			Bone bone = this.unmappedTweenedKeys.get(ref.timeline).object();
-			this.box.updateFor(bone, animation.getTimeline(ref.timeline).objectInfo);
-			Rectangle.setBiggerRectangle(rect, this.box.getBoundingRect(), rect);
+			this.prevBBox.calcFor(bone, animation.getTimeline(ref.timeline).objectInfo);
+			Rectangle.setBiggerRectangle(rect, this.prevBBox.getBoundingRect(), rect);
 		}
 	}
 	
@@ -374,6 +397,61 @@ public class Player {
 	
 	public float getPivotY(){
 		return pivot.y;
+	}
+	
+	public Iterator<Bone> boneIterator(){
+		this.boneIterator.reset();
+		return this.boneIterator;
+	}
+	
+	public Iterator<Object> objectIterator(){
+		this.objectIterator.reset();
+		return this.objectIterator;
+	}
+	
+	private class ObjectIterator implements Iterator<Object>{
+		private int index = 0;
+		@Override
+		public boolean hasNext() {
+			return index < getCurrentKey().objectRefs.size();
+		}
+
+		@Override
+		public Object next() {
+			return (Object) unmappedTweenedKeys.get(getCurrentKey().objectRefs.get(index++).timeline).object();
+		}
+
+		@Override
+		public void remove() {
+			throw new SpriterException("remove() is not supported by this iterator!");
+		}
+		
+		private void reset(){
+			index = 0;
+		}
+		
+	}
+	
+	private class BoneIterator implements Iterator<Bone>{
+		private int index = 0;
+		@Override
+		public boolean hasNext() {
+			return index < getCurrentKey().boneRefs.size();
+		}
+
+		@Override
+		public Bone next() {
+			return unmappedTweenedKeys.get(getCurrentKey().boneRefs.get(index++).timeline).object();
+		}
+
+		@Override
+		public void remove() {
+			throw new SpriterException("remove() is not supported by this iterator!");
+		}
+		
+		private void reset(){
+			index = 0;
+		}
 	}
 
 }

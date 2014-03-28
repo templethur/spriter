@@ -39,8 +39,8 @@ public class Mainline {
     public static class Key{
     	
     	public final int id, time;
-    	public final List<BoneRef> boneRefs;
-    	public final List<ObjectRef> objectRefs;
+    	final List<BoneRef> boneRefs;
+    	final List<ObjectRef> objectRefs;
     	public final Curve curve;
     	
     	public Key(int id, int time, Curve curve){

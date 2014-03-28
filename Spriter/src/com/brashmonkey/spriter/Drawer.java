@@ -57,7 +57,7 @@ public abstract class Drawer<R> {
 			Timeline.Key.Bone bone = key.object();
 			ObjectInfo info = player.animation.getTimeline(ref.timeline).objectInfo;
 			if(info == null) continue;
-			this.box.updateFor(bone, info);
+			this.box.calcFor(bone, info);
 			this.drawBBox(this.box);
 		}
 		for(Mainline.Key.ObjectRef ref: player.getCurrentKey().objectRefs){
@@ -66,7 +66,7 @@ public abstract class Drawer<R> {
 			Timeline.Key.Bone bone = key.object();
 			ObjectInfo info = player.animation.getTimeline(ref.timeline).objectInfo;
 			if(info == null) continue;
-			this.box.updateFor(bone, info);
+			this.box.calcFor(bone, info);
 			this.drawBBox(this.box);
 		}
 

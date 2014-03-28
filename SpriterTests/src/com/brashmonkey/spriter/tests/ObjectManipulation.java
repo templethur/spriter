@@ -5,7 +5,6 @@ import static com.brashmonkey.spriter.tests.TestBase.*;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.brashmonkey.spriter.Player;
@@ -17,12 +16,16 @@ public class ObjectManipulation {
 	public static void main(String[] args){
 		create("monster/basic_002.scml", "Object manipulation");
 		//drawBones = true;
+		information = "Press left mouse button to move the torso bone.\n"
+						+"Press right mouse button to change the angle of rightUpperArm bone.\n"
+						+ "Press middle mouse button to rotate the head sprite.";
+		infoPosition.y = -200;
 		test = new ApplicationAdapter() {
 			Player player;
 			
 			public void create(){
-				this.player = createPlayer(data.getEntity(0));
-				players.removeIndex(0);
+				this.player = new Player(data.getEntity(0));//createPlayer(data.getEntity(0));
+				//players.removeIndex(0);
 			}
 			
 			Vector3 v = new Vector3();
@@ -52,13 +55,9 @@ public class ObjectManipulation {
 					player.setObject(objectName, object);
 				}
 				
-				batch.begin();
-					drawer.draw(player);
-				batch.end();
-				
-				renderer.begin(ShapeType.Line);
-					drawer.drawBones(player);
-				renderer.end();
+				drawer.draw(player);
+			
+				drawer.drawBones(player);
 			}
 		};
 	}

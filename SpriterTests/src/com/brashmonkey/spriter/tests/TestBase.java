@@ -98,26 +98,26 @@ public class TestBase implements ApplicationListener{
 		renderer.setProjectionMatrix(camera.combined);
 		batch.setProjectionMatrix(camera.combined);
 		
+		batch.begin();
+		renderer.begin(ShapeType.Line);
+		
 		for(Player player: players)
 			player.update();
-		
-		batch.begin();
 			for(Player player: players)
 				drawer.draw(player);
 			//font.draw(batch, information, 0, 0, 50f, HAlignment.CENTER);
 			font.drawMultiLine(batch, information, infoPosition.x, infoPosition.y, 0, HAlignment.CENTER);
-		batch.end();
-		
-		renderer.begin(ShapeType.Line);
+			
 			if(drawBones)
 				for(Player player: players)
 					drawer.drawBones(player);
 			if(drawBoxes)
 				for(Player player: players)
 					drawer.drawBoxes(player);
-		renderer.end();
 		
 		if(test != null) test.render();
+		batch.end();
+		renderer.end();
 	}
 
 	@Override

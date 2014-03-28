@@ -16,7 +16,7 @@ public class BoundingBox {
 		this.boundingRect = new Rectangle(0,0,0,0);
 	}
 	
-	public void updateFor(Timeline.Key.Bone bone, ObjectInfo info){
+	public void calcFor(Timeline.Key.Bone bone, ObjectInfo info){
 		float width = info.size.width*bone.scale.x;
 		float height = info.size.height*bone.scale.y;
 	
