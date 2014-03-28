@@ -5,16 +5,18 @@ import java.util.Iterator;
 import com.brashmonkey.spriter.Entity.CharacterMap;
 import com.brashmonkey.spriter.Entity.ObjectInfo;
 import com.brashmonkey.spriter.Entity.ObjectType;
+import com.brashmonkey.spriter.Timeline.Key.Bone;
+import com.brashmonkey.spriter.Timeline.Key.Object;
 
 public abstract class Drawer<R> {
 	
 	public float pointRadius = 5f;
-	private final BoundingBox box;
+	//private final BoundingBox box;
 	protected Loader<R> loader;
 	
 	public Drawer(Loader<R> loader){
 		this.loader = loader;
-		this.box = new BoundingBox();
+		//this.box = new BoundingBox();
 	}
 	
 	public void setLoader(Loader<R> loader){
@@ -53,33 +55,46 @@ public abstract class Drawer<R> {
 	
 	public void drawBoxes(Player player){
 		this.setColor(0f, 1f, 0f, 1f);
-		for(Mainline.Key.BoneRef ref: player.getCurrentKey().boneRefs){
-			Timeline.Key key = player.unmappedTweenedKeys.get(ref.timeline);
-			if(!key.active || player.animation.getTimeline(ref.timeline).objectInfo.type == ObjectType.Point) continue;
-			Timeline.Key.Bone bone = key.object();
-			ObjectInfo info = player.animation.getTimeline(ref.timeline).objectInfo;
-			if(info == null) continue;
-			this.box.calcFor(bone, info);
-			this.drawBBox(this.box);
+		this.drawBoneBoxes(player);
+		this.drawObjectBoxes(player);
+		this.drawPoints(player);
+	}
+	
+	public void drawBoneBoxes(Player player){
+		drawBoneBoxes(player, player.boneIterator());
+	}
+	
+	public void drawBoneBoxes(Player player, Iterator<Bone> it){
+		while(it.hasNext()){
+			Bone bone = it.next();
+			this.drawBBox(player.getBox(bone));
 		}
-		for(Mainline.Key.ObjectRef ref: player.getCurrentKey().objectRefs){
-			Timeline.Key key = player.unmappedTweenedKeys.get(ref.timeline);
-			if(!key.active || player.animation.getTimeline(ref.timeline).objectInfo.type != ObjectType.Sprite) continue;
-			Timeline.Key.Bone bone = key.object();
-			ObjectInfo info = player.animation.getTimeline(ref.timeline).objectInfo;
-			if(info == null) continue;
-			this.box.calcFor(bone, info);
-			this.drawBBox(this.box);
+	}
+	
+	public void drawObjectBoxes(Player player){
+		drawObjectBoxes(player, player.objectIterator());
+	}
+	
+	public void drawObjectBoxes(Player player, Iterator<Object> it){
+		while(it.hasNext()){
+			Object bone = it.next();
+			this.drawBBox(player.getBox(bone));
 		}
-
-		for(Mainline.Key.ObjectRef ref: player.getCurrentKey().objectRefs){
-			Timeline.Key key = player.unmappedTweenedKeys.get(ref.timeline);
-			if(player.animation.getTimeline(ref.timeline).objectInfo.type != ObjectType.Point || !key.active) continue;
-			Timeline.Key.Bone bone = key.object();
-			float x = bone.position.x+(float)(Math.cos(Math.toRadians(bone.angle))*pointRadius);
-			float y = bone.position.y+(float)(Math.sin(Math.toRadians(bone.angle))*pointRadius);
-			circle(bone.position.x, bone.position.y, pointRadius);
-			line(bone.position.x, bone.position.y, x,y);
+	}
+	
+	public void drawPoints(Player player){
+		drawPoints(player, player.objectIterator());
+	}
+	
+	public void drawPoints(Player player, Iterator<Object> it){
+		while(it.hasNext()){
+			Object point = it.next();
+			if(player.getObjectInfoFor(point).type == ObjectType.Point){
+				float x = point.position.x+(float)(Math.cos(Math.toRadians(point.angle))*pointRadius);
+				float y = point.position.y+(float)(Math.sin(Math.toRadians(point.angle))*pointRadius);
+				circle(point.position.x, point.position.y, pointRadius);
+				line(point.position.x, point.position.y, x,y);
+			}
 		}
 	}
 	

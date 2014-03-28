@@ -408,17 +408,27 @@ public class Player {
 	}
 	
 	public Iterator<Bone> boneIterator(){
-		this.boneIterator.reset();
+		this.boneIterator.index = 0;
+		return this.boneIterator;
+	}
+	
+	public Iterator<Bone> boneIterator(BoneRef start){
+		this.boneIterator.index = start.id;
 		return this.boneIterator;
 	}
 	
 	public Iterator<Object> objectIterator(){
-		this.objectIterator.reset();
+		this.objectIterator.index = 0;
 		return this.objectIterator;
 	}
 	
-	private class ObjectIterator implements Iterator<Object>{
-		private int index = 0;
+	public Iterator<Object> objectIterator(ObjectRef start){
+		this.objectIterator.index = start.id;
+		return this.objectIterator;
+	}
+	
+	class ObjectIterator implements Iterator<Object>{
+		int index = 0;
 		@Override
 		public boolean hasNext() {
 			return index < getCurrentKey().objectRefs.size();
@@ -434,14 +444,10 @@ public class Player {
 			throw new SpriterException("remove() is not supported by this iterator!");
 		}
 		
-		private void reset(){
-			index = 0;
-		}
-		
 	}
 	
-	private class BoneIterator implements Iterator<Bone>{
-		private int index = 0;
+	class BoneIterator implements Iterator<Bone>{
+		int index = 0;
 		@Override
 		public boolean hasNext() {
 			return index < getCurrentKey().boneRefs.size();
@@ -455,10 +461,6 @@ public class Player {
 		@Override
 		public void remove() {
 			throw new SpriterException("remove() is not supported by this iterator!");
-		}
-		
-		private void reset(){
-			index = 0;
 		}
 	}
 

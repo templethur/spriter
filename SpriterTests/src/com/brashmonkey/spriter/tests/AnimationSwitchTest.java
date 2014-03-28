@@ -29,7 +29,7 @@ public class AnimationSwitchTest {
 	
 	public static class AnimationSwitcher extends InputAdapter{
 		
-		Player player;
+		public Player player;
 		
 		public AnimationSwitcher(Player player){
 			this.player = player;

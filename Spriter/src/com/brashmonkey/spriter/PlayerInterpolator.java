@@ -7,15 +7,16 @@ public class PlayerInterpolator extends Player{
 	public float weight = .5f;
 	public float spriteThreshold = .5f;
 	
-	public PlayerInterpolator(Entity entity){
-		super(entity);
-	}
-	
 	public PlayerInterpolator(Player player1, Player player2){
-		this(player1.getEntity());
+		super(player1.getEntity());
+		this.setPlayers(player1, player2);
 	}
 	
 	public void update(){
+		if(player1 == null){
+			this.anim.setAnimations(entity.getAnimation(0), entity.getAnimation(0));
+			return;
+		}
 		this.anim.weight = weight;
 		this.anim.spriteThreshold = spriteThreshold;
 		this.anim.setAnimations(player1.animation, player2.animation);
@@ -45,7 +46,7 @@ public class PlayerInterpolator extends Player{
 	}
 	
 	public void setAnimation(Animation anim){
-		throw new SpriterException("This is not possible with a PlayerInterpolator instance!");
+		//throw new SpriterException("This is not possible with a PlayerInterpolator instance!");
 	}
 
 }
