@@ -5,6 +5,7 @@ public class PlayerTweener extends Player{
 	private TweenedAnimation anim;
 	private Player player1, player2;
 	public boolean updatePlayers = true;
+	public String baseBoneName = null;
 	
 	public PlayerTweener(Player player1, Player player2){
 		super(player1.getEntity());
@@ -26,6 +27,12 @@ public class PlayerTweener extends Player{
 		}
 		anim.setAnimations(player1.animation, player2.animation);
 		super.update();
+		if(baseBoneName != null){
+			int index = anim.onFirstMainLine()? player1.getBoneIndex(baseBoneName) : player2.getBoneIndex(baseBoneName);
+			if(index == -1) throw new SpriterException("A bone with name \""+baseBoneName+"\" does no exist!");
+			anim.base = anim.getCurrentKey().getBoneRef(index);
+			super.update();
+		}
 	}
 	
 	public void setPlayers(Player player1, Player player2){
