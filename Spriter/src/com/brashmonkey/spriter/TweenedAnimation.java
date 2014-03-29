@@ -5,7 +5,7 @@ import com.brashmonkey.spriter.Mainline.Key.ObjectRef;
 import com.brashmonkey.spriter.Timeline.Key.Bone;
 import com.brashmonkey.spriter.Timeline.Key.Object;
 
-public class InterpolatedAnimation extends Animation{
+public class TweenedAnimation extends Animation{
 	
 	public float weight = .5f, spriteThreshold = .5f;
 	public final Curve curve;
@@ -15,7 +15,7 @@ public class InterpolatedAnimation extends Animation{
 	public BoneRef base = null;
 	public boolean tweenSprites = false;
 
-	public InterpolatedAnimation(Entity entity) {
+	public TweenedAnimation(Entity entity) {
 		super(-1, "interpolatedAnimation", 0, true);
 		this.entity = entity;
 		this.curve = new Curve();
@@ -117,7 +117,7 @@ public class InterpolatedAnimation extends Animation{
 	}
 	
 	private void setUpTimelines(){
-		Animation maxAnim = entity.getMaxAnimationTimelines();
+		Animation maxAnim = this.entity.getMaxAnimationTimelines();
 		int max = maxAnim.timelines();
 		for(int i = 0; i < max; i++){
 			Timeline t = new Timeline(i, maxAnim.getTimeline(i).name, maxAnim.getTimeline(i).objectInfo);
@@ -127,7 +127,7 @@ public class InterpolatedAnimation extends Animation{
 	}
 	
 	public void setAnimations(Animation animation1, Animation animation2){
-		boolean areInterpolated = animation1 instanceof InterpolatedAnimation || animation2 instanceof InterpolatedAnimation;
+		boolean areInterpolated = animation1 instanceof TweenedAnimation || animation2 instanceof TweenedAnimation;
 		if(animation1 == anim1 && animation2 == anim2) return;
 		if((!this.entity.containsAnimation(animation1) || !this.entity.containsAnimation(animation2)) && !areInterpolated)
 			throw new SpriterException("Both animations have to be part of the same entity!");
