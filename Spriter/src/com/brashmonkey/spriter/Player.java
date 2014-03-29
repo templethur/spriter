@@ -88,11 +88,19 @@ public class Player {
 		return this.unmappedTweenedKeys.get(animation.getTimeline(name).id).object();
 	}
 	
+	public BoneRef getBoneRef(Bone b){
+		return this.getCurrentKey().getBoneRefTimeline(this.objToTimeline.get(b).id);
+	}
+	
 	public int getObjectIndex(String name){
 		for(ObjectRef ref: getCurrentKey().objectRefs)
 			if(animation.getTimeline(ref.timeline).name.equals(name))
 				return ref.id;
 		return -1;
+	}
+	
+	public ObjectRef getObjectRef(Object b){
+		return this.getCurrentKey().getObjectRefTimeline(this.objToTimeline.get(b).id);
 	}
 	
 	public String getNameFor(Bone bone){

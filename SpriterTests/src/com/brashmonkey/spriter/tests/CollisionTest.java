@@ -38,10 +38,8 @@ public class CollisionTest {
 						while(iterator.hasNext()){
 							Object object = (Object)iterator.next();
 							if(player.collidesFor(object, mouse.x, mouse.y)){
-								//if(object.ref.hasFile())
 								b = object;
 								offset.set(b.position.x - mouse.x, b.position.y - mouse.y);
-								//System.out.println(offset);
 								return false;
 							}
 						}

@@ -91,7 +91,7 @@ public class Mainline {
         	return null;
         }
         
-        public BoneRef getObjectRefTimeline(int timeline){
+        public ObjectRef getObjectRefTimeline(int timeline){
     		for(ObjectRef objRef: this.objectRefs)
     			if(objRef.timeline == timeline) return objRef;
         	return null;

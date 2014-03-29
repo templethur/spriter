@@ -33,24 +33,27 @@ public abstract class Drawer<R> {
 			ObjectInfo info = player.animation.getTimeline(ref.timeline).objectInfo;
 			if(info == null) continue;
 			Dimension size = info.size;
-			
-			float halfHeight = size.height/2;
-			float xx = bone.position.x+(float)Math.cos(Math.toRadians(bone.angle))*info.size.height;
-			float yy = bone.position.y+(float)Math.sin(Math.toRadians(bone.angle))*info.size.height;
-			float x2 = (float)Math.cos(Math.toRadians(bone.angle+90))*halfHeight*bone.scale.y;
-			float y2 = (float)Math.sin(Math.toRadians(bone.angle+90))*halfHeight*bone.scale.y;
-			
-			float targetX = bone.position.x+(float)Math.cos(Math.toRadians(bone.angle))*size.width*bone.scale.x,
-					targetY = bone.position.y+(float)Math.sin(Math.toRadians(bone.angle))*size.width*bone.scale.x;
-			float upperPointX = xx+x2, upperPointY = yy+y2;
-			this.line(bone.position.x, bone.position.y, upperPointX, upperPointY);
-			this.line(upperPointX, upperPointY, targetX, targetY);
-
-			float lowerPointX = xx-x2, lowerPointY = yy-y2;
-			this.line(bone.position.x, bone.position.y, lowerPointX, lowerPointY);
-			this.line(lowerPointX, lowerPointY, targetX, targetY);
-			this.line(bone.position.x, bone.position.y, targetX, targetY);
+			drawBone(bone, size);
 		}
+	}
+	
+	public void drawBone(Bone bone, Dimension size){
+		float halfHeight = size.height/2;
+		float xx = bone.position.x+(float)Math.cos(Math.toRadians(bone.angle))*size.height;
+		float yy = bone.position.y+(float)Math.sin(Math.toRadians(bone.angle))*size.height;
+		float x2 = (float)Math.cos(Math.toRadians(bone.angle+90))*halfHeight*bone.scale.y;
+		float y2 = (float)Math.sin(Math.toRadians(bone.angle+90))*halfHeight*bone.scale.y;
+		
+		float targetX = bone.position.x+(float)Math.cos(Math.toRadians(bone.angle))*size.width*bone.scale.x,
+				targetY = bone.position.y+(float)Math.sin(Math.toRadians(bone.angle))*size.width*bone.scale.x;
+		float upperPointX = xx+x2, upperPointY = yy+y2;
+		this.line(bone.position.x, bone.position.y, upperPointX, upperPointY);
+		this.line(upperPointX, upperPointY, targetX, targetY);
+
+		float lowerPointX = xx-x2, lowerPointY = yy-y2;
+		this.line(bone.position.x, bone.position.y, lowerPointX, lowerPointY);
+		this.line(lowerPointX, lowerPointY, targetX, targetY);
+		this.line(bone.position.x, bone.position.y, targetX, targetY);
 	}
 	
 	public void drawBoxes(Player player){
