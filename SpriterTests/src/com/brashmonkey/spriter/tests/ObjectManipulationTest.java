@@ -11,7 +11,7 @@ import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.Timeline.Key.Bone;
 import com.brashmonkey.spriter.Timeline.Key.Object;
 
-public class ObjectManipulation {
+public class ObjectManipulationTest {
 	
 	public static void main(String[] args){
 		create("monster/basic_002.scml", "Object manipulation");
