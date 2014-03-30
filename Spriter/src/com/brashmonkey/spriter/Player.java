@@ -19,6 +19,7 @@ public class Player {
 	int time;
 	public int speed;
 	public List<Timeline.Key> tweenedKeys, unmappedTweenedKeys;
+	private List<PlayerListener> listeners;
 	Timeline.Key.Bone root = new Timeline.Key.Bone(new Point(0,0));
 	private final Point position = new Point(0,0), pivot = new Point(0,0);
 	private final HashMap<Object, Timeline.Key> objToTimeline = new HashMap<Object, Timeline.Key>();
@@ -29,7 +30,7 @@ public class Player {
 	public final BoundingBox prevBBox;
 	private BoneIterator boneIterator;
 	private ObjectIterator objectIterator;
-	private Mainline.Key currentKey;
+	private Mainline.Key currentKey, prevKey;
 	
 	public Player(Entity entity){
 		this.boneIterator = new BoneIterator();
@@ -39,26 +40,44 @@ public class Player {
 		this.prevBBox = new BoundingBox();
 		this.tweenedKeys = new ArrayList<Timeline.Key>();
 		this.unmappedTweenedKeys = new ArrayList<Timeline.Key>();
+		this.listeners = new ArrayList<PlayerListener>();
 		this.setEntity(entity);
 	}
 	
 	public void update(){
+		for(PlayerListener listener: listeners)
+			listener.preProcess(this);
 		if(dirty) this.updateRoot();
 		this.animation.update(time, root);
 		this.currentKey = this.animation.currentKey;
+		if(prevKey != currentKey){
+			for(PlayerListener listener: listeners)
+				listener.mainlineKeyChanged(prevKey, currentKey);
+			prevKey = currentKey;
+		}
 		for(Timeline.Key key: animation.tweenedKeys){
 			this.tweenedKeys.get(key.id).active = key.active;
 			this.unmappedTweenedKeys.get(key.id).active = animation.mappedTweenedKeys[key.id].active;
 			((Object)this.tweenedKeys.get(key.id).object()).set((Object)key.object());
 			((Object)this.unmappedTweenedKeys.get(key.id).object()).set((Object)animation.mappedTweenedKeys[key.id].object());
 		}
+		for(PlayerListener listener: listeners)
+			listener.postProcess(this);
 		this.increaseTime();
 	}
 	
 	private void increaseTime(){
 		time += speed;
-		if(time > animation.length)	time = time-animation.length;
-		if(time < 0) time += animation.length;
+		if(time > animation.length){
+			time = time-animation.length;
+			for(PlayerListener listener: listeners)
+				listener.animationFinished(animation);
+		}
+		if(time < 0){
+			for(PlayerListener listener: listeners)
+				listener.animationFinished(animation);
+			time += animation.length;
+		}
 	}
 	
 	private void updateRoot(){
@@ -249,6 +268,7 @@ public class Player {
 	}
 	
 	public void setAnimation(Animation animation){
+		Animation prevAnim = this.animation;
 		if(animation == this.animation) return;
 		if(animation == null) throw new SpriterException("animation can not be null!");
 		if(animation != this.animation) time = 0;
@@ -266,6 +286,8 @@ public class Player {
 		this.time = 0;
 		this.update();
 		this.time = tempTime;
+		for(PlayerListener listener: listeners)
+			listener.animationChanged(prevAnim, animation);
 	}
 	
 	public void setAnimation(String name){
@@ -472,4 +494,11 @@ public class Player {
 		}
 	}
 
+	public static interface PlayerListener{
+		public void animationFinished(Animation animation);
+		public void animationChanged(Animation oldAnim, Animation newAnim);
+		public void preProcess(Player player);
+		public void postProcess(Player player);
+		public void mainlineKeyChanged(Mainline.Key prevKey, Mainline.Key newKey);
+	}
 }

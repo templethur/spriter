@@ -11,12 +11,10 @@ import com.brashmonkey.spriter.Timeline.Key.Object;
 public abstract class Drawer<R> {
 	
 	public float pointRadius = 5f;
-	//private final BoundingBox box;
 	protected Loader<R> loader;
 	
 	public Drawer(Loader<R> loader){
 		this.loader = loader;
-		//this.box = new BoundingBox();
 	}
 	
 	public void setLoader(Loader<R> loader){

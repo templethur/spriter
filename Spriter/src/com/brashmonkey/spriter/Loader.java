@@ -5,12 +5,17 @@ import java.util.HashMap;
 public abstract class Loader<R> {
 	
 	protected final HashMap<FileReference, R> resources;
-	protected final Data data;
+	protected Data data;
 	protected String root = "";
+	private boolean disposed;
 	
-	public Loader(Data data){
+	public Loader(Data data, java.io.File file){
 		this.data = data;
 		this.resources = new HashMap<FileReference, R>(50);
+	}
+	
+	public Loader(Data data){
+		this(data, null);
 	}
 	
 	protected abstract R loadResource(FileReference ref);
@@ -28,6 +33,7 @@ public abstract class Loader<R> {
 				this.resources.put(ref, this.loadResource(ref));
 			}
 		}
+		this.disposed = false;
 		this.finishLoading();
 	}
 	
@@ -37,6 +43,17 @@ public abstract class Loader<R> {
 	
 	public R get(FileReference ref){
 		return this.resources.get(ref);
+	}
+	
+	public void dispose(){
+		resources.clear();
+		data = null;
+		root = "";
+		disposed = true;
+	}
+	
+	public boolean isDisposed(){
+		return disposed;
 	}
 
 }

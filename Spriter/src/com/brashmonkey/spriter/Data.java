@@ -38,9 +38,15 @@ public class Data {
     }
     
     public Entity getEntity(String name){
+    	int index = getEntityIndex(name);
+    	if(index >= 0) return getEntity(index);
+    	else return null;
+    }
+    
+    public int getEntityIndex(String name){
     	for(Entity entity: this.entities)
-    		if(entity.name.equals(name)) return entity;
-    	return null;
+    		if(entity.name.equals(name)) return entity.id;
+    	return -1;
     }
     
     public File getFile(Folder folder, int file){

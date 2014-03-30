@@ -39,8 +39,8 @@ public class SCMLReader {
 		this.data = this.load(filename);
 	}
 	
-	public SCMLReader(InputStream strem){
-		this.data = this.load(strem);
+	public SCMLReader(InputStream stream){
+		this.data = this.load(stream);
 	}
 	
 	/**

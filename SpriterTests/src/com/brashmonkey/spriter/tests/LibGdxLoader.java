@@ -87,6 +87,7 @@ public class LibGdxLoader extends Loader<Sprite> implements Disposable{
 	public void dispose() {
 		if(this.pack && this.packer != null) this.packer.dispose();
 		else this.disposeNonPackedTextures();
+		super.dispose();
 	}
 	
 	protected void finishLoading() {
