@@ -69,14 +69,16 @@ public class TestBase implements ApplicationListener{
 		font = new BitmapFont();
 		camera = new OrthographicCamera();
 		
-		scmlHandle = Gdx.files.internal(path);
-		reader = new SCMLReader(scmlHandle.read());
-		data = reader.getData();
-		
-		loader = new LibGdxLoader(data);
-		loader.load(scmlHandle.file());
-		
-		drawer = new LibGdxDrawer(loader, batch, renderer);
+		if(path != null){
+			scmlHandle = Gdx.files.internal(path);
+			reader = new SCMLReader(scmlHandle.read());
+			data = reader.getData();
+			
+			loader = new LibGdxLoader(data);
+			loader.load(scmlHandle.file());
+			
+			drawer = new LibGdxDrawer(loader, batch, renderer);
+		}
 		
 		Gdx.input.setInputProcessor(input);
 		
@@ -103,19 +105,20 @@ public class TestBase implements ApplicationListener{
 		
 		for(Player player: players)
 			player.update();
-			for(Player player: players)
-				drawer.draw(player);
-			//font.draw(batch, information, 0, 0, 50f, HAlignment.CENTER);
-			font.drawMultiLine(batch, information, infoPosition.x, infoPosition.y, 0, HAlignment.CENTER);
+		for(Player player: players)
+			drawer.draw(player);
 			
-			if(drawBones)
-				for(Player player: players)
-					drawer.drawBones(player);
-			if(drawBoxes)
-				for(Player player: players)
-					drawer.drawBoxes(player);
+		if(drawBones)
+			for(Player player: players)
+				drawer.drawBones(player);
+		if(drawBoxes)
+			for(Player player: players)
+				drawer.drawBoxes(player);
 		
 		if(test != null) test.render();
+		
+		//font.draw(batch, information, 0, 0, 50f, HAlignment.CENTER);
+		if(information != null) font.drawMultiLine(batch, information, infoPosition.x, infoPosition.y, 0, HAlignment.CENTER);
 		batch.end();
 		renderer.end();
 	}
@@ -134,7 +137,7 @@ public class TestBase implements ApplicationListener{
 	public void dispose() {
 		renderer.dispose();
 		batch.dispose();
-		loader.dispose();
+		if(loader != null) loader.dispose();
 		font.dispose();
 		if(test != null) test.dispose();
 	}

@@ -21,6 +21,8 @@ import com.brashmonkey.spriter.Loader;
 
 public class LibGdxLoader extends Loader<Sprite> implements Disposable{
 	
+	public static int standardAtlasWidth = 2048, standardAtlasHeight = 2048;
+	
 	private PixmapPacker packer;
 	private HashMap<FileReference, Pixmap> pixmaps;	
 	private HashMap<Pixmap, Boolean> pixmapsToDispose;
@@ -32,7 +34,7 @@ public class LibGdxLoader extends Loader<Sprite> implements Disposable{
 	}
 	
 	public LibGdxLoader(Data data, boolean pack){
-		this(data, 2048, 2048);
+		this(data, standardAtlasWidth, standardAtlasHeight);
 		this.pack = pack;
 	}
 

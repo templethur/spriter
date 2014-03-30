@@ -142,6 +142,10 @@ public class Spriter {
 		return loadedData.get(fileName);
 	}
 	
+	public static int players(){
+		return players.size();
+	}
+	
 	public static void dispose(){
 		drawer = null;
 		drawerDependencies = new Object[1];
