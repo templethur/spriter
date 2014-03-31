@@ -20,7 +20,7 @@ public class Animation {
     public final String name;
     public final boolean looping;
 	Key currentKey;
-	Timeline.Key[] tweenedKeys, mappedTweenedKeys;
+	Timeline.Key[] tweenedKeys, unmappedTweenedKeys;
 	private boolean prepared;
     
     public Animation(Mainline mainline, int id, String name, int length, boolean looping){
@@ -89,7 +89,7 @@ public class Animation {
     	if(root == null) throw new SpriterException("The root can not be null! Set a root bone to apply this animation relative to the root bone.");
     	this.currentKey = mainline.getKeyBeforeTime(time);
     	
-    	for(Timeline.Key timelineKey: this.mappedTweenedKeys)
+    	for(Timeline.Key timelineKey: this.unmappedTweenedKeys)
 			timelineKey.active = false;
 		for(BoneRef ref: currentKey.boneRefs)
 			this.update(ref, root, time);
@@ -117,51 +117,30 @@ public class Animation {
 		Bone bone1 = key.object();
 		Bone bone2 = nextKey.object();
 		Bone tweenTarget = this.tweenedKeys[ref.timeline].object();
-		if(isObject) this.tweenObject((Object)bone1, (Object)bone2, (Object)tweenTarget, t, key.curve);
-		else this.tweenBone(bone1, bone2, tweenTarget, t, key.curve);
-		this.mappedTweenedKeys[ref.timeline].active = true;
+		if(isObject) this.tweenObject((Object)bone1, (Object)bone2, (Object)tweenTarget, t, key.curve, key.spin);
+		else this.tweenBone(bone1, bone2, tweenTarget, t, key.curve, key.spin);
+		this.unmappedTweenedKeys[ref.timeline].active = true;
 		this.unmapTimelineObject(ref.timeline, isObject,(ref.parent != null) ?
-				this.mappedTweenedKeys[ref.parent.timeline].object(): root);
+				this.unmappedTweenedKeys[ref.parent.timeline].object(): root);
     }
     
     void unmapTimelineObject(int timeline, boolean isObject, Bone root){
 		Bone tweenTarget = this.tweenedKeys[timeline].object();
-		Bone mapTarget = this.mappedTweenedKeys[timeline].object();
+		Bone mapTarget = this.unmappedTweenedKeys[timeline].object();
 		if(isObject) ((Object)mapTarget).set((Object)tweenTarget);
 		else mapTarget.set(tweenTarget);
 		mapTarget.unmap(root);
     }
-    
-    /*void setBone(int index, Bone bone, Bone root){
-    	BoneRef base = currentKey.getBoneRef(index);
-    	this.mappedTweenedKeys[base.timeline].setObject(bone);
-    	for(int i = base.id+1; i < currentKey.boneRefs.size(); i++){
-    		BoneRef ref = currentKey.getBoneRef(i);
-    		if(ref.parent != base) continue;
-    		this.unmapTimelineObject(ref.timeline, ref instanceof ObjectRef,(ref.parent != null) ?
-    				this.mappedTweenedKeys[ref.parent.timeline].object(): root);
-    		setBone(ref.id, this.mappedTweenedKeys[ref.timeline].object(), root);
-    	}
-    	for(ObjectRef ref: currentKey.objectRefs){
-    		if(ref.parent != base) continue;
-    		this.unmapTimelineObject(ref.timeline, ref instanceof ObjectRef, (ref.parent != null) ?
-    				this.mappedTweenedKeys[ref.parent.timeline].object(): root);
-    	}
-    }*/
-    
-    /*void setObject(int index, Object obj){
-    	this.mappedTweenedKeys[currentKey.getObjectRef(index).timeline].setObject(obj);
-    }*/
 	
-	protected void tweenBone(Bone bone1, Bone bone2, Bone target, float t, Curve curve){
-		target.angle = curve.tweenAngle(bone1.angle, bone2.angle, t);
+	protected void tweenBone(Bone bone1, Bone bone2, Bone target, float t, Curve curve, int spin){
+		target.angle = curve.tweenAngle(bone1.angle, bone2.angle, t, spin);
 		curve.tweenPoint(bone1.position, bone2.position, t, target.position);
 		curve.tweenPoint(bone1.scale, bone2.scale, t, target.scale);
 		curve.tweenPoint(bone1.pivot, bone2.pivot, t, target.pivot);
 	}
 	
-	protected void tweenObject(Object object1, Object object2, Object target, float t, Curve curve){
-		this.tweenBone(object1, object2, target, t, curve);
+	protected void tweenObject(Object object1, Object object2, Object target, float t, Curve curve, int spin){
+		this.tweenBone(object1, object2, target, t, curve, spin);
 		target.alpha = curve.tweenAngle(object1.alpha, object2.alpha, t);
 		target.ref.set(object1.ref);
 	}
@@ -199,13 +178,13 @@ public class Animation {
 	public void prepare(){
 		if(this.prepared) return;
 		this.tweenedKeys = new Timeline.Key[timelines.size()];
-		this.mappedTweenedKeys = new Timeline.Key[timelines.size()];
+		this.unmappedTweenedKeys = new Timeline.Key[timelines.size()];
 		
 		for(int i = 0; i < this.tweenedKeys.length; i++){
 			this.tweenedKeys[i] = new Timeline.Key(i);
-			this.mappedTweenedKeys[i] = new Timeline.Key(i);
+			this.unmappedTweenedKeys[i] = new Timeline.Key(i);
 			this.tweenedKeys[i].setObject(new Timeline.Key.Object(new Point(0,0)));
-			this.mappedTweenedKeys[i].setObject(new Timeline.Key.Object(new Point(0,0)));
+			this.unmappedTweenedKeys[i].setObject(new Timeline.Key.Object(new Point(0,0)));
 		}
 		if(mainline.keys.size() > 0) currentKey = mainline.getKey(0);
 		this.prepared = true;

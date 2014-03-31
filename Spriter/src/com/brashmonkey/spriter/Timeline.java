@@ -46,7 +46,7 @@ public class Timeline {
     	public int time;
     	public final Curve curve;
     	public boolean active;
-    	private Bone object;
+    	private Object object;
     	
     	public Key(int id, int time, int spin, Curve curve){
     		this.id = id;
@@ -67,12 +67,12 @@ public class Timeline {
     		this(id, 0);
     	}
     	
-    	public void setObject(Bone object){
+    	public void setObject(Object object){
     		if(object == null) throw new IllegalArgumentException("object can not be null!");
     		this.object = object;
     	}
     	
-    	public Bone object(){
+    	public Object object(){
     		return this.object;
     	}
     	

@@ -9,8 +9,8 @@ public class CCDResolver extends IKResolver {
 	public void resolve(float x, float y, int chainLength, BoneRef effectorRef, Player player) {
 		//player.unmapObjects(null);
 		Timeline timeline = player.animation.getTimeline(effectorRef.timeline);
-		Timeline.Key key = player.tweenedKeys.get(effectorRef.timeline);
-		Timeline.Key unmappedKey = player.unmappedTweenedKeys.get(effectorRef.timeline);
+		Timeline.Key key = player.tweenedKeys[effectorRef.timeline];
+		Timeline.Key unmappedKey = player.unmappedTweenedKeys[effectorRef.timeline];
 		Bone effector = key.object();
 		Bone unmappedffector = unmappedKey.object();
 		float width = (timeline.objectInfo != null) ? timeline.objectInfo.size.width: 200;
@@ -25,8 +25,8 @@ public class CCDResolver extends IKResolver {
 		BoneRef parentRef = effectorRef.parent;
 		Bone parent = null, unmappedParent = null;
 		if(parentRef != null){
-			parent = player.tweenedKeys.get(parentRef.timeline).object();
-			unmappedParent = player.unmappedTweenedKeys.get(parentRef.timeline).object();
+			parent = player.tweenedKeys[parentRef.timeline].object();
+			unmappedParent = player.unmappedTweenedKeys[parentRef.timeline].object();
 			effector.angle -= unmappedParent.angle;
 		}
 		player.unmapObjects(null);
@@ -37,8 +37,8 @@ public class CCDResolver extends IKResolver {
 					Calculator.angleBetween(unmappedParent.position.x, unmappedParent.position.y, xx, yy));
 			parentRef = parentRef.parent;
 			if(parentRef != null && i < chainLength-1){
-				parent = player.tweenedKeys.get(parentRef.timeline).object();
-				unmappedParent = player.unmappedTweenedKeys.get(parentRef.timeline).object();
+				parent = player.tweenedKeys[parentRef.timeline].object();
+				unmappedParent = player.unmappedTweenedKeys[parentRef.timeline].object();
 				parent.angle -= unmappedParent.angle;
 			}
 			else parent = null;

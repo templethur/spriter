@@ -40,15 +40,17 @@ public class Point {
 	}
 	
 	public void rotate(float degrees){
-		double radians = Math.toRadians(degrees);
-		float cos = (float)Math.cos(radians);
-		float sin = (float)Math.sin(radians);
-		
-		float xx = x*cos-y*sin;
-		float yy = x*sin+y*cos;
-		
-		this.x = xx;
-		this.y = yy;
+		if(x != 0 || y != 0){
+			//double radians = Math.toRadians(degrees);
+			float cos = Calculator.cosDeg(degrees);//(float)Math.cos(radians);
+			float sin = Calculator.sinDeg(degrees);//(float)Math.sin(radians);
+			
+			float xx = x*cos-y*sin;
+			float yy = x*sin+y*cos;
+			
+			this.x = xx;
+			this.y = yy;
+		}
 	}
 	
 	public Point copy(){

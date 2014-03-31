@@ -105,6 +105,7 @@ public class Curve {
 		t = tweenSub(0f,1f,t);
 		switch(type){
 		case Instant: return a;
+		case Linear: return linearAngle(a, b, t);
 		case Quadratic: return quadraticAngle(a, linearAngle(a, b, constraints.c1), b, t);
 		case Cubic: return cubicAngle(a, linearAngle(a, b, constraints.c1), linearAngle(a, b, constraints.c2), b, t);
 		case Quartic: return quarticAngle(a, linearAngle(a, b, constraints.c1), linearAngle(a, b, constraints.c2),	linearAngle(a, b, constraints.c3), b, t);

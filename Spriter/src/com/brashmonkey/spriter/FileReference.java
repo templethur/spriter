@@ -3,7 +3,6 @@ package com.brashmonkey.spriter;
 public class FileReference {
 	
 	public int folder, file;
-	private int hashCode;
 	
 	public FileReference(int folder, int file){
 		this.set(folder, file);
@@ -11,7 +10,7 @@ public class FileReference {
 	
 	@Override
 	public int hashCode(){
-		return this.hashCode;
+		return folder*10000+file;//We can have 10000 files per folder
 	}
 	
 	@Override
@@ -24,7 +23,6 @@ public class FileReference {
 	public void set(int folder, int file){
 		this.folder = folder;
 		this.file = file;
-		this.hashCode = (folder+","+file).hashCode();
 	}
 	
 	public void set(FileReference ref){

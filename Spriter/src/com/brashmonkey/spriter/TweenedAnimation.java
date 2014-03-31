@@ -28,7 +28,7 @@ public class TweenedAnimation extends Animation{
 	@Override
 	public void update(int time, Bone root){
 		super.currentKey = onFirstMainLine() ? anim1.currentKey: anim2.currentKey;
-    	for(Timeline.Key timelineKey: this.mappedTweenedKeys)
+    	for(Timeline.Key timelineKey: this.unmappedTweenedKeys)
 			timelineKey.active = false;
     	if(base != null){//TODO: Sprites not working properly because of different timeline naming
         	Animation currentAnim = onFirstMainLine() ? anim1: anim2;
@@ -38,12 +38,12 @@ public class TweenedAnimation extends Animation{
 	        	if(timeline == null) continue;
 	    		Timeline.Key key, mappedKey;
     			key = baseAnim.tweenedKeys[timeline.id];
-    			mappedKey = baseAnim.mappedTweenedKeys[timeline.id];
+    			mappedKey = baseAnim.unmappedTweenedKeys[timeline.id];
 	    		this.tweenedKeys[ref.timeline].active = key.active;
 	    		this.tweenedKeys[ref.timeline].object().set(key.object());
-	    		this.mappedTweenedKeys[ref.timeline].active = mappedKey.active;
+	    		this.unmappedTweenedKeys[ref.timeline].active = mappedKey.active;
 				this.unmapTimelineObject(ref.timeline, false,(ref.parent != null) ?
-						this.mappedTweenedKeys[ref.parent.timeline].object(): root);
+						this.unmappedTweenedKeys[ref.parent.timeline].object(): root);
 	    	}
 	    	/*for(ObjectRef ref: baseAnim.currentKey.objectRefs){
 	        	Timeline timeline = baseAnim.getTimeline(ref.timeline);//getSimilarTimeline(ref, tempTimelines);
@@ -98,18 +98,26 @@ public class TweenedAnimation extends Animation{
 		if(bone2 != null && tweenTarget != null && bone1 != null){
 			if(isObject) this.tweenObject((Object)bone1, (Object)bone2, (Object)tweenTarget, this.weight, this.curve);
 			else this.tweenBone(bone1, bone2, tweenTarget, this.weight, this.curve);
-			this.mappedTweenedKeys[targetTimeline.id].active = true;
+			this.unmappedTweenedKeys[targetTimeline.id].active = true;
 		}
 		//Transform the bone relative to the parent bone or the root
-		if(this.mappedTweenedKeys[ref.timeline].active){
+		if(this.unmappedTweenedKeys[ref.timeline].active){
 			this.unmapTimelineObject(targetTimeline.id, isObject,(ref.parent != null) ?
-					this.mappedTweenedKeys[ref.parent.timeline].object(): root);
+					this.unmappedTweenedKeys[ref.parent.timeline].object(): root);
 		}
     }
-	protected void tweenObject(Object object1, Object object2, Object target, float t, Curve curve){
+	
+	private void tweenBone(Bone bone1, Bone bone2, Bone target, float t, Curve curve){
+		target.angle = curve.tweenAngle(bone1.angle, bone2.angle, t);
+		curve.tweenPoint(bone1.position, bone2.position, t, target.position);
+		curve.tweenPoint(bone1.scale, bone2.scale, t, target.scale);
+		curve.tweenPoint(bone1.pivot, bone2.pivot, t, target.pivot);
+	}
+	
+	private void tweenObject(Object object1, Object object2, Object target, float t, Curve curve){
 		this.tweenBone(object1, object2, target, t, curve);
 		target.alpha = curve.tweenAngle(object1.alpha, object2.alpha, t);
-		target.ref.set(onFirstMainLine() ? object1.ref: object2.ref);
+		target.ref.set(object1.ref);
 	}
 	
 	public boolean onFirstMainLine(){
@@ -117,7 +125,7 @@ public class TweenedAnimation extends Animation{
 	}
 	
 	private void setUpTimelines(){
-		Animation maxAnim = this.entity.getMaxAnimationTimelines();
+		Animation maxAnim = this.entity.getAnimationWithMostTimelines();
 		int max = maxAnim.timelines();
 		for(int i = 0; i < max; i++){
 			Timeline t = new Timeline(i, maxAnim.getTimeline(i).name, maxAnim.getTimeline(i).objectInfo);

@@ -228,8 +228,8 @@ public class SCMLReader {
 					timeline.objectInfo.size.set(f.size);
 				}
 			}
-			Timeline.Key.Bone object;
-			if(obj.getName().equals("bone")) object = new Timeline.Key.Bone(position, scale, pivot, angle);
+			Timeline.Key.Object object;
+			if(obj.getName().equals("bone")) object = new Timeline.Key.Object(position, scale, pivot, angle, alpha, new FileReference(folder, file));
 			else object = new Timeline.Key.Object(position, scale, pivot, angle, alpha, new FileReference(folder, file));
 			key.setObject(object);
 			timeline.addKey(key);

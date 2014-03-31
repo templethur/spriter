@@ -113,10 +113,18 @@ public class Spriter {
 		if(!loadedData.containsKey(scmlFile)) throw new SpriterException("You have to load \""+scmlFile+"\" before using it!");
 		return newPlayer(scmlFile, loadedData.get(scmlFile).getEntityIndex(entityName));
 	}
-	
+
+	/**
+	 * This method should only be called if you want to update and render on the same thread.
+	 */
+	@SuppressWarnings("unchecked")
 	public static void updateAndDraw(){
-		update();
-		draw();
+		if(!initialized) throw new SpriterException("Call init() before updating!");
+		for(Player player: players){
+			player.update();
+			drawer.loader = entityToLoader.get(player.getEntity());
+			drawer.draw(player);
+		}
 	}
 	
 	public static void update(){

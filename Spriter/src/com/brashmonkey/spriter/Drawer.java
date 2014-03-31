@@ -24,15 +24,24 @@ public abstract class Drawer<R> {
 	
 	public void drawBones(Player player){
 		this.setColor(1, 0, 0, 1);
-		for(Mainline.Key.BoneRef ref: player.getCurrentKey().boneRefs){
-			Timeline.Key key = player.unmappedTweenedKeys.get(ref.timeline);
+		Iterator<Bone> it = player.boneIterator();
+		while(it.hasNext()){
+			Timeline.Key.Bone bone = it.next();
+			Timeline.Key key = player.getKeyFor(bone);
+			if(!key.active) continue;
+			ObjectInfo info = player.getObjectInfoFor(bone);
+			Dimension size = info.size;
+			drawBone(bone, size);
+		}
+		/*for(Mainline.Key.BoneRef ref: player.getCurrentKey().boneRefs){
+			Timeline.Key key = player.unmappedTweenedKeys[ref.timeline];
 			Timeline.Key.Bone bone = key.object();
 			if(player.animation.getTimeline(ref.timeline).objectInfo.type != ObjectType.Bone || !key.active) continue;
 			ObjectInfo info = player.animation.getTimeline(ref.timeline).objectInfo;
 			if(info == null) continue;
 			Dimension size = info.size;
 			drawBone(bone, size);
-		}
+		}*/
 	}
 	
 	public void drawBone(Bone bone, Dimension size){

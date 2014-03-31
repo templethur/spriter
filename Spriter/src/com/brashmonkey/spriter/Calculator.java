@@ -176,8 +176,52 @@ public class Calculator {
 	public static float cubed(float f) { return f * f * f; }
 	public static float cubicRoot(float f) { return (float) pow(f, 1f / 3f); }
 	public static float sqrt(float x){ return (float)Math.sqrt(x); }
-	public static float cos(float x){ return (float)Math.cos(x); }
-	public static float sin(float x){ return (float)Math.sin(x); }
 	public static float acos(float x){ return (float)Math.acos(x); }
+	
+	static private final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
+	static private final int SIN_MASK = ~(-1 << SIN_BITS);
+	static private final int SIN_COUNT = SIN_MASK + 1;
+
+	static private final float radFull = PI * 2;
+	static private final float degFull = 360;
+	static private final float radToIndex = SIN_COUNT / radFull;
+	static private final float degToIndex = SIN_COUNT / degFull;
+
+	/** multiply by this to convert from radians to degrees */
+	static public final float radiansToDegrees = 180f / PI;
+	static public final float radDeg = radiansToDegrees;
+	/** multiply by this to convert from degrees to radians */
+	static public final float degreesToRadians = PI / 180;
+	static public final float degRad = degreesToRadians;
+
+	static private class Sin {
+		static final float[] table = new float[SIN_COUNT];
+		static {
+			for (int i = 0; i < SIN_COUNT; i++)
+				table[i] = (float)Math.sin((i + 0.5f) / SIN_COUNT * radFull);
+			for (int i = 0; i < 360; i += 90)
+				table[(int)(i * degToIndex) & SIN_MASK] = (float)Math.sin(i * degreesToRadians);
+		}
+	}
+
+	/** Returns the sine in radians from a lookup table. */
+	static public final float sin (float radians) {
+		return Sin.table[(int)(radians * radToIndex) & SIN_MASK];
+	}
+
+	/** Returns the cosine in radians from a lookup table. */
+	static public final float cos (float radians) {
+		return Sin.table[(int)((radians + PI / 2) * radToIndex) & SIN_MASK];
+	}
+
+	/** Returns the sine in radians from a lookup table. */
+	static public final float sinDeg (float degrees) {
+		return Sin.table[(int)(degrees * degToIndex) & SIN_MASK];
+	}
+
+	/** Returns the cosine in radians from a lookup table. */
+	static public final float cosDeg (float degrees) {
+		return Sin.table[(int)((degrees + 90) * degToIndex) & SIN_MASK];
+	}
 
 }

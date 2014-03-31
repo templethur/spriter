@@ -4,6 +4,7 @@ import static com.brashmonkey.spriter.tests.TestBase.*;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.MathUtils;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.Spriter;
@@ -23,7 +24,14 @@ public class SpriterStressTest {
 			}
 			
 			public void render(){
-				Spriter.updateAndDraw();
+				if(Gdx.input.isKeyPressed(Keys.SPACE))
+					Spriter.updateAndDraw();
+				else
+					Spriter.update();
+				
+				//if(Gdx.input.isKeyPressed(Keys.SPACE))
+					//Spriter.draw();
+				
 				Gdx.graphics.setTitle("Fps: "+Gdx.graphics.getFramesPerSecond() + " @ " + Spriter.players()+" players");
 				if(Gdx.graphics.getFramesPerSecond() >= 60) addPlayer();
 			}
@@ -34,6 +42,7 @@ public class SpriterStressTest {
 			
 			private void addPlayer(){
 				Player p =  Spriter.newPlayer(files[MathUtils.random(files.length-1)], 0);
+				p.speed = 1+MathUtils.random(60);
 				p.setPosition(-Gdx.graphics.getWidth()/2f + MathUtils.random((float)Gdx.graphics.getWidth()),
 						-Gdx.graphics.getHeight()/2f + MathUtils.random((float)Gdx.graphics.getHeight()));
 				p.setAngle(MathUtils.random(360f));

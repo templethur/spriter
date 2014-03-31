@@ -47,7 +47,7 @@ public class Entity {
 		return this.animations.contains(anim);
 	}
 	
-	public Animation getMaxAnimationTimelines(){
+	public Animation getAnimationWithMostTimelines(){
 		Animation maxAnim = getAnimation(0);
 		for(Animation anim: this.animations){
 			if(maxAnim.timelines() < anim.timelines()) maxAnim = anim;

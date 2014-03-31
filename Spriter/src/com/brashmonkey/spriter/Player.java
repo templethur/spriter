@@ -18,7 +18,8 @@ public class Player {
 	Animation animation;
 	int time;
 	public int speed;
-	public List<Timeline.Key> tweenedKeys, unmappedTweenedKeys;
+	Timeline.Key[] tweenedKeys, unmappedTweenedKeys;
+	private Timeline.Key[] tempTweenedKeys, tempUnmappedTweenedKeys;
 	private List<PlayerListener> listeners;
 	Timeline.Key.Bone root = new Timeline.Key.Bone(new Point(0,0));
 	private final Point position = new Point(0,0), pivot = new Point(0,0);
@@ -31,6 +32,7 @@ public class Player {
 	private BoneIterator boneIterator;
 	private ObjectIterator objectIterator;
 	private Mainline.Key currentKey, prevKey;
+	public boolean copyObjects = false;
 	
 	public Player(Entity entity){
 		this.boneIterator = new BoneIterator();
@@ -38,8 +40,6 @@ public class Player {
 		this.speed = 15;
 		this.rect = new Rectangle(0,0,0,0);
 		this.prevBBox = new BoundingBox();
-		this.tweenedKeys = new ArrayList<Timeline.Key>();
-		this.unmappedTweenedKeys = new ArrayList<Timeline.Key>();
 		this.listeners = new ArrayList<PlayerListener>();
 		this.setEntity(entity);
 	}
@@ -55,15 +55,27 @@ public class Player {
 				listener.mainlineKeyChanged(prevKey, currentKey);
 			prevKey = currentKey;
 		}
-		for(Timeline.Key key: animation.tweenedKeys){
-			this.tweenedKeys.get(key.id).active = key.active;
-			this.unmappedTweenedKeys.get(key.id).active = animation.mappedTweenedKeys[key.id].active;
-			((Object)this.tweenedKeys.get(key.id).object()).set((Object)key.object());
-			((Object)this.unmappedTweenedKeys.get(key.id).object()).set((Object)animation.mappedTweenedKeys[key.id].object());
+		if(copyObjects){
+			tweenedKeys = tempTweenedKeys;
+			unmappedTweenedKeys = tempUnmappedTweenedKeys;
+			this.copyObjects();
+		}
+		else{
+			tweenedKeys = animation.tweenedKeys;
+			unmappedTweenedKeys = animation.unmappedTweenedKeys;
 		}
 		for(PlayerListener listener: listeners)
 			listener.postProcess(this);
 		this.increaseTime();
+	}
+	
+	private void copyObjects(){
+		for(int i = 0; i < animation.tweenedKeys.length; i++){
+			this.tweenedKeys[i].active = animation.tweenedKeys[i].active;
+			this.unmappedTweenedKeys[i].active = animation.unmappedTweenedKeys[i].active;
+			this.tweenedKeys[i].object().set(animation.tweenedKeys[i].object());
+			this.unmappedTweenedKeys[i].object().set(animation.unmappedTweenedKeys[i].object());
+		}
 	}
 	
 	private void increaseTime(){
@@ -89,11 +101,11 @@ public class Player {
 	}
 	
 	public Bone getBone(int index){
-		return this.unmappedTweenedKeys.get(getCurrentKey().getBoneRef(index).timeline).object();
+		return this.unmappedTweenedKeys[getCurrentKey().getBoneRef(index).timeline].object();
 	}
 	
 	public Object getObject(int index){
-		return (Object) this.unmappedTweenedKeys.get(getCurrentKey().getObjectRef(index).timeline).object();
+		return (Object) this.unmappedTweenedKeys[getCurrentKey().getObjectRef(index).timeline].object();
 	}
 	
 	public int getBoneIndex(String name){
@@ -104,7 +116,7 @@ public class Player {
 	}
 	
 	public Bone getBone(String name){
-		return this.unmappedTweenedKeys.get(animation.getTimeline(name).id).object();
+		return this.unmappedTweenedKeys[animation.getTimeline(name).id].object();
 	}
 	
 	public BoneRef getBoneRef(Bone b){
@@ -128,6 +140,10 @@ public class Player {
 	
 	public ObjectInfo getObjectInfoFor(Bone bone){
 		return this.animation.getTimeline(objToTimeline.get(bone).id).objectInfo;
+	}
+	
+	public Timeline.Key getKeyFor(Bone bone){
+		return objToTimeline.get(bone);
 	}
 
 	public BoundingBox getBox(Bone bone){
@@ -236,7 +252,7 @@ public class Player {
 	
 	
 	public Object getObject(String name){
-		return (Object)this.unmappedTweenedKeys.get(animation.getTimeline(name).id).object();
+		return (Object)this.unmappedTweenedKeys[animation.getTimeline(name).id].object();
 	}
 	
 	public void unmapObjects(BoneRef base){
@@ -244,22 +260,36 @@ public class Player {
     	for(int i = start+1; i < getCurrentKey().boneRefs.size(); i++){
     		BoneRef ref = getCurrentKey().getBoneRef(i);
     		if(ref.parent != base && base != null) continue;
-			Bone parent = ref.parent == null ? this.root : this.unmappedTweenedKeys.get(ref.parent.timeline).object();
-			unmappedTweenedKeys.get(ref.timeline).object().set(tweenedKeys.get(ref.timeline).object());
-			unmappedTweenedKeys.get(ref.timeline).object().unmap(parent);
+			Bone parent = ref.parent == null ? this.root : this.unmappedTweenedKeys[ref.parent.timeline].object();
+			unmappedTweenedKeys[ref.timeline].object().set(tweenedKeys[ref.timeline].object());
+			unmappedTweenedKeys[ref.timeline].object().unmap(parent);
 			unmapObjects(ref);
 		}
 		for(ObjectRef ref: getCurrentKey().objectRefs){
     		if(ref.parent != base && base != null) continue;
-			Bone parent = ref.parent == null ? this.root : this.unmappedTweenedKeys.get(ref.parent.timeline).object();
-			unmappedTweenedKeys.get(ref.timeline).object().set(tweenedKeys.get(ref.timeline).object());
-			unmappedTweenedKeys.get(ref.timeline).object().unmap(parent);
+			Bone parent = ref.parent == null ? this.root : this.unmappedTweenedKeys[ref.parent.timeline].object();
+			unmappedTweenedKeys[ref.timeline].object().set(tweenedKeys[ref.timeline].object());
+			unmappedTweenedKeys[ref.timeline].object().unmap(parent);
 		}
 	}
 	
 	public void setEntity(Entity entity){
 		if(entity == null) throw new SpriterException("entity can not be null!");
 		this.entity = entity;
+		int maxAnims = entity.getAnimationWithMostTimelines().timelines();
+		tweenedKeys = new Timeline.Key[maxAnims];
+		unmappedTweenedKeys = new Timeline.Key[maxAnims];
+		for(int i = 0; i < maxAnims; i++){
+			Timeline.Key key = new Timeline.Key(i);
+			Timeline.Key keyU = new Timeline.Key(i);
+			key.setObject(new Timeline.Key.Object(new Point(0,0)));
+			keyU.setObject(new Timeline.Key.Object(new Point(0,0)));
+			tweenedKeys[i] = key;
+			unmappedTweenedKeys[i] = keyU;
+			this.objToTimeline.put(keyU.object(), keyU);
+		}
+		this.tempTweenedKeys = tweenedKeys;
+		this.tempUnmappedTweenedKeys = unmappedTweenedKeys;
 		this.setAnimation(entity.getAnimation(0));
 	}
 	
@@ -273,15 +303,6 @@ public class Player {
 		if(animation == null) throw new SpriterException("animation can not be null!");
 		if(animation != this.animation) time = 0;
 		this.animation = animation;
-		for(int i = this.tweenedKeys.size(); i < animation.tweenedKeys.length; i++){
-			Timeline.Key key = new Timeline.Key(i);
-			Timeline.Key keyU = new Timeline.Key(i);
-			key.setObject(new Timeline.Key.Object(new Point(0,0)));
-			keyU.setObject(new Timeline.Key.Object(new Point(0,0)));
-			this.tweenedKeys.add(key);
-			this.unmappedTweenedKeys.add(keyU);
-			this.objToTimeline.put((Object) keyU.object(), keyU);
-		}
 		int tempTime = this.time;
 		this.time = 0;
 		this.update();
@@ -295,7 +316,7 @@ public class Player {
 	}
 	
 	public Rectangle getBoundingRectangle(BoneRef root){
-		Bone boneRoot = root == null ? this.root : this.unmappedTweenedKeys.get(root.timeline).object();
+		Bone boneRoot = root == null ? this.root : this.unmappedTweenedKeys[root.timeline].object();
 		this.rect.set(boneRoot.position.x, boneRoot.position.y, boneRoot.position.x, boneRoot.position.y);
 		this.calcBoundingRectangle(root);
 		this.rect.calculateSize();
@@ -305,14 +326,14 @@ public class Player {
 	private void calcBoundingRectangle(BoneRef root){
 		for(BoneRef ref: getCurrentKey().boneRefs){
 			if(ref.parent != root && root != null) continue;
-			Bone bone = this.unmappedTweenedKeys.get(ref.timeline).object();
+			Bone bone = this.unmappedTweenedKeys[ref.timeline].object();
 			this.prevBBox.calcFor(bone, animation.getTimeline(ref.timeline).objectInfo);
 			Rectangle.setBiggerRectangle(rect, this.prevBBox.getBoundingRect(), rect);
 			this.calcBoundingRectangle(ref);
 		}
 		for(ObjectRef ref: getCurrentKey().objectRefs){
 			if(ref.parent != root) continue;
-			Bone bone = this.unmappedTweenedKeys.get(ref.timeline).object();
+			Bone bone = this.unmappedTweenedKeys[ref.timeline].object();
 			this.prevBBox.calcFor(bone, animation.getTimeline(ref.timeline).objectInfo);
 			Rectangle.setBiggerRectangle(rect, this.prevBBox.getBoundingRect(), rect);
 		}
@@ -466,7 +487,7 @@ public class Player {
 
 		@Override
 		public Object next() {
-			return (Object) unmappedTweenedKeys.get(getCurrentKey().objectRefs.get(index++).timeline).object();
+			return unmappedTweenedKeys[getCurrentKey().objectRefs.get(index++).timeline].object();
 		}
 
 		@Override
@@ -485,7 +506,7 @@ public class Player {
 
 		@Override
 		public Bone next() {
-			return unmappedTweenedKeys.get(getCurrentKey().boneRefs.get(index++).timeline).object();
+			return unmappedTweenedKeys[getCurrentKey().boneRefs.get(index++).timeline].object();
 		}
 
 		@Override
