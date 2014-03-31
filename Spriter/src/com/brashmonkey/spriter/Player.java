@@ -32,7 +32,7 @@ public class Player {
 	private BoneIterator boneIterator;
 	private ObjectIterator objectIterator;
 	private Mainline.Key currentKey, prevKey;
-	public boolean copyObjects = false;
+	public boolean copyObjects = true;
 	
 	public Player(Entity entity){
 		this.boneIterator = new BoneIterator();
