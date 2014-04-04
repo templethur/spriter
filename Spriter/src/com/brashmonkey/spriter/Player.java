@@ -458,6 +458,14 @@ public class Player {
 		return pivot.y;
 	}
 	
+	public void addListener(PlayerListener listener){
+		this.listeners.add(listener);
+	}
+	
+	public void removeListener(PlayerListener listener){
+		this.listeners.remove(listener);
+	}
+	
 	public Iterator<Bone> boneIterator(){
 		this.boneIterator.index = 0;
 		return this.boneIterator;
