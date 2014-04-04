@@ -8,7 +8,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -85,7 +84,7 @@ public class Java2DTest extends JFrame{
 							repaint();
 						}
 					});
-				} catch (InvocationTargetException | InterruptedException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

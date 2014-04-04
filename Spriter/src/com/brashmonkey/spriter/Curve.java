@@ -21,15 +21,13 @@ public class Curve {
 	 * @return
 	 */
 	public static Type getType(String name){
-		switch(name){
-		case "instant": return Type.Instant;
-		case "quadratic": return Type.Quadratic;
-		case "cubic": return Type.Cubic;
-		case "quartic": return Type.Quartic;
-		case "quintic": return Type.Quintic;
-		case "bezier": return Type.Bezier;
-		default: return Type.Linear;
-		}
+		if(name.equals("instant")) return Type.Instant;
+		else if(name.equals("quadratic")) return Type.Quadratic;
+		else if(name.equals("cubic")) return Type.Cubic;
+		else if(name.equals("quartic")) return Type.Quartic;
+		else if(name.equals("quintic")) return Type.Quintic;
+		else if(name.equals("bezier")) return Type.Bezier;
+		else return Type.Linear;
 	}
 	
 	private Type type;

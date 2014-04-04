@@ -95,12 +95,10 @@ public class Entity {
     	Sprite, Bone, Box, Point;
     	
     	public static ObjectType getObjectInfoFor(String type){
-    		switch(type){
-    		case "bone": return Bone;
-    		case "box": return Box;
-    		case "point": return Point;
-    		default: return Sprite;
-    		}
+    		if(type.equals("bone")) return Bone;
+    		else if(type.equals("box")) return Box;
+    		else if(type.equals("point")) return Point;
+    		else return Sprite;
     	}
     }
     
