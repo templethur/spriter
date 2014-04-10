@@ -1,19 +1,3 @@
-/**************************************************************************
- * Copyright 2013 by Trixt0r
- * (https://github.com/Trixt0r, Heinrich Reich, e-mail: trixter16@web.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
-***************************************************************************/
 package com.brashmonkey.spriter;
 
 import java.io.FileInputStream;
@@ -28,7 +12,7 @@ import com.brashmonkey.spriter.Mainline.Key.*;
 import com.brashmonkey.spriter.XmlReader.*;
 
 /**
- * This class was implemented to give you the chance loading scml files on android since JAXB does not run on android devices.
+ * This class parses a SCML file and creates a {@link Data} instance.
  * @author Trixt0r
  */
 public class SCMLReader {
@@ -48,7 +32,7 @@ public class SCMLReader {
 	 * @param filename Path to scml file.
 	 * @return Spriter data in form of lists.
 	 */
-	public Data load(String filename){
+	Data load(String filename){
 		try {
 			return load(new FileInputStream(filename));
 		} catch (FileNotFoundException e) {
@@ -57,7 +41,7 @@ public class SCMLReader {
 		return null;
 	}
 	
-	public Data load(InputStream stream){
+	Data load(InputStream stream){
 		XmlReader reader = new XmlReader();
 		try {
 			Element root = reader.parse(stream);
@@ -77,7 +61,7 @@ public class SCMLReader {
 	protected void loadFolders(ArrayList<Element> folders){
 		for(int i = 0; i < folders.size(); i++){
 			Element repo = folders.get(i);
-			Folder folder = new Folder(repo.getInt("id"), repo.get("name"));
+			Folder folder = new Folder(repo.getInt("id"), repo.get("name", "no_name_"+i));
 			ArrayList<Element> files = repo.getChildrenByName("file");
 			for(int j = 0; j < files.size(); j++){
 				Element f = files.get(j);
@@ -129,7 +113,7 @@ public class SCMLReader {
 		for(int i = 0; i< maps.size(); i++){
 			Element map = maps.get(i);
 			Entity.CharacterMap charMap = new Entity.CharacterMap(map.getInt("id"), map.getAttribute("name", "charMap"+i));
-			entity.characterMaps.add(charMap);
+			entity.addCharacterMap(charMap);
 			ArrayList<Element> mappings = map.getChildrenByName("map");
 			for(Element mapping: mappings){
 				int folder = mapping.getInt("folder");

@@ -79,13 +79,13 @@ public class LibGdxTest implements ApplicationListener{
 		loader.dispose();
 	}
 	
-	/*public static void main(String[] args){
+	public static void main(String[] args){
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "LibGdx test";
 		cfg.width = 1280;
 		cfg.height = 720;
 		
 		new LwjglApplication(new LibGdxTest(), cfg);
-	}*/
+	}
 
 }

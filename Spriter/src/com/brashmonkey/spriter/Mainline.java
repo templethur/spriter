@@ -3,6 +3,14 @@ package com.brashmonkey.spriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a mainline in a Spriter SCML file.
+ * A mainline holds only keys and occurs only once in an animation.
+ * The mainline is responsible for telling which draw order the sprites have
+ * and how the objects are related to each other, i.e. which bone is the root and which objects are the children.
+ * @author Trixt0r
+ *
+ */
 public class Mainline {
 
     public final List<Key> keys;
@@ -23,12 +31,24 @@ public class Mainline {
     	return toReturn;
     }
     
-    public Key getKey(int id){
-    	return this.keys.get(id);
+    /**
+     * Returns a {@link Key} at the given index.
+     * @param index the index of the key
+     * @return the key with the given index
+     * @throws IndexOutOfBoundsException if index is out of range
+     */
+    public Key getKey(int index){
+    	return this.keys.get(index);
     }
     
+    /**
+     * Returns a {@link Key} before the given time.
+     * @param time the time a key has to be before
+     * @return a key which has a time value before the given one.
+     * The first key is returned if no key was found.
+     */
     public Key getKeyBeforeTime(int time){
-    	Key found = null;
+    	Key found = this.keys.get(0);
     	for(Key key: this.keys){
     		if(key.time <= time) found = key;
     		else break;
@@ -36,6 +56,13 @@ public class Mainline {
     	return found;
     }
     
+    /**
+     * Represents a mainline key in a Spriter SCML file.
+     * A mainline key holds an {@link #id}, a {@link #time}, a {@link #curve}
+     * and lists of bone and object references which build a tree hierarchy.
+     * @author Trixt0r
+     *
+     */
     public static class Key{
     	
     	public final int id, time;
@@ -55,42 +82,76 @@ public class Mainline {
     		this.objectRefs = objectRefs;
     	}
     	
+    	/**
+    	 * Adds a bone reference to this key.
+    	 * @param ref the reference to add
+    	 */
     	public void addBoneRef(BoneRef ref){
     		this.boneRefs.add(ref);
     	}
     	
+    	/**
+    	 * Adds a object reference to this key.
+    	 * @param ref the reference to add
+    	 */
     	public void addObjectRef(ObjectRef ref){
     		this.objectRefs.add(ref);
     	}
     	
-    	public BoneRef getBoneRef(int i){
-    		if(i < 0 || i >= this.boneRefs.size()) return null;
-    		else return this.boneRefs.get(i);
+    	/**
+    	 * Returns a {@link BoneRef} with the given index.
+    	 * @param index the index of the bone reference
+    	 * @return the bone reference or null if no reference exists with the given index
+    	 */
+    	public BoneRef getBoneRef(int index){
+    		if(index < 0 || index >= this.boneRefs.size()) return null;
+    		else return this.boneRefs.get(index);
     	}
     	
+    	/**
+    	 * Returns a {@link ObjectRef} with the given index.
+    	 * @param i the index of the object reference
+    	 * @return the object reference or null if no reference exists with the given index
+    	 */
     	public ObjectRef getObjectRef(int i){
     		if(i < 0 || i >= this.objectRefs.size()) return null;
     		else return this.objectRefs.get(i);
     	}
     	
+    	/**
+    	 * Returns a {@link BoneRef} for the given reference.
+    	 * @param ref the reference to the reference in this key
+    	 * @return a bone reference with the same time line as the given one
+    	 */
         public BoneRef getBoneRef(BoneRef ref){
-    		for(BoneRef boneRef: this.boneRefs)
-    			if(boneRef.timeline == ref.timeline) return boneRef;
-        	return null;
+        	return getBoneRefTimeline(ref.timeline);
         }
         
+        /**
+    	 * Returns a {@link BoneRef} with the given time line index.
+         * @param timeline the time line index
+         * @return the bone reference with the given time line index or null if no reference exists with the given time line index
+         */
         public BoneRef getBoneRefTimeline(int timeline){
     		for(BoneRef boneRef: this.boneRefs)
     			if(boneRef.timeline == timeline) return boneRef;
         	return null;
         }
-    	
+        
+        /**
+    	 * Returns an {@link ObjectRef} for the given reference.
+    	 * @param ref the reference to the reference in this key
+    	 * @return an object reference with the same time line as the given one
+    	 */
         public ObjectRef getObjectRef(ObjectRef ref){
-    		for(ObjectRef objRef: this.objectRefs)
-    			if(objRef.timeline == ref.timeline) return objRef;
-        	return null;
+        	return getObjectRefTimeline(ref.timeline);
         }
         
+        /**
+    	 * Returns a {@link ObjectRef} with the given time line index.
+         * @param timeline the time line index
+         * @return the object reference with the given time line index or null if no reference exists with the given time line index
+         */
         public ObjectRef getObjectRefTimeline(int timeline){
     		for(ObjectRef objRef: this.objectRefs)
     			if(objRef.timeline == timeline) return objRef;
@@ -107,6 +168,13 @@ public class Mainline {
         	return toReturn;
         }
     	
+    	/**
+    	 * Represents a bone reference in a Spriter SCML file.
+    	 * A bone reference holds an {@link #id}, a {@link #timeline} and a {@link #key}.
+    	 * A bone reference may have a parent reference.
+    	 * @author Trixt0r
+    	 *
+    	 */
     	public static class BoneRef{
     		public final int id, key, timeline;
     		public final BoneRef parent;
@@ -124,6 +192,13 @@ public class Mainline {
     		}
     	}
     	
+    	/**
+    	 * Represents an object reference in a Spriter SCML file.
+    	 * An object reference extends a {@link BoneRef} with a {@link #zIndex},
+    	 * which indicates when the object has to be drawn.
+    	 * @author Trixt0r
+    	 *
+    	 */
     	public static class ObjectRef extends BoneRef implements Comparable<ObjectRef>{
     		public final int zIndex;
     		
@@ -141,10 +216,6 @@ public class Mainline {
 				return (int)Math.signum(zIndex-o.zIndex);
 			}
     	}
-    }
-    
-    public void print(){
-    	System.out.println(this);
     }
 
 }

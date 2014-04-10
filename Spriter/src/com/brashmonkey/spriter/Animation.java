@@ -10,7 +10,13 @@ import com.brashmonkey.spriter.Mainline.Key.BoneRef;
 import com.brashmonkey.spriter.Mainline.Key.ObjectRef;
 import com.brashmonkey.spriter.Timeline.Key.Bone;
 import com.brashmonkey.spriter.Timeline.Key.Object;
-
+/**
+ * Represents an animation of a Spriter SCML file.
+ * An animation holds {@link Timeline}s and a {@link Mainline} to animate objects.
+ * Furthermore it holds an {@link #id}, a {@link #length}, a {@link #name} and whether it is {@link #looping} or not.
+ * @author Trixt0r
+ *
+ */
 public class Animation {
 
     public final Mainline mainline;
@@ -51,19 +57,34 @@ public class Animation {
     	this(new Mainline(), id, name, length, looping);
     }
     
-    public Timeline getTimeline(int id){
-    	return this.timelines.get(id);
+    /**
+     * Returns a {@link Timeline} with the given index.
+     * @param index the index of the timeline
+     * @return the timeline with the given index
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    public Timeline getTimeline(int index){
+    	return this.timelines.get(index);
     }
     
+    /**
+     * Returns a {@link Timeline} with the given name.
+     * @param name the name of the time line
+     * @return the time line with the given name or null if no time line exists with the given name.
+     */
     public Timeline getTimeline(String name){
     	return this.nameToTimeline.get(name);
     }
     
-    public void addTimeline(Timeline timeline){
+    void addTimeline(Timeline timeline){
     	this.timelines.add(timeline);
     	this.nameToTimeline.put(timeline.name, timeline);
     }
     
+    /**
+     * Returns the number of time lines this animation holds.
+     * @return the number of time lines
+     */
     public int timelines(){
     	return timelines.size();
     }
@@ -80,7 +101,7 @@ public class Animation {
     }
     
     /**
-     * Updates the bone and object structure.
+     * Updates the bone and object structure with the given time to the given root bone.
      * @param time The time which has to be between 0 and {@link #length} to work properly.
      * @param root The root bone which is not allowed to be null. The whole animation runs relative to the root bone.
      */
@@ -145,13 +166,13 @@ public class Animation {
 		target.ref.set(object1.ref);
 	}
 	
-	public Timeline getSimilarTimeline(Timeline t){
+	Timeline getSimilarTimeline(Timeline t){
     	Timeline found = getTimeline(t.name);
     	if(found == null && t.id < this.timelines()) found = this.getTimeline(t.id);
     	return found;
 	}
 	
-	public Timeline getSimilarTimeline(BoneRef ref, Collection<Timeline> coveredTimelines){
+	Timeline getSimilarTimeline(BoneRef ref, Collection<Timeline> coveredTimelines){
 		if(ref.parent == null) return null;
     	for(BoneRef boneRef: this.currentKey.objectRefs){
     		Timeline t = this.getTimeline(boneRef.timeline);
@@ -161,7 +182,7 @@ public class Animation {
     	return null;
 	}
 	
-	public Timeline getSimilarTimeline(ObjectRef ref, Collection<Timeline> coveredTimelines){
+	Timeline getSimilarTimeline(ObjectRef ref, Collection<Timeline> coveredTimelines){
 		if(ref.parent == null) return null;
     	for(ObjectRef objRef: this.currentKey.objectRefs){
     		Timeline t = this.getTimeline(objRef.timeline);

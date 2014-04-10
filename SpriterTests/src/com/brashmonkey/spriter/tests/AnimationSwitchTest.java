@@ -11,13 +11,12 @@ import static com.brashmonkey.spriter.tests.TestBase.*;
 
 public class AnimationSwitchTest {
 	public static void main(String[] args){
-		create("monster/basic_002.scml", "Animation switching");
+		create("monster/basic_000.scml", "Animation switching");
 		
 		test = new ApplicationAdapter() {
 			Player player;
 			public void create(){
 				player = createPlayer(data.getEntity(0));
-				information = "Press left/right mouse button to switch animations. Current animation: "+player.getAnimation().name;
 				addInputProcessor(new AnimationSwitcher(player));
 			}
 			

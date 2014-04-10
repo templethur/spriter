@@ -45,7 +45,8 @@ public class Spriter {
 		drawerTypes = new Class[drawerDependencies.length+1];
 		drawerTypes[0] = Loader.class;
 		for(int i = 0; i< drawerDependencies.length; i++)
-			drawerTypes[i+1] = drawerDependencies[i].getClass();
+			if(drawerDependencies[i] != null)
+				drawerTypes[i+1] = drawerDependencies[i].getClass();
 	}
 	
 	public static void init(Class<? extends Loader> loaderClass, Class<? extends Drawer> drawerClass){
@@ -105,6 +106,10 @@ public class Spriter {
 	public static Player newPlayer(String scmlFile, String entityName){
 		if(!loadedData.containsKey(scmlFile)) throw new SpriterException("You have to load \""+scmlFile+"\" before using it!");
 		return newPlayer(scmlFile, loadedData.get(scmlFile).getEntityIndex(entityName));
+	}
+	
+	public static Loader<?> getLoader(String scmlFile){
+		return entityToLoader.get(getData(scmlFile).getEntity(0));
 	}
 
 	/**

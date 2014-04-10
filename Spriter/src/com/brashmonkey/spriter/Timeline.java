@@ -5,7 +5,12 @@ import java.util.List;
 
 import com.brashmonkey.spriter.Entity.ObjectInfo;
 
-
+/**
+ * Represents a time line in a Spriter SCML file.
+ * A time line holds an {@link #id}, a {@link #name} and at least one {@link Key}.
+ * @author Trixt0r
+ *
+ */
 public class Timeline {
 
     public final List<Key> keys;
@@ -13,23 +18,29 @@ public class Timeline {
     public final String name;
     public final ObjectInfo objectInfo;
     
-    public Timeline(int id, String name, ObjectInfo objectInfo){
+    Timeline(int id, String name, ObjectInfo objectInfo){
     	this(id, name, objectInfo, new ArrayList<Key>());
     }
     
-    public Timeline(int id, String name, ObjectInfo objectInfo, List<Key> keys){
+    Timeline(int id, String name, ObjectInfo objectInfo, List<Key> keys){
     	this.id = id;
     	this.name = name;
     	this.objectInfo = objectInfo;
     	this.keys = keys;
     }
     
-    public void addKey(Key key){
+    void addKey(Key key){
     	this.keys.add(key);
     }
     
-    public Key getKey(int id){
-    	return this.keys.get(id);
+    /**
+     * Returns a {@link Key} at the given index
+     * @param index the index of the key.
+     * @return the key with the given index.
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    public Key getKey(int index){
+    	return this.keys.get(index);
     }
     
     public String toString(){
@@ -40,6 +51,12 @@ public class Timeline {
     	return toReturn;
     }
     
+    /**
+     * Represents a time line key in a Spriter SCML file.
+     * A key holds an {@link #id}, a {@link #time}, a {@link #spin}, an {@link #object()} and a {@link #curve}.
+     * @author Trixt0r
+     *
+     */
     public static class Key{
     	
     	public final int id, spin;
@@ -80,6 +97,13 @@ public class Timeline {
     		return getClass().getSimpleName()+"|[id: "+id+", time: "+time+", spin: "+spin+"\ncurve: "+curve+"\nobject:"+object+"]";
     	}
     	
+    	/**
+    	 * Represents a bone in a Spriter SCML file.
+    	 * A bone holds a {@link #position}, {@link #scale}, an {@link #angle} and a {@link #pivot}.
+    	 * Bones are the only objects which can be used as a parent for other tweenable objects.
+    	 * @author Trixt0r
+    	 *
+    	 */
     	public static class Bone{
         	public final Point position, scale, pivot;
         	public float angle;
@@ -125,6 +149,10 @@ public class Timeline {
         		this.pivot.set(pivotX, pivotY);
         	}
         	
+        	/**
+        	 * Maps this bone from it's parent's coordinate system to a global one.
+        	 * @param parent the parent bone of this bone
+        	 */
         	public void unmap(Bone parent){
         		this.angle *= Math.signum(parent.scale.x)*Math.signum(parent.scale.y);
         		this.angle += parent.angle;
@@ -134,6 +162,10 @@ public class Timeline {
         		this.position.translate(parent.position);
         	}
         	
+        	/**
+        	 * Maps this from it's global coordinate system to the parent's one.
+        	 * @param parent the parent bone of this bone
+        	 */
         	public void map(Bone parent){
         		this.position.translate(-parent.position.x, -parent.position.y);
         		this.position.rotate(-parent.angle);
@@ -144,6 +176,13 @@ public class Timeline {
         	}
     	}
     	
+    	
+    	/**
+    	 * Represents an object in a Spriter SCML file.
+    	 * A file has the same properties as a bone with an alpha and file extension.
+    	 * @author Trixt0r
+    	 *
+    	 */
     	public static class Object extends Bone{
     		
     		public float alpha;
@@ -185,10 +224,6 @@ public class Timeline {
 			}
     		
     	}
-    }
-    
-    public void print(){
-    	System.out.println(this);
     }
 
 }

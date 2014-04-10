@@ -3,28 +3,67 @@ package com.brashmonkey.spriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a folder in a Spriter SCML file.
+ * A folder has at least an {@link #id}, {@link #name} and {@link #files} may be empty.
+ * An instance of this class holds a {@link List} of {@link File} instances.
+ * Specific {@link File} instances can be accessed via the corresponding methods, i.e getFile().
+ * @author Trixt0r
+ *
+ */
 public class Folder {
 
-    public final List<File> files;
+    final List<File> files;
     public final Integer id;
     public final String name;
     
-    public Folder(int id, String name){
+    Folder(int id, String name){
     	this(id, name, new ArrayList<File>());
     }
     
-    public Folder(int id, String name, List<File> files){
+    Folder(int id, String name, List<File> files){
     	this.id = id;
     	this.name = name;
     	this.files = files;
     }
     
-    public void addFile(File file){
+    /**
+     * Adds a {@link File} instance to this folder.
+     * @param file the file to add
+     */
+    void addFile(File file){
     	this.files.add(file);
     }
     
-    public File getFile(int i){
-    	return files.get(i);
+    /**
+     * Returns a {@link File} instance with the given index.
+     * @param index the index of the file
+     * @return the file with the given name
+     */
+    public File getFile(int index){
+    	return files.get(index);
+    }
+    
+    /**
+     * Returns a {@link File} instance with the given name.
+     * @param name the name of the file
+     * @return the file with the given name or null if no file with the given name exists
+     */
+    public File getFile(String name){
+    	int index = getFileIndex(name);
+    	if(index >= 0) return getFile(index);
+    	else return null;
+    }
+    
+    /**
+     * Returns a file index with the given name.
+     * @param name the name of the file
+     * @return the file index with the given name or -1 if no file with the given name exists
+     */
+    int getFileIndex(String name){
+    	for(File file: this.files)
+    		if(file.name.equals(name)) return file.id;
+    	return -1;
     }
     
     public String toString(){

@@ -12,6 +12,18 @@ import com.brashmonkey.spriter.Mainline.Key.ObjectRef;
 import com.brashmonkey.spriter.Timeline.Key.Bone;
 import com.brashmonkey.spriter.Timeline.Key.Object;
 
+/**
+ * A Player instance is responsible for updating an {@link Animation} properly.
+ * With the {@link #update()} method an instance of this class will increase its current time
+ * and update the current set animation ({@see #setAnimation(Animation)}).
+ * A Player can be set to any position with {@link #setPivot(float, float)}, scaled with {@link #setScale(float)},
+ * flipped with {@link #flip(boolean, boolean)} and rotated {@link #setAngle(float)}.
+ * A Player has various methods for runtime object manipulation such as {@link #setBone(String, Bone)} or {@link #setObject(String, Bone)}.
+ * Events like the ending of an animation can be observed with the {@link PlayerListener} interface.
+ * Character maps can be changed on the fly, just by assigning a character map to {@link #characterMap}, setting it to <code>null</code> will remove the current character map.
+ * @author Trixt0r
+ *
+ */
 public class Player {
 	
 	protected Entity entity;
@@ -313,6 +325,10 @@ public class Player {
 	
 	public void setAnimation(String name){
 		this.setAnimation(entity.getAnimation(name));
+	}
+	
+	public void setAnimation(int index){
+		this.setAnimation(entity.getAnimation(index));
 	}
 	
 	public Rectangle getBoundingRectangle(BoneRef root){
