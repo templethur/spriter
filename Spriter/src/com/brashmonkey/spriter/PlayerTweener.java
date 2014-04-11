@@ -76,7 +76,7 @@ public class PlayerTweener extends Player{
 		if(player1.entity == entity) return;
 		this.anim = new TweenedAnimation(player1.getEntity());
 		anim.setAnimations(player1.animation, player2.animation);
-		entity = player1.getEntity();
+		super.setEntity(player1.getEntity());
 		super.setAnimation(anim);
 	}
 	

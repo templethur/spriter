@@ -570,7 +570,7 @@ public class Player {
 		Animation prevAnim = this.animation;
 		if(animation == this.animation) return;
 		if(animation == null) throw new SpriterException("animation can not be null!");
-		if(!this.entity.containsAnimation(animation)) throw new SpriterException("animation has to be in the same entity as the current set one!");
+		if(!this.entity.containsAnimation(animation) && animation.id != -1) throw new SpriterException("animation has to be in the same entity as the current set one!");
 		if(animation != this.animation) time = 0;
 		this.animation = animation;
 		int tempTime = this.time;

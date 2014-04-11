@@ -59,7 +59,7 @@ public class TweenedAnimation extends Animation{
 	 * @param entity the entity animations have to be part of
 	 */
 	public TweenedAnimation(Entity entity) {
-		super(-1, "interpolatedAnimation", 0, true);
+		super(-1, "__interpolatedAnimation__", 0, true);
 		this.entity = entity;
 		this.curve = new Curve();
 		this.setUpTimelines();
