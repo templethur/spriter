@@ -237,7 +237,7 @@ public class Timeline {
         	 * @param object the object
         	 */
 			public void set(Object object){
-				this.set(object.position, object.alpha, object.scale, object.pivot, object.alpha, object.ref);
+				this.set(object.position, object.angle, object.scale, object.pivot, object.alpha, object.ref);
 			}
 			
 			/**
