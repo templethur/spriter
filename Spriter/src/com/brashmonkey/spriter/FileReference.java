@@ -1,5 +1,11 @@
 package com.brashmonkey.spriter;
 
+/**
+ * Represents a reference to a specific file.
+ * A file reference consists of a folder and file index.
+ * @author Trixt0r
+ *
+ */
 public class FileReference {
 	
 	public int folder, file;

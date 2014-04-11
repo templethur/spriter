@@ -75,7 +75,7 @@ public class CollisionTest {
 				
 				while(iterator.hasNext())
 					if(player.collidesFor(iterator.next(), mouse.x, mouse.y))
-						drawer.drawBBox(player.prevBBox);
+						drawer.drawBox(player.prevBBox);
 				
 				if(Gdx.input.isKeyPressed(Keys.SPACE)) iterator = player.boneIterator();
 				else iterator = player.objectIterator();

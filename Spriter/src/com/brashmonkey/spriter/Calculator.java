@@ -3,7 +3,7 @@ package com.brashmonkey.spriter;
 import static java.lang.Math.*;
 
 /**
- * A class which provides methods to calculate Spriter specific issues,
+ * A utility class which provides methods to calculate Spriter specific issues,
  * like linear interpolation and rotation around a parent object.
  * Other interpolation types are coming with the next releases of Spriter.
  * 
@@ -13,37 +13,7 @@ import static java.lang.Math.*;
 
 public class Calculator {
 	
-	public static float PI = (float)Math.PI;
-	
-	/**
-	 * Calculates interpolated value for positions and scale.
-	 * @param a first value
-	 * @param b second value
-	 * @param timeA first time
-	 * @param timeB second time
-	 * @param currentTime
-	 * @return interpolated value between a and b.
-	 */
-	public static float calculateInterpolation(float a, float b, float timeA, float timeB, float currentTime) {
-		return a + (b - a) * getNormalizedTime(timeA, timeB, currentTime);
-	}
-	
-	public static float getNormalizedTime(float startTime, float endTime, float currentTime){
-		return (currentTime - startTime)/(endTime - startTime);
-	}
-
-	/**
-	 * Calculates interpolated value for angles.
-	 * @param a first angle
-	 * @param b second angle
-	 * @param timeA first time
-	 * @param timeB second time
-	 * @param currentTime
-	 * @return interpolated angle
-	 */
-	public static float calculateAngleInterpolation(float a, float b, float timeA, float timeB, float currentTime) {
-		return a + (angleDifference(b, a) * ((currentTime - timeA) / (timeB - timeA)));
-	}
+	public final static float PI = (float)Math.PI;
 	
 	/**
 	 * Calculates the smallest difference between angle a and b.
@@ -80,12 +50,12 @@ public class Calculator {
 	}
 	
 	/**
-	 * Solves the equation a*x^3 + b*x^2 + c*x +d = 0
+	 * Solves the equation a*x^3 + b*x^2 + c*x +d = 0.
 	 * @param a
 	 * @param b
 	 * @param c
 	 * @param d
-	 * @return
+	 * @return the solution of the cubic function
 	 */
 	public static Float solveCubic(float a, float b, float c, float d) {
         if (a == 0) return solveQuadratic(b, c, d);
@@ -140,7 +110,7 @@ public class Calculator {
 	 * @param a
 	 * @param b
 	 * @param c
-	 * @return
+	 * @return the solution for the quadratic function
 	 */
 	public static Float solveQuadratic(float a, float b, float c) {
 		float squaredB = squared(b);
@@ -155,10 +125,39 @@ public class Calculator {
         return null;
     }
 	
+	/**
+	 * Returns the square of the given value.
+	 * @param f the value
+	 * @return the square of the value
+	 */
 	public static float squared(float f) { return f * f; }
+	
+	/**
+	 * Returns the cubed value of the given one.
+	 * @param f the value
+	 * @return the cubed value
+	 */
 	public static float cubed(float f) { return f * f * f; }
+	
+	/**
+	 * Returns the cubic root of the given value.
+	 * @param f the value
+	 * @return the cubic root
+	 */
 	public static float cubicRoot(float f) { return (float) pow(f, 1f / 3f); }
+	
+	/**
+	 * Returns the square root of the given value.
+	 * @param x the value
+	 * @return the square root
+	 */
 	public static float sqrt(float x){ return (float)Math.sqrt(x); }
+	
+	/**
+	 * Returns the arc cosine at the given value.
+	 * @param x the value
+	 * @return the arc cosine
+	 */
 	public static float acos(float x){ return (float)Math.acos(x); }
 	
 	static private final int SIN_BITS = 14; // 16KB. Adjust for accuracy.

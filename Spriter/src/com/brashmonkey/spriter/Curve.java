@@ -4,21 +4,28 @@ import static  com.brashmonkey.spriter.Calculator.*;
 import static com.brashmonkey.spriter.Interpolator.*;
 
 /**
- * Represents a curve in Spriter.
+ * Represents a curve in a Spriter SCML file.
  * An instance of this class is responsible for tweening given data.
+ * The most important method of this class is {@link #tween(float, float, float)}.
+ * Curves can be changed with sub curves {@link Curve#subCurve}.
  * @author Trixt0r
  *
  */
 public class Curve {
 	
+	/**
+	 * Represents a curve type in a Spriter SCML file.
+	 * @author Trixt0r
+	 *
+	 */
 	public static enum Type {
 		Instant, Linear, Quadratic, Cubic, Quartic, Quintic, Bezier;
 	}
 	
 	/**
-	 * 
-	 * @param name
-	 * @return
+	 * Returns a curve type based on the given curve name.
+	 * @param name the name of the curve
+	 * @return the curve type. {@link Type#Linear} is returned as a default type.
 	 */
 	public static Type getType(String name){
 		if(name.equals("instant")) return Type.Instant;
@@ -31,33 +38,68 @@ public class Curve {
 	}
 	
 	private Type type;
+	/**
+	 * The sub curve of this curve, which can be <code>null</code>.
+	 */
 	public Curve subCurve;
+	/**
+	 * The constraints of a curve which will affect a curve of the types different from {@link Type#Linear} and {@link Type#Instant}.
+	 */
 	public final Constraints constraints = new Constraints(0, 0, 0, 0);
 	
+	/**
+	 * Creates a new linear curve.
+	 */
 	public Curve(){
 		this(Type.Linear);
 	}
 	
+	/**
+	 * Creates a new curve with the given type.
+	 * @param type the curve type
+	 */
 	public Curve(Type type){
 		this(type, null);
 	}
 	
+	/**
+	 * Creates a new curve with the given type and sub cuve.
+	 * @param type the curve type
+	 * @param subCurve the sub curve. Can be <code>null</code>
+	 */
 	public Curve(Type type, Curve subCurve){
 		this.setType(type);
 		this.subCurve = subCurve;
 	}
 	
+	/**
+	 * Sets the type of this curve.
+	 * @param type the curve type.
+	 * @throws SpriterException if the type is <code>null</code>
+	 */
 	public void setType(Type type){
-		if(type == null) throw new NullPointerException("The type of a curve cannot be null!");
+		if(type == null) throw new SpriterException("The type of a curve cannot be null!");
 		this.type = type;
 	}
 	
+	/**
+	 * Returns the type of this curve.
+	 * @return the curve type
+	 */
 	public Type getType(){
 		return this.type;
 	}
 
 	
 	private float lastCubicSolution = 0f;
+	/**
+	 * Returns a new value based on the given values.
+	 * Tweens the weight with the set sub curve.
+	 * @param a the start value
+	 * @param b the end value
+	 * @param t the weight which lies between 0.0 and 1.0
+	 * @return tweened value
+	 */
 	public float tween(float a, float b, float t){
 		t = tweenSub(0f,1f,t);
 		switch(type){
@@ -75,6 +117,13 @@ public class Curve {
 		}
 	}
 	
+	/**
+	 * Interpolates the given two points with the given weight and saves the result in the target point.
+	 * @param a the start point
+	 * @param b the end point
+	 * @param t the weight which lies between 0.0 and 1.0
+	 * @param target the target point to save the result in
+	 */
 	public void tweenPoint(Point a, Point b, float t, Point target){
 		target.set(this.tween(a.x, b.x, t), this.tween(a.y, b.y, t));
 	}
@@ -84,21 +133,31 @@ public class Curve {
 		else return t;
 	}
 	
+	/**
+	 * Returns a tweened angle based on the given angles, weight and the spin.
+	 * @param a the start angle
+	 * @param b the end angle
+	 * @param t the weight which lies between 0.0 and 1.0
+	 * @param spin the spin, which is either 0, 1 or -1
+	 * @return tweened angle
+	 */
 	public float tweenAngle(float a, float b, float t, int spin){
-	    if(spin>0)
-	    {
-	        if((b-a)<0)
+	    if(spin>0){
+	        if(b-a < 0)
 	            b+=360;
 	    }
-	    else if(spin<0)
-	    {
-	        if((b-a)>0)
+	    else if(spin < 0){
+	        if(b-a > 0)
 	            b-=360;
-	    } else return a;
+	    }
+	    else return a;
 
 	    return tween(a, b, t);
 	}
 	
+	/**
+	 * @see {@link #tween(float, float, float)}
+	 */
 	public float tweenAngle(float a, float b, float t){
 		t = tweenSub(0f,1f,t);
 		switch(type){
@@ -120,6 +179,12 @@ public class Curve {
 		return getClass().getSimpleName()+"|["+type+":"+constraints+", subCurve: "+subCurve+"]";
 	}
 	
+	/**
+	 * Represents constraints for a curve.
+	 * Constraints are important for curves which have a order higher than 1.
+	 * @author Trixt0r
+	 *
+	 */
 	public static class Constraints{
 		public float c1, c2, c3, c4;
 		

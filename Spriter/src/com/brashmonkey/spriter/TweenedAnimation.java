@@ -5,16 +5,59 @@ import com.brashmonkey.spriter.Mainline.Key.ObjectRef;
 import com.brashmonkey.spriter.Timeline.Key.Bone;
 import com.brashmonkey.spriter.Timeline.Key.Object;
 
+/**
+ * A tweened animation is responsible for updating itself based on two given animations.
+ * The values of the two given animations will get interpolated and save in this animation.
+ * When tweening two animations, you have to make sure that they have the same structure.
+ * The best result is achieved if bones of two different animations are named in the same way.
+ * There are still issues with sprites, which are hard to resolve since Spriter does not save them in a useful order or naming convention.
+ * @author Trixt0r
+ *
+ */
 public class TweenedAnimation extends Animation{
 	
-	public float weight = .5f, spriteThreshold = .5f;
+	/**
+	 * The weight of the interpolation. 0.5f is the default value.
+	 * Values closer to 0.0f mean the first animation will have more influence.
+	 */
+	public float weight = .5f;
+	
+	/**
+	 * Indicates when a sprite should be switched form the first animation object to the second one.
+	 * A value closer to 0.0f means that the sprites of the second animation will be drawn.
+	 */
+	public float spriteThreshold = .5f;
+	
+	/**
+	 * The curve which will tween the animations.
+	 * The default type of the curve is {@link Curve.Type#Linear}.
+	 */
 	public final Curve curve;
+	
+	/**
+	 * The entity the animations have be part of.
+	 * Animations of two different entities can not be tweened.
+	 */
 	public final Entity entity;
 	private Animation anim1, anim2;
+	
+	/**
+	 * The base animation an object or bone will get if it will not be tweened.
+	 */
 	public Animation baseAnimation;
-	public BoneRef base = null;
+	BoneRef base = null;
+	
+	/**
+	 * Indicates whether to tween sprites or not. Default value is <code>false</code>.
+	 * Tweening sprites should be only enabled if they have exactly the same structure.
+	 * If all animations are bone based and sprites only change their references it is not recommended to tween sprites.
+	 */
 	public boolean tweenSprites = false;
-
+	
+	/**
+	 * Creates a tweened animation based on the given entity.
+	 * @param entity the entity animations have to be part of
+	 */
 	public TweenedAnimation(Entity entity) {
 		super(-1, "interpolatedAnimation", 0, true);
 		this.entity = entity;
@@ -22,9 +65,14 @@ public class TweenedAnimation extends Animation{
 		this.setUpTimelines();
 	}
 	
+	/**
+	 * Returns the current mainline key.
+	 * @return the mainline key
+	 */
 	public Mainline.Key getCurrentKey(){
 		return this.currentKey;
 	}
+	
 	@Override
 	public void update(int time, Bone root){
 		super.currentKey = onFirstMainLine() ? anim1.currentKey: anim2.currentKey;
@@ -120,6 +168,10 @@ public class TweenedAnimation extends Animation{
 		target.ref.set(object1.ref);
 	}
 	
+	/**
+	 * Returns whether the current mainline key is the one from the first animation or from the second one.
+	 * @return <code>true</code> if the mainline key is the one from the first animation 
+	 */
 	public boolean onFirstMainLine(){
 		return this.weight < this.spriteThreshold;
 	}
@@ -134,6 +186,12 @@ public class TweenedAnimation extends Animation{
 		prepare();
 	}
 	
+	/**
+	 * Sets the animations to tween.
+	 * @param animation1 the first animation
+	 * @param animation2 the second animation
+	 * @throws SpriterException if {@link #entity} does not contain one of the given animations.
+	 */
 	public void setAnimations(Animation animation1, Animation animation2){
 		boolean areInterpolated = animation1 instanceof TweenedAnimation || animation2 instanceof TweenedAnimation;
 		if(animation1 == anim1 && animation2 == anim2) return;
@@ -143,10 +201,18 @@ public class TweenedAnimation extends Animation{
 		this.anim2 = animation2;
 	}
 	
+	/**
+	 * Returns the first animation.
+	 * @return the first animation
+	 */
 	public Animation getFirstAnimation(){
 		return this.anim1;
 	}
 	
+	/**
+	 * Returns the second animation.
+	 * @return the second animation
+	 */
 	public Animation getSecondAnimation(){
 		return this.anim2;
 	}

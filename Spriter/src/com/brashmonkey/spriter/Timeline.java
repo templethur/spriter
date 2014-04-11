@@ -109,14 +109,14 @@ public class Timeline {
         	public float angle;
         	
         	public Bone(Point position, Point scale, Point pivot, float angle){
-        		this.position = position;
-        		this.scale = scale;
+        		this.position = new Point(position);
+        		this.scale =  new Point(scale);
         		this.angle = angle;
-        		this.pivot = pivot;
+        		this.pivot =  new Point(pivot);
         	}
         	
         	public Bone(Bone bone){
-        		this(bone.position.copy(), bone.scale.copy(), bone.pivot.copy(), bone.angle);
+        		this(bone.position, bone.scale, bone.pivot, bone.angle);
         	}
         	
         	public Bone(Point position){
@@ -127,26 +127,48 @@ public class Timeline {
         		this(new Point());
         	}
         	
+        	/**
+        	 * Returns whether this instance is a Spriter object or a bone.
+        	 * @return true if this instance is a Spriter bone
+        	 */
         	public boolean isBone(){
         		return !(this instanceof Object);
         	}
         	
-        	public String toString(){
-        		return getClass().getSimpleName()+"|position: "+position+", scale: "+scale+", angle: "+angle;
-        	}
-        	
+        	/**
+        	 * Sets the values of this bone to the values of the given bone
+        	 * @param bone the bone
+        	 */
         	public void set(Bone bone){
-        		this.angle = bone.angle;
-        		this.position.set(bone.position);
-        		this.scale.set(bone.scale);
-				this.pivot.set(bone.pivot);
+        		this.set(bone.position, bone.angle, bone.scale, bone.pivot);
         	}
         	
+        	/**
+        	 * Sets the given values for this bone.
+			 * @param x the new position in x direction
+			 * @param y the new position in y direction
+			 * @param angle the new angle
+			 * @param scaleX the new scale in x direction
+			 * @param scaleY the new scale in y direction
+			 * @param pivotX the new pivot in x direction
+			 * @param pivotY the new pivot in y direction
+        	 */
         	public void set(float x, float y, float angle, float scaleX, float scaleY, float pivotX, float pivotY){
         		this.angle = angle;
         		this.position.set(x, y);
         		this.scale.set(scaleX, scaleY);
         		this.pivot.set(pivotX, pivotY);
+        	}
+        	
+        	/**
+        	 * Sets the given values for this bone.
+			 * @param position the new position
+			 * @param angle the new angle
+			 * @param scale the new scale
+			 * @param pivot the new pivot
+        	 */
+        	public void set(Point position, float angle, Point scale, Point pivot){
+        		this.set(position.x, position.y, angle, scale.x, scale.y, pivot.x, pivot.y);
         	}
         	
         	/**
@@ -173,6 +195,10 @@ public class Timeline {
         		this.scale.scale(1f/parent.scale.x, 1f/parent.scale.y);
         		this.angle -=parent.angle;
     			this.angle *= Math.signum(parent.scale.x)*Math.signum(parent.scale.y);
+        	}
+        	
+        	public String toString(){
+        		return getClass().getSimpleName()+"|position: "+position+", scale: "+scale+", angle: "+angle;
         	}
     	}
     	
@@ -206,21 +232,49 @@ public class Timeline {
 				this(new Point());
 			}
 			
-			public String toString(){
-				return super.toString()+", pivot: "+pivot+", alpha: "+alpha+", reference: "+ref;
-			}
-			
+			/**
+        	 * Sets the values of this object to the values of the given object.
+        	 * @param object the object
+        	 */
 			public void set(Object object){
-				super.set(object);
-				this.alpha = object.alpha;
-				this.ref.set(object.ref);
+				this.set(object.position, object.alpha, object.scale, object.pivot, object.alpha, object.ref);
 			}
 			
+			/**
+        	 * Sets the given values for this object.
+			 * @param x the new position in x direction
+			 * @param y the new position in y direction
+			 * @param angle the new angle
+			 * @param scaleX the new scale in x direction
+			 * @param scaleY the new scale in y direction
+			 * @param pivotX the new pivot in x direction
+			 * @param pivotY the new pivot in y direction
+			 * @param alpha the new alpha value
+			 * @param folder the new folder index
+			 * @param file the new file index
+        	 */
 			public void set(float x, float y, float angle, float scaleX, float scaleY, float pivotX, float pivotY, float alpha, int folder, int file){
 				super.set(x, y, angle, scaleX, scaleY, pivotX, pivotY);
 				this.alpha = alpha;
 				this.ref.folder = folder;
 				this.ref.file = file;
+			}
+			
+			/**
+        	 * Sets the given values for this object.
+			 * @param position the new position
+			 * @param angle the new angle
+			 * @param scale the new scale
+			 * @param pivot the new pivot
+			 * @param alpha the new alpha value
+			 * @param fileRef the new file reference
+        	 */
+        	public void set(Point position, float angle, Point scale, Point pivot, float alpha, FileReference fileRef){
+        		this.set(position.x, position.y, angle, scale.x, scale.y, pivot.x, pivot.y, alpha , fileRef.folder, fileRef.file);
+        	}
+			
+			public String toString(){
+				return super.toString()+", pivot: "+pivot+", alpha: "+alpha+", reference: "+ref;
 			}
     		
     	}

@@ -19,18 +19,26 @@ public class SCMLReader {
 	
 	protected Data data;
 	
-	public SCMLReader(String filename){
-		this.data = this.load(filename);
-	}
-	
+	/**
+	 * Creates a new SCML reader and will load the given stream.
+	 * @param stream the stream
+	 */
 	public SCMLReader(InputStream stream){
 		this.data = this.load(stream);
 	}
 	
 	/**
-	 * Reads the whole given scml file.
-	 * @param filename Path to scml file.
-	 * @return Spriter data in form of lists.
+	 * Creates a new SCML reader and will load the file at the given filename.
+	 * @param filename
+	 */
+	public SCMLReader(String filename){
+		this.data = this.load(filename);
+	}
+	
+	/**
+	 * Reads the whole given SCML file.
+	 * @param filename Path to SCML file.
+	 * @return instance of {@link Data}.
 	 */
 	Data load(String filename){
 		try {
@@ -220,6 +228,10 @@ public class SCMLReader {
 		}
 	}
 	
+	/**
+	 * Returns the loaded SCML data.
+	 * @return the SCML data.
+	 */
 	public Data getData(){
 		return data;
 	}

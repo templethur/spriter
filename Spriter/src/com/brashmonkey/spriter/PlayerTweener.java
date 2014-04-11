@@ -1,24 +1,51 @@
 package com.brashmonkey.spriter;
 
+/**
+ * A player tweener is responsible for tweening to {@link Player} instances.
+ * Such a 
+ * @author Trixt0r
+ *
+ */
 public class PlayerTweener extends Player{
 	
 	private TweenedAnimation anim;
 	private Player player1, player2;
+	/**
+	 * Indicates whether to update the {@link Player} instances this instance is holding.
+	 * If this variable is set to <code>false</code>, you will have to call {@link Player#update()} on your own.
+	 */
 	public boolean updatePlayers = true;
+	
+	/**
+	 * The name of root bone to start the tweening at.
+	 * Set it to null to tween the whole hierarchy.
+	 */
 	public String baseBoneName = null;
 	
+	/**
+	 * Creates a player tweener which will tween the given two players.
+	 * @param player1 the first player
+	 * @param player2 the second player
+	 */
 	public PlayerTweener(Player player1, Player player2){
 		super(player1.getEntity());
 		this.setPlayers(player1, player2);
 	}
 	
+	/**
+	 * Creates a player tweener based on the entity.
+	 * The players to tween will be created by this instance.
+	 * @param entity the entity the players will animate
+	 */
 	public PlayerTweener(Entity entity){
-		super(entity);
-		player1 = new Player(entity);
-		player2 = new Player(entity);
-		this.setPlayers(player1, player2);
+		this(new Player(entity), new Player(entity));
 	}
 	
+	/**
+	 * Tweens the current set players.
+	 * This method will update the set players if {@link #updatePlayers} is <code>true</code>.
+	 * @throws SpriterException if no bone with {@link #baseBoneName} exists
+	 */
 	@Override
 	public void update(){
 		if(updatePlayers){
@@ -35,6 +62,12 @@ public class PlayerTweener extends Player{
 		}
 	}
 	
+	/**
+	 * Sets the players for this tweener.
+	 * Both players have to hold the same {@link Entity}
+	 * @param player1 the first player
+	 * @param player2 the second player
+	 */
 	public void setPlayers(Player player1, Player player2){
 		if(player1.entity != player2.entity)
 			throw new SpriterException("player1 and player2 have to hold the same entity!");
@@ -47,16 +80,31 @@ public class PlayerTweener extends Player{
 		super.setAnimation(anim);
 	}
 	
+	/**
+	 * Returns the first set player.
+	 * @return the first player
+	 */
 	public Player getFirstPlayer(){
 		return this.player1;
 	}
 	
+	/**
+	 * Returns the second set player.
+	 * @return the second player
+	 */
 	public Player getSecondPlayer(){
 		return this.player2;
 	}
 	
+	/**
+	 * Not supported by this class.
+	 */
 	@Override
 	public void setAnimation(Animation anim){}
+	
+	/**
+	 * Not supported by this class.
+	 */
 	@Override
 	public void setEntity(Entity entity){}
 }
