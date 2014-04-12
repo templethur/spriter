@@ -11,7 +11,7 @@ import static com.brashmonkey.spriter.tests.TestBase.*;
 
 public class AnimationSwitchTest {
 	public static void main(String[] args){
-		create("monster/basic_000.scml", "Animation switching");
+		create("monster/basic_002.scml", "Animation switching");
 		
 		test = new ApplicationAdapter() {
 			Player player;

@@ -132,8 +132,17 @@ public class Animation {
 		}
 		//Normalize the time
 		float t = (float)(time - currentTime)/(float)(nextTime - currentTime);
-		if(Float.isNaN(t) || Float.isInfinite(t)) t = 1;
-		t = currentKey.curve.tween(0, 1, t);//TODO: Mainline curve is not applied properly
+		if(Float.isNaN(t) || Float.isInfinite(t)) t = 1f;
+		//TODO: Mainline curve is not applied properly
+		if(currentKey.time > currentTime){
+			float tMid = (float)(currentKey.time - currentTime)/(float)(nextTime - currentTime);
+			if(Float.isNaN(tMid) || Float.isInfinite(tMid)) tMid = 0f;
+			t = (float)(time - currentKey.time)/(float)(nextTime - currentKey.time);
+			if(Float.isNaN(t) || Float.isInfinite(t)) t = 1f;
+			t = currentKey.curve.tween(tMid, 1f, t);
+		}
+		else 
+			t = currentKey.curve.tween(0f, 1f, t);
 		//Tween bone/object
 		Bone bone1 = key.object();
 		Bone bone2 = nextKey.object();
