@@ -133,7 +133,6 @@ public class Animation {
 		//Normalize the time
 		float t = (float)(time - currentTime)/(float)(nextTime - currentTime);
 		if(Float.isNaN(t) || Float.isInfinite(t)) t = 1f;
-		//TODO: Mainline curve is not applied properly
 		if(currentKey.time > currentTime){
 			float tMid = (float)(currentKey.time - currentTime)/(float)(nextTime - currentTime);
 			if(Float.isNaN(tMid) || Float.isInfinite(tMid)) tMid = 0f;
