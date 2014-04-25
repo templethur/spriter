@@ -33,7 +33,7 @@ public class LibGdxTest implements ApplicationListener{
 		cam.zoom = 1f;
 		renderer = new ShapeRenderer();
 		batch = new SpriteBatch();
-		FileHandle handle = Gdx.files.internal("monster/basic_002.scml");
+		FileHandle handle = Gdx.files.internal("assets/monster/basic_002.scml");
 		Data data = new SCMLReader(handle.read()).getData();
 		
 		loader = new LibGdxLoader(data);
