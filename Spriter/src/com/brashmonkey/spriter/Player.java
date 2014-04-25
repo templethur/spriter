@@ -34,6 +34,7 @@ public class Player {
 	Timeline.Key[] tweenedKeys, unmappedTweenedKeys;
 	private Timeline.Key[] tempTweenedKeys, tempUnmappedTweenedKeys;
 	private List<PlayerListener> listeners;
+	public final List<Attachment> attachments = new ArrayList<Attachment>();
 	Timeline.Key.Bone root = new Timeline.Key.Bone(new Point(0,0));
 	private final Point position = new Point(0,0), pivot = new Point(0,0);
 	private final HashMap<Object, Timeline.Key> objToTimeline = new HashMap<Object, Timeline.Key>();
@@ -85,6 +86,10 @@ public class Player {
 			tweenedKeys = animation.tweenedKeys;
 			unmappedTweenedKeys = animation.unmappedTweenedKeys;
 		}
+		
+		for(Attachment attach: attachments)
+			attach.update();
+		
 		for(PlayerListener listener: listeners)
 			listener.postProcess(this);
 		this.increaseTime();
@@ -1025,5 +1030,81 @@ public class Player {
 		 * @param newKey the new mainline key
 		 */
 		public void mainlineKeyChanged(Mainline.Key prevKey, Mainline.Key newKey);
+	}
+	
+	/**
+	 * An attachment is an abstract object which can be attached to a {@link Player} object.
+	 * An attachment extends a {@link Bone} which means that {@link Bone#position}, {@link Bone#scale} and {@link Bone#angle} can be set to change the relative position to its {@link Attachment#parent}
+	 * The {@link Player} object will make sure that the attachment will be transformed relative to its {@link Attachment#parent}.
+	 * @author Trixt0r
+	 *
+	 */
+	public static abstract class Attachment extends Timeline.Key.Bone{
+		
+		private Bone parent;
+		private final Point positionTemp, scaleTemp;
+		private float angleTemp;
+		
+		/**
+		 * Creates a new attachment 
+		 * @param parent the parent of this attachment
+		 */
+		public Attachment(Bone parent){
+			this.positionTemp = new Point();
+			this.scaleTemp = new Point();
+			this.setParent(parent);
+		}
+		
+		/**
+		 * Sets the parent of this attachment.
+		 * @param parent the parent
+		 * @throws SpriterException if parent is <code>null</code>
+		 */
+		public void setParent(Bone parent){
+			if(parent == null) throw new SpriterException("The parent cannot be null!");
+			this.parent = parent;
+		}
+		
+		/**
+		 * Returns the current set parent.
+		 * @return the parent
+		 */
+		public Bone getParent(){
+			return this.parent;
+		}
+		
+		final void update(){
+			//Save relative positions
+			this.positionTemp.set(super.position);
+			this.scaleTemp.set(super.scale);
+			this.angleTemp = super.angle;
+			
+			super.unmap(parent);
+			this.setPosition(super.position.x, super.position.y);
+			this.setScale(super.scale.x, super.scale.y);
+			this.setAngle(super.angle);
+			
+			//Load realtive positions
+			super.position.set(this.positionTemp);
+			super.scale.set(this.scaleTemp);
+			super.angle = this.angleTemp;
+		}
+		/**
+		 * Sets the position to the given coordinates.
+		 * @param x the x coordinate
+		 * @param y the y coordinate
+		 */
+		protected abstract void setPosition(float x, float y);
+		/**
+		 * Sets the scale to the given scale.
+		 * @param xscale the scale in x direction
+		 * @param yscale the scale in y direction
+		 */
+		protected abstract void setScale(float xscale, float yscale);
+		/**
+		 * Sets the angle to the given one.
+		 * @param angle the angle in degrees
+		 */
+		protected abstract void setAngle(float angle);
 	}
 }

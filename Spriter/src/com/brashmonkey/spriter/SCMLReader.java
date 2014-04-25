@@ -13,6 +13,9 @@ import com.brashmonkey.spriter.XmlReader.*;
 
 /**
  * This class parses a SCML file and creates a {@link Data} instance.
+ * If you want to keep track of what is going on during the build process of the objects parsed from the SCML file,
+ * you could extend this class and override the load*() methods for pre or post processing.
+ * This could be e.g. useful for a loading screen which responds to the current building or parsing state.
  * @author Trixt0r
  */
 public class SCMLReader {
@@ -40,7 +43,7 @@ public class SCMLReader {
 	 * @param filename Path to SCML file.
 	 * @return instance of {@link Data}.
 	 */
-	Data load(String filename){
+	protected Data load(String filename){
 		try {
 			return load(new FileInputStream(filename));
 		} catch (FileNotFoundException e) {
@@ -49,7 +52,12 @@ public class SCMLReader {
 		return null;
 	}
 	
-	Data load(InputStream stream){
+	/**
+	 * Parses the SCML objects saved in the given stream and returns the built data object.
+	 * @param stream the stream from the SCML file 
+	 * @return the built data
+	 */
+	protected Data load(InputStream stream){
 		XmlReader reader = new XmlReader();
 		try {
 			Element root = reader.parse(stream);
@@ -58,7 +66,7 @@ public class SCMLReader {
 			data = new Data(root.get("scml_version"), root.get("generator"),root.get("generator_version"),
 					new ArrayList<Folder>(folders.size()),
 					new ArrayList<Entity>(entities.size()));
-			loadFoldersAndFiles(folders);
+			loadFolders(folders);
 			loadEntities(entities);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -66,23 +74,39 @@ public class SCMLReader {
 		return data;
 	}
 	
-	protected void loadFoldersAndFiles(ArrayList<Element> folders){
+	/**
+	 * Iterates through the given folders and adds them to the current {@link Data} object.
+	 * @param folders a list of folders to load
+	 */
+	protected void loadFolders(ArrayList<Element> folders){
 		for(int i = 0; i < folders.size(); i++){
 			Element repo = folders.get(i);
 			Folder folder = new Folder(repo.getInt("id"), repo.get("name", "no_name_"+i));
-			ArrayList<Element> files = repo.getChildrenByName("file");
-			for(int j = 0; j < files.size(); j++){
-				Element f = files.get(j);
-				File file = new File(f.getInt("id"), f.get("name"),
-						new Dimension(f.getInt("width", 0), f.getInt("height", 0)),
-						new Point(f.getFloat("pivot_x", 0f), f.getFloat("pivot_y", 1f)));
-				
-				folder.addFile(file);
-			}
+			loadFiles(repo.getChildrenByName("file"), folder);
 			data.addFolder(folder);
 		}
 	}
+	
+	/**
+	 * Iterates through the given files and adds them to the given {@link Folder} object.
+	 * @param files a list of files to load
+	 * @param folder the folder containing the files
+	 */
+	protected void loadFiles(ArrayList<Element> files, Folder folder){
+		for(int j = 0; j < files.size(); j++){
+			Element f = files.get(j);
+			File file = new File(f.getInt("id"), f.get("name"),
+					new Dimension(f.getInt("width", 0), f.getInt("height", 0)),
+					new Point(f.getFloat("pivot_x", 0f), f.getFloat("pivot_y", 1f)));
+			
+			folder.addFile(file);
+		}
+	}
 
+	/**
+	 * Iterates through the given entities and adds them to the current {@link Data} object.
+	 * @param entities a list of entities to load
+	 */
 	protected void loadEntities(ArrayList<Element> entities){
 		for(int i = 0; i < entities.size(); i++){
 			Element e = entities.get(i);
@@ -100,6 +124,11 @@ public class SCMLReader {
 		}
 	}
 	
+	/**
+	 * Iterates through the given object infos and adds them to the given {@link Entity} object.
+	 * @param infos a list of infos to load
+	 * @param entity the entity containing the infos
+	 */
 	protected void loadObjectInfos(ArrayList<Element> infos, Entity entity){
 		for(int i = 0; i< infos.size(); i++){
 			Element info = infos.get(i);
@@ -118,6 +147,11 @@ public class SCMLReader {
 		}
 	}
 	
+	/**
+	 * Iterates through the given character maps and adds them to the given {@link Entity} object.
+	 * @param maps a list of character maps to load
+	 * @param entity the entity containing the character maps
+	 */
 	protected void loadCharacterMaps(ArrayList<Element> maps, Entity entity){
 		for(int i = 0; i< maps.size(); i++){
 			Element map = maps.get(i);
@@ -133,6 +167,11 @@ public class SCMLReader {
 		}
 	}
 	
+	/**
+	 * Iterates through the given animations and adds them to the given {@link Entity} object.
+	 * @param animations a list of animations to load
+	 * @param entity the entity containing the animations maps
+	 */
 	protected void loadAnimations(ArrayList<Element> animations, Entity entity){
 		for(int i = 0; i < animations.size(); i++){
 			Element a = animations.get(i);
@@ -146,11 +185,21 @@ public class SCMLReader {
 		}
 	}
 	
+	/**
+	 * Creates a new mainline and injects it to the given {@link Animation} object.
+	 * @param mainline the mainline to load
+	 * @param animation the animation the mainline contains
+	 */
 	protected void loadMainline(Element mainline, Animation animation){
 		Mainline main = animation.mainline;
 		loadMainlineKeys(mainline.getChildrenByName("key"),main);
 	}
 	
+	/**
+	 * Iterates through the given mainline keys and adds them to the given {@link Mainline} object.
+	 * @param keys a list of mainline keys
+	 * @param main the mainline
+	 */
 	protected void loadMainlineKeys(ArrayList<Element> keys, Mainline main){
 		for(int i = 0; i < keys.size(); i++){
 			Element k = keys.get(i);
@@ -167,6 +216,12 @@ public class SCMLReader {
 		}
 	}
 	
+	/**
+	 * Iterates through the given bone and object references and adds them to the given {@link Mainline.Key} object.
+	 * @param objectRefs a list of object references
+	 * @param boneRefs a list if bone references
+	 * @param key the mainline key
+	 */
 	protected void loadRefs(ArrayList<Element> objectRefs, ArrayList<Element> boneRefs, Mainline.Key key){
 		for(Element e: boneRefs){
 			BoneRef boneRef = new BoneRef(e.getInt("id"),e.getInt("timeline"),
@@ -182,6 +237,12 @@ public class SCMLReader {
 		Collections.sort(key.objectRefs);
 	}
 	
+	/**
+	 * Iterates through the given timelines and adds them to the given {@link Animation} object.
+	 * @param timelines a list of timelines
+	 * @param animation the animation containing the timelines
+	 * @param entity entity for assigning the timeline an object info
+	 */
 	protected void loadTimelines(ArrayList<Element> timelines, Animation animation, Entity entity){
 		for(int i = 0; i< timelines.size(); i++){
 			Element t = timelines.get(i);
@@ -196,6 +257,11 @@ public class SCMLReader {
 		}
 	}
 	
+	/**
+	 * Iterates through the given timeline keys and adds them to the given {@link Timeline} object.
+	 * @param keys a list if timeline keys
+	 * @param timeline the timeline containing the keys
+	 */
 	protected void loadTimelineKeys(ArrayList<Element> keys, Timeline timeline){
 		for(int i = 0; i< keys.size(); i++){
 			Element k = keys.get(i);
