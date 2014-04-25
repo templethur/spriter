@@ -31,7 +31,6 @@ public class Slick2DTest extends BasicGame{
     	
 		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
 		player = new Player(data.getEntity(0));
-		player.update();
 		player.setPosition(640, 480);
     	final Graphics g = gc.getGraphics();
 		
@@ -73,10 +72,10 @@ public class Slick2DTest extends BasicGame{
 			public void draw(Object object) {
 				Image image = loader.get(object.ref);
 				float newPivotX = (image.getWidth() * object.pivot.x);
-				float newX = object.position.x - newPivotX;
+				float newX = object.position.x - newPivotX*Math.signum(object.scale.x);;
 
 				float newPivotY = (image.getHeight() * object.pivot.y);
-				float newY = (gc.getHeight() - object.position.y) - (image.getHeight() - newPivotY);
+				float newY = (gc.getHeight() - object.position.y) - (image.getHeight() - newPivotY)*Math.signum(object.scale.y);
 				
 				g.rotate(object.position.x, (gc.getHeight() - object.position.y), - object.angle);
 				image.setAlpha(object.alpha);

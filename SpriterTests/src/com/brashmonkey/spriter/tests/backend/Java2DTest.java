@@ -130,15 +130,17 @@ public class Java2DTest extends JFrame{
 		@Override
 		public void draw(Object object) {
 			graphics.setTransform(identity);
-			BufferedImage image = loader.get(object.ref);
-			float newPivotX = (image.getWidth() * object.pivot.x);
-			int newX = (int)(object.position.x - newPivotX);
+			drawer.graphics.scale(1, -1);
+			drawer.graphics.translate(0, -getContentPane().getHeight());			
 
-			float newPivotY = (image.getHeight() * object.pivot.y);
-			int newY = (int)((getContentPane().getHeight() - object.position.y) - (image.getHeight() - newPivotY));
-			
-			graphics.rotate(-Math.toRadians(object.angle), object.position.x, getContentPane().getHeight()-object.position.y);
-			graphics.drawImage(image, newX, newY, (int)(image.getWidth()*object.scale.x), (int)(image.getHeight()*object.scale.y), null);
+			BufferedImage sprite = loader.get(object.ref);
+			float newPivotX = sprite.getWidth() * object.pivot.x;
+			float newX = object.position.x - newPivotX*Math.signum(object.scale.x);
+			float newPivotY = sprite.getHeight() * object.pivot.y;
+			float newY = object.position.y - newPivotY*Math.signum(object.scale.y);
+			graphics.rotate(Math.toRadians(object.angle), object.position.x, object.position.y);
+			int height = -(int)(sprite.getHeight()*object.scale.y);
+			graphics.drawImage(sprite, (int)newX, (int)newY-height, (int)(sprite.getWidth()*object.scale.x), height, null);
 		}
 		
 		@Override

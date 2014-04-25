@@ -58,7 +58,7 @@ public class SCMLReader {
 			data = new Data(root.get("scml_version"), root.get("generator"),root.get("generator_version"),
 					new ArrayList<Folder>(folders.size()),
 					new ArrayList<Entity>(entities.size()));
-			loadFolders(folders);
+			loadFoldersAndFiles(folders);
 			loadEntities(entities);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -66,7 +66,7 @@ public class SCMLReader {
 		return data;
 	}
 	
-	protected void loadFolders(ArrayList<Element> folders){
+	protected void loadFoldersAndFiles(ArrayList<Element> folders){
 		for(int i = 0; i < folders.size(); i++){
 			Element repo = folders.get(i);
 			Folder folder = new Folder(repo.getInt("id"), repo.get("name", "no_name_"+i));
@@ -76,6 +76,7 @@ public class SCMLReader {
 				File file = new File(f.getInt("id"), f.get("name"),
 						new Dimension(f.getInt("width", 0), f.getInt("height", 0)),
 						new Point(f.getFloat("pivot_x", 0f), f.getFloat("pivot_y", 1f)));
+				
 				folder.addFile(file);
 			}
 			data.addFolder(folder);
