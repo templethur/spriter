@@ -275,6 +275,6 @@ Spriter.update();
 // Do stuff...
 Spriter.draw();
 ```
-If you are done with the Spriter class, e.g. if you switch from game screen to menu screen. You can call `Spriter.dispose()`. After this call you have again to set the loader and drawer dependencies and to init Spriter.
+If you are done with the Spriter class, e.g. if you switch from game screen to menu screen, you can call `Spriter.dispose()`. After this call you have again to set the loader and drawer dependencies and to init Spriter.
 
 You can take a look at [SpriterStressTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/SpriterStressTest.java) to see it in action.
