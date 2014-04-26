@@ -89,6 +89,7 @@ Listening for player events
 It is quite common to observe an animation at runtime to e.g. switch the animation to another one if the current ends.
 For this purpose I added a [PlayerListener](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/Player.java#L998) interface which can be used to listen for such events.
 To register listeners on a player one can just call `player.addListener(yourListener)`. To remove a listener just call `player.removeListener(yourListener)`.
+To see this all in action, checkout out: [AnimationSpeedTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AnimationSpeedTest.java), [AnimationSwitchTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AnimationSwitchTest.java) and [TransformationTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/TransformationTest.java)
 
 
 Manipulating bones and objects at runtime
@@ -106,5 +107,91 @@ player.setObject("name of your object", newAlphaValue, folderIndex, fileIndex);/
 drawer.draw(player);//Finally draw
 ```
 The methods for object and bone manipulation are almost the same, with some extra methods for objects since they have some more attributes.
-As you may notice the manipulation takes place between the update and drawing call. This is very important to call the manipulation methods between those two calls, otherwise you will not see any desired results.
+As you may notice the manipulation takes place between the update and drawing call. This is very important to do the manipulation methods between those two calls, otherwise you will not see any desired results.
+See [ObjectManipulationTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/ObjectManipulationTest.java) for more information.
+
+Bounding boxes and collision tests
+----------------------------------
+The library offers you a way to calculate bounding boxes for specific parts of an animation or for the whole animation.
+The only thing you have to do is:
 ```
+Rectangle bbox = player.getBoundingRectangle(null);
+```
+this will return you the surrounding rectangle of the current animation state.
+You could also pass a bone as an argument to calculate the bounding box for a specific part of the sekelton.
+The [Rectangle](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/Rectangle.java) class has some usefull methods like intersection checking or merging two rectangles to a bigger one.
+
+Checking if a certain point lies in the bounding box of a bone or object can also be usefull, if you want e.g. pick the head and drag it around or check if the sword during an attack animation is hitting something. All you need to do is:
+```
+boolean hits = player.collidesFor(swordObject, x, y);
+if(hits){
+  //cut off the balls...
+}
+```
+Checking if the object collides with a rectangular are is also possible:
+```
+Rectangle area = new Rectangle(0,0, 500, 500);
+//...
+boolean hits = player.collidesFor(swordObject, area);
+if(hits){
+  //cut off the balls...
+}
+```
+Have a look at the [CollisionTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/CollisionTest.java) and [CullingTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/CullingTest.java) to see the feature in action.
+
+
+Interpolation and animation composition
+----------------------------------------
+It is quite common in many games that animation switches of a character are not instant. In most games there is a smooth transition between the end of e.g. idle animation and the beginning of a walking animation.
+This library is able to such stuff. You can create a [PlayerTweener](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/PlayerTweener.java) which relies on two other Player instances. You can either create a PlayerTweener with or without assigning it the Player instances. In any case, you will have access to them. A PlayerTweener will interpolate the bones and objects of two Player instances. Instantiating a PlayerTweener is the same as instantiating a normal Player:
+```
+PlayerTweener tweener = new PlayerTweener(data.getEntity(index));
+```
+This will create internally two Player instances. You can access them with `tweener.getFirstPlayer()` or `tweener.getSecondPlayer()`.
+The tweener will update the players with its `update()` method. You can turn off the auto update by setting `tweener.updatePlayers = false;` but then you have to update them on your own.
+As a default value the interplation weight between the two players is at 50%. Setting and getting the weight works like this:
+```
+tweener.setWeight(.75f);//Sets the weight to 75%, i.e. the second player will have more influence than the first
+tweener.getWeight();//Returns the weight of the player
+```
+A weight of 0% means that only the first player will be played back, a weight of 100% means that the second player will be played back.
+Setting the animation of a player is not possible because it makes no sense and it uses its own interpolated animation internally.
+Transforming the tweener works in the same way as for a normal player object. Transforming the internal players of a tweener will have no effect on the interpolation, since only the tweened realtive transformations are taken into consideration.
+Note that tweening two animations makes only sense if both animations have a similar structure. I recommend that you create your animations with the same bone naming structure, since this will give you the best tweening result.
+
+Check out the [InterpolationTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/InterpolationTest.java) for more information.
+
+You can also force the tweener to only interpolate bones and objects starting from a specific root. This can be useful if you want e.g. play a shooting animation while your character is running.
+
+Let's say you have an animation called "walk" and one called "shoot". Then we would set the base animation of the tweener to "walk", the animation of the second player would also be "walk" and the animation of the first player would be "shoot". Then we could set the weight of the tweener to zero, indicating that only "shoot" will be played back. As a last step we need to specify what the name of the root bone is. The tweener will then tween all bones starting from the given root bone. Then all bones and objects which do not occur in the children list of the root bone will stay at the animation "walk". Here is the code snippet:
+```
+tweener.setBaseAnimation("walk");
+tweener.getSecondPlayer().setAnimation("walk");
+tweener.getFirstPlayer().setAnimation("shoot");
+tweener.setWeight(0f);
+```
+Have a look at [CompositionTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/CompositionTest.java).
+
+
+Inverse kinematics
+-------------------
+Inverse kinematics is also supported by the library. The default inverse kinematics algorithm is [Cyclic Coordinate Descent](http://www.ryanjuckett.com/programming/cyclic-coordinate-descent-in-2d/), but the library is designed to have also other algorithms for ik. If you have a better algorithm, extend [IKResolver](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/IKResolver.java).
+The basic usage for inverse kinematics is rather simple. Everything you have to do is mapping specific [IKObjects](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/IKRObject.java) to your resolver and update the resolver after your player got updated.
+Here is a snippet for  the basic usage:
+```
+//Create a resolver
+IKResolver resolver = new CCDResolver();
+
+//Create an ik object and map it to the resolver
+IKObject ikObject = new IKObject(0, 0, 2, 5); //Creates an ik object at (0,0), with a chain length of 2 and forces the resolver to apply the algorithm at most 5 times
+resolver.mapIKObject(ikObject, yourBone);
+
+
+//During main loop
+player.update();
+resolver.resolve();
+
+drawer.draw(player);
+```
+Since applying inverse kinematics is the same as manipulating objects of a player you have to call the resolve method between update and draw.
+See it in action in the [InverseKinematicsTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/InverseKinematicsTest.java).
