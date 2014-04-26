@@ -2,7 +2,7 @@ Spriter (WIP)
 =============
 A Generic Java library for Spriter animation files.
 
-[Checkout the features video.](http://www.youtube.com/watch?v=i_OxqopvMH0)
+[Checkout the features video (note: at the moment there are more features than in this video!).](http://www.youtube.com/watch?v=i_OxqopvMH0)
 
 
 Basic usage
@@ -52,7 +52,7 @@ This will draw the current set animation at the point (0,0).
 
 That's it! Now read further if you want to know what other abilities the library has.
 
-Manipulate a Player at runtime
+Manipulate a player at runtime
 ------------------------------
 You have the ability to change the animation and speed of your player.
 Changing animation:
