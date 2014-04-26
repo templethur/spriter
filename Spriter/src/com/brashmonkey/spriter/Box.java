@@ -55,7 +55,7 @@ public class Box {
 	 * @param info the object info of the given bone or object
 	 * @param x the x coordinate
 	 * @param y the y coordinate
-	 * @return true if the given point lies in the box
+	 * @return <code>true</code> if the given point lies in the box
 	 * @throws NullPointerException if info or boneOrObject is <code>null</code>
 	 */
 	public boolean collides(Timeline.Key.Bone boneOrObject, ObjectInfo info, float x, float y){
@@ -74,7 +74,7 @@ public class Box {
 	/**
 	 * Returns whether this box is inside the given rectangle.
 	 * @param rect the rectangle
-	 * @return  true if one of the four points is inside the rectangle
+	 * @return  <code>true</code> if one of the four points is inside the rectangle
 	 */
 	public boolean isInside(Rectangle rect){
 		boolean inside = false;

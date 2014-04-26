@@ -256,7 +256,7 @@ public class Player {
 	 * @param boneOrObject the bone or object
 	 * @param x the x value of the point
 	 * @param y the y value of the point
-	 * @return true if x,y lies inside the box of the given bone or object
+	 * @return <code>true</code> if x,y lies inside the box of the given bone or object
 	 * @throws NullPointerException if no object info for the given bone or object exists
 	 */
 	public boolean collidesFor(Bone boneOrObject, float x, float y){
@@ -269,11 +269,23 @@ public class Player {
 	 * Returns whether the given point lies inside the box of the given bone or object.
 	 * @param bone the bone or object
 	 * @param point the point
-	 * @return true if the point lies inside the box of the given bone or object
+	 * @return <code>true</code> if the point lies inside the box of the given bone or object
 	 * @throws NullPointerException if no object info for the given bone or object exists
 	 */
-	public boolean collidesFor(Bone bone, Point point){
-		return this.collidesFor(bone, point.x, point.y);
+	public boolean collidesFor(Bone boneOrObject, Point point){
+		return this.collidesFor(boneOrObject, point.x, point.y);
+	}
+	
+	/**
+	 * Returns whether the given area collides with the box of the given bone or object.
+	 * @param boneOrObject the bone or object
+	 * @param area the rectangular area
+	 * @return <code>true</code> if the area collides with the bone or object
+	 */
+	public boolean collidesFor(Bone boneOrObject, Rectangle area){
+		ObjectInfo info = getObjectInfoFor(boneOrObject);
+		this.prevBBox.calcFor(boneOrObject, info);
+		return this.prevBBox.isInside(area);
 	}
 	
 	/**
