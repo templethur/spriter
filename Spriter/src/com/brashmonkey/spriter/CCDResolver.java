@@ -12,9 +12,13 @@ import com.brashmonkey.spriter.Timeline.Key.Bone;
  *
  */
 public class CCDResolver extends IKResolver {
+	
+	public CCDResolver(Player player) {
+		super(player);
+	}
 
 	@Override
-	public void resolve(float x, float y, int chainLength, BoneRef effectorRef, Player player) {
+	public void resolve(float x, float y, int chainLength, BoneRef effectorRef) {
 		//player.unmapObjects(null);
 		Timeline timeline = player.animation.getTimeline(effectorRef.timeline);
 		Timeline.Key key = player.tweenedKeys[effectorRef.timeline];

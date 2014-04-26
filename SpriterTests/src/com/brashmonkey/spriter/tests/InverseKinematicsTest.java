@@ -32,7 +32,7 @@ public class InverseKinematicsTest {
 			@Override
 			public void create() {
 				player = new Player(data.getEntity(0));//createPlayer(data.getEntity(0));
-				resolver = new CCDResolver();
+				resolver = new CCDResolver(player);
 				ikObject = new IKObject(0, 0, 2, 5);
 				
 				addInputProcessor(new InputAdapter(){
@@ -58,14 +58,14 @@ public class InverseKinematicsTest {
 			public void render() {
 				mouse.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
 				camera.unproject(mouse);
-				if(Gdx.input.isButtonPressed(Buttons.LEFT) && b!= null) resolver.mapIKObject(ikObject, player.getBoneRef(b));
+				if(Gdx.input.isButtonPressed(Buttons.LEFT) && b!= null) resolver.mapIKObject(ikObject, b);
 				else resolver.unmapIKObject(ikObject);
 				
 				player.update();
 				
 				ikObject.x = mouse.x;
 				ikObject.y = mouse.y;
-				resolver.resolve(player);
+				resolver.resolve();
 				
 				drawer.draw(player);
 				drawer.drawBones(player);
