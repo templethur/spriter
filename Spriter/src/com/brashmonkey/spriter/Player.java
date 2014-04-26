@@ -615,7 +615,7 @@ public class Player {
 	/**
 	 * Returns a bounding box for this player.
 	 * The bounding box is calculated for all bones and object starting from the given root.
-	 * @param root the starting root. Set it to null to calculate the bounding box for the whole animation
+	 * @param root the starting root. Set it to null to calculate the bounding box for the whole player
 	 * @return the bounding box
 	 */
 	public Rectangle getBoundingRectangle(BoneRef root){
@@ -624,6 +624,16 @@ public class Player {
 		this.calcBoundingRectangle(root);
 		this.rect.calculateSize();
 		return this.rect;
+	}
+	
+	/**
+	 * Returns a bounding box for this player.
+	 * The bounding box is calculated for all bones and object starting from the given root.
+	 * @param root the starting root. Set it to null to calculate the bounding box for the whole player
+	 * @return the bounding box
+	 */
+	public Rectangle getBoudingRectangle(Bone root){
+		return this.getBoundingRectangle(root == null ? null: getBoneRef(root));
 	}
 	
 	private void calcBoundingRectangle(BoneRef root){

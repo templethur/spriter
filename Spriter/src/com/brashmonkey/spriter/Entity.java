@@ -144,7 +144,7 @@ public class Entity {
      *
      */
     public static enum ObjectType{
-    	Sprite, Bone, Box, Point;
+    	Sprite, Bone, Box, Point, Skin;
     	
     	/**
     	 * Returns the object type for the given name
@@ -153,6 +153,7 @@ public class Entity {
     	 */
     	public static ObjectType getObjectInfoFor(String name){
     		if(name.equals("bone")) return Bone;
+    		else if(name.equals("skin")) return Skin;
     		else if(name.equals("box")) return Box;
     		else if(name.equals("point")) return Point;
     		else return Sprite;

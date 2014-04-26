@@ -214,6 +214,10 @@ public abstract class Drawer<R> {
 		this.line(box.points[2].x, box.points[2].y, box.points[0].x, box.points[0].y);
 	}
 	
+	public void drawRectangle(Rectangle rect){
+		this.rectangle(rect.left, rect.bottom, rect.size.width, rect.size.height);
+	}
+	
 	/**
 	 * Sets the color for drawing lines, rectangles and circles.
 	 * @param r the red value between 0.0 - 1.0

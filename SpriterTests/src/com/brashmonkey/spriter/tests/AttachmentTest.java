@@ -20,7 +20,7 @@ public class AttachmentTest {
 		create("monster/basic_002.scml", "Attachment test");
 		infoPosition.y = -250;
 		test = new ApplicationAdapter() {
-			String[] files = {"assets/monster/basic_002.scml", "assets/GreyGuy/player.scml"};
+			String[] files = {"monster/basic_002.scml", "GreyGuy/player.scml"};
 			Player monster, player;
 			Attachment attach;
 			Vector3 mouse = new Vector3();
