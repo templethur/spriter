@@ -65,7 +65,7 @@ drawer.draw(yourPlayer);
 This will draw the current set animation at the point (0,0).
 
 That's it! Now read further if you want to know what other abilities the library has.
-[Back to top](#)
+[Back to top](#index)
 
 Manipulate a player at runtime
 ------------------------------
@@ -105,7 +105,7 @@ Listening for player events
 It is quite common to observe an animation at runtime to e.g. switch the animation to another one if the current ends.
 For this purpose I added a [PlayerListener](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/Player.java#L998) interface which can be used to listen for such events.
 To register listeners on a player one can just call `player.addListener(yourListener)`. To remove a listener just call `player.removeListener(yourListener)`.
-[Back to top](#)
+[Back to top](#index)
 
 Manipulating bones and objects at runtime
 -----------------------------------------
@@ -124,7 +124,7 @@ drawer.draw(player);//Finally draw
 The methods for object and bone manipulation are almost the same, with some extra methods for objects since they have some more attributes.
 As you may notice the manipulation takes place between the update and drawing call. This is very important to do the manipulation methods between those two calls, otherwise you will not see any desired results.
 See [ObjectManipulationTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/ObjectManipulationTest.java) for more information.
-[Back to top](#)
+[Back to top](#index)
 
 Bounding boxes and collision tests
 ----------------------------------
@@ -154,7 +154,7 @@ if(hits){
 }
 ```
 Have a look at the [CollisionTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/CollisionTest.java) and [CullingTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/CullingTest.java) to see the feature in action.
-[Back to top](#)
+[Back to top](#index)
 
 
 Interpolation and animation composition
@@ -191,7 +191,7 @@ tweener.setWeight(0f);
 If you want that the tweener interpolates all objects and bones again, just set `tweener.baseBoneName = null`.
 
 Have a look at [CompositionTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/CompositionTest.java).
-[Back to top](#)
+[Back to top](#index)
 
 
 Inverse kinematics
@@ -216,7 +216,7 @@ drawer.draw(player);
 ```
 Since applying inverse kinematics is the same as manipulating objects of a player you have to call the resolve method between update and draw.
 See it in action in the [InverseKinematicsTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/InverseKinematicsTest.java).
-[Back to top](#)
+[Back to top](#index)
 
 Attachments
 -----------
@@ -243,7 +243,7 @@ mainPlayer.attachments.add(attach);
 ```
 That is all you need to do. The mainPlayer will now transform the `playerToAttach` instance realtive to the `handObject`.
 To see it in action have a look at [AttachmentTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AttachmentTest.java).
-[Back to top](#)
+[Back to top](#index)
 
 Character maps
 --------------
@@ -254,7 +254,7 @@ CharacterMap map = player.getEntity().getCharacterMap("name of your char map");
 player.characterMap = map;
 ```
 That's it. To remove the character map, just set `player.characterMap = null` and you will be fine.
-[Back to top](#)
+[Back to top](#index)
 
 Spriter managment
 -----------------
@@ -303,4 +303,4 @@ Spriter.draw();
 If you are done with the Spriter class, e.g. if you switch from game screen to menu screen, you can call `Spriter.dispose()`. After this call you have again to set the loader and drawer dependencies and to init Spriter.
 
 You can take a look at [SpriterStressTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/SpriterStressTest.java) to see it in action.
-[Back to top](#)
+[Back to top](#index)
