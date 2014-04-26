@@ -6,7 +6,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.MathUtils;
 import com.brashmonkey.spriter.PlayerTweener;
-import com.brashmonkey.spriter.TweenedAnimation;
 
 public class CompositionTest {
 	public static void main(String[] args){
@@ -16,32 +15,30 @@ public class CompositionTest {
 		
 		test = new ApplicationAdapter() {
 			 PlayerTweener tweener;
-			 TweenedAnimation anim;
 			 
 			 public void create(){
 				 tweener = new PlayerTweener(data.getEntity(0));
 				 players.add(tweener);
-				 anim = (TweenedAnimation) tweener.getAnimation();
 				 tweener.getFirstPlayer().setAnimation("shoot");
 				 tweener.getSecondPlayer().setAnimation("walk");
 				 tweener.baseBoneName = "chest";
-				 anim.weight = 0f;
+				 tweener.setWeight(0f);
 				 
 				 tweener.getFirstPlayer().speed = 50;
 				 
-				 anim.baseAnimation = tweener.getEntity().getAnimation("walk");
+				 tweener.setBaseAnimation("walk");
 				 addInputProcessor(new AnimationSwitchTest.AnimationSwitcher(tweener.getSecondPlayer()));
 				 addInputProcessor(new InputAdapter(){
 						public boolean scrolled(int am){
-							anim.weight -= (float)am/10f;
-							anim.weight = MathUtils.clamp(anim.weight, 0f, 1f);
+							tweener.setWeight(tweener.getWeight() - (float)am/10f);
+							tweener.setWeight(MathUtils.clamp(tweener.getWeight(), 0f, 1f));
 							return false;
 						}
 					});
 			 }
 			 
 			 public void render(){
-				 anim.baseAnimation = tweener.getSecondPlayer().getAnimation();
+				 tweener.setBaseAnimation(tweener.getSecondPlayer().getAnimation());
 			 }
 		};
 	}

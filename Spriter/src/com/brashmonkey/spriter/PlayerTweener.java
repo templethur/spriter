@@ -112,6 +112,42 @@ public class PlayerTweener extends Player{
 		return this.anim.weight;
 	}
 	
+	
+	/**
+	 * Sets the base animation of this tweener.
+	 * Has only an effect if {@link #baseBoneName} is not <code>null</code>. 
+	 * @param anim the base animation
+	 */
+	public void setBaseAnimation(Animation anim){
+		this.anim.baseAnimation = anim;
+	}
+	
+	/**
+	 * Sets the base animation of this tweener by the given animation index.
+	 * Has only an effect if {@link #baseBoneName} is not <code>null</code>. 
+	 * @param index the index of the base animation
+	 */
+	public void setBaseAnimation(int index){
+		this.setBaseAnimation(entity.getAnimation(index));
+	}
+	
+	/**
+	 * Sets the base animation of this tweener by the given name.
+	 * Has only an effect if {@link #baseBoneName} is not <code>null</code>. 
+	 * @param name the name of the base animation
+	 */
+	public void setBaseAnimation(String name){
+		this.setBaseAnimation(entity.getAnimation(name));
+	}
+	
+	/**
+	 * Returns the base animation if this tweener.
+	 * @return the base animation
+	 */
+	public Animation getBaseAnimation(){
+		return this.anim.baseAnimation;
+	}
+	
 	/**
 	 * Not supported by this class.
 	 */
