@@ -97,6 +97,22 @@ public class PlayerTweener extends Player{
 	}
 	
 	/**
+	 * Sets the interpolation weight of this tweener.
+	 * @param weight  the interpolation weight between 0.0f  and 1.0f
+	 */
+	public void setWeight(float weight){
+		this.anim.weight = weight;
+	}
+	
+	/**
+	 * Returns the interpolation weight.
+	 * @return the interpolation weight between 0.0f  and 1.0f
+	 */
+	public float getWeight(){
+		return this.anim.weight;
+	}
+	
+	/**
 	 * Not supported by this class.
 	 */
 	@Override
