@@ -83,14 +83,13 @@ player.flipX();//Will flip the player around the x-axis
 player.flipY();//Will flip the player around the y-axis
 ```
 That is the basic transformation usage for a player. There are also methods like `player.translatePosition(x,y)` which should be self explanatory.
+To see this all in action, checkout out: [AnimationSpeedTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AnimationSpeedTest.java), [AnimationSwitchTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AnimationSwitchTest.java) and [TransformationTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/TransformationTest.java).
 
 Listening for player events
 ---------------------------
 It is quite common to observe an animation at runtime to e.g. switch the animation to another one if the current ends.
 For this purpose I added a [PlayerListener](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/Player.java#L998) interface which can be used to listen for such events.
 To register listeners on a player one can just call `player.addListener(yourListener)`. To remove a listener just call `player.removeListener(yourListener)`.
-To see this all in action, checkout out: [AnimationSpeedTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AnimationSpeedTest.java), [AnimationSwitchTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AnimationSwitchTest.java) and [TransformationTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/TransformationTest.java)
-
 
 Manipulating bones and objects at runtime
 -----------------------------------------
@@ -195,3 +194,87 @@ drawer.draw(player);
 ```
 Since applying inverse kinematics is the same as manipulating objects of a player you have to call the resolve method between update and draw.
 See it in action in the [InverseKinematicsTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/InverseKinematicsTest.java).
+
+Attachments
+-----------
+The library has also the ability to attach 2D objects to a animated bone or object. For this purpose I implemented the [Attachment](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/Player.java#L1064) class. It is an abstract class which extends a bone.
+If you want to attach an object to a player object or bone, the only thing you have to do is, to implement the abstact methods. If you want for example to attach a player to a hand of another player, you would create a new attachment and attach it to the hand of the player:
+```
+Attachment attach = new Player.Attachment(handObject) {
+  @Override
+  protected void setScale(float xscale, float yscale) {
+  	playerToAttach.setScale(Math.max(xscale, yscale));
+  }
+  
+  @Override
+  protected void setPosition(float x, float y) {
+  	playerToAttach.setPosition(x, y);
+  }
+  
+  @Override
+  protected void setAngle(float angle) {
+  	playerToAttach.setAngle(angle);
+  }
+};
+mainPlayer.attachments.add(attach);
+```
+That is all you need to do. The mainPlayer will now transform the `playerToAttach` instance realtive to the `handObject`.
+To see it in action have a look at [AttachmentTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/AttachmentTest.java).
+
+Character maps
+--------------
+Applying character maps on the fly is as simple as in Spriter.
+First get a character map, then assign it to a player:
+```
+CharacterMap map = player.getEntity().getCharacterMap("name of your char map");
+player.characterMap = map;
+```
+That's it. To remove the character map, just set `player.characterMap = null` and you will be fine.
+
+Spriter managment
+-----------------
+If you have a bunch of players and you do not want to manage all them on your own, the library can do it for you.
+The [Spriter](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/Spriter.java) class is designed to load SCML files and its sprites, update and draw all created players and to dispose them.
+The class will create a drawer and loaders on its own. The only thing you have to do, is to say which class holds the implementation of the loader and drawer and what the dependencies are, to create them.
+For example the LibGDX loader depends on no other instances, but the LibGDX drawer depends on a SpriteBatch and a ShapeRenderer. Therefore we have to tell Spriter where those references are:
+```
+Spriter.setDrawerDependencies(batch, renderer);
+//Same for loader dependencies: Spriter.setLoaderDependencies(...);
+```
+Assuming the `batch` and `renderer` are already instantiated.
+Spriter predicts, that the constructors of your Drawer and Loader implementation look like this:
+```
+Loader loader = new YourLoader(instanceOfData, ...);
+Drawer drawer = new YourDrawer(loader, ...);
+```
+So the first argument is always the one from the super class constructor.
+
+After setting the dependencies, Spriter knows how to create a loader and a drawer. Then we can call `Spriter.init(LibGdxLoader.class, LibGdxDrawer.class)`. This method has to be called before any other.
+
+Then we can load our desired SCML files with `Spriter.load(scmlStream, "path to scml file")`.
+
+Now you are able to create Player instances:
+```
+Player player = Spriter.newPlayer("name of scml file", entityIndexOrName);
+```
+You have to call this method, otherwise updating and drawing with Spriter will not work.
+
+Creating e.g. a PlayerTweener instance with the Spriter class works like this
+```
+Spriter.newPlayer("scmlFile", entityIndex, PlayerTweener.class);
+```
+
+In your mainlooop you can therefore call:
+```
+Spriter.updateAndDraw();
+```
+This will update and immediately draw all player created with Spriter. Node that you are then not able to manipulate objects and bones. For this usecase you should use the [Player.Listener#postProcess()](https://github.com/Trixt0r/spriter/blob/master/Spriter/src/com/brashmonkey/spriter/Player.java#L1046) method.
+I only recommend this if you run all your logic and rendering on the same thread. Otherwise you would call update and draw seperately:
+```
+Spriter.update();
+// Do stuff...
+Spriter.draw();
+```
+If you are done with the Spriter class, e.g. if you switch from game screen to menu screen. You can call `Spriter.dispose()`. After this call you have again to set the loader and drawer dependencies and to init Spriter.
+
+You can take a look at [SpriterStressTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/SpriterStressTest.java) to see it in action.
