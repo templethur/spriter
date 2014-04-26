@@ -162,13 +162,16 @@ Check out the [InterpolationTest](https://github.com/Trixt0r/spriter/blob/master
 
 You can also force the tweener to only interpolate bones and objects starting from a specific root. This can be useful if you want e.g. play a shooting animation while your character is running.
 
-Let's say you have an animation called "walk" and one called "shoot". Then we would set the base animation of the tweener to "walk", the animation of the second player would also be "walk" and the animation of the first player would be "shoot". Then we could set the weight of the tweener to zero, indicating that only "shoot" will be played back. As a last step we need to specify what the name of the root bone is. The tweener will then tween all bones starting from the given root bone. Then all bones and objects which do not occur in the children list of the root bone will stay at the animation "walk". Here is the code snippet:
+Let's say you have an animation called "walk" and one called "shoot". Then we would set the base animation of the tweener to "walk", the animation of the second player would also be "walk" and the animation of the first player would be "shoot". Then we could set the weight of the tweener to zero, indicating that only "shoot" will be played back. As a last step we need to specify what the name of the root bone is (here we assume the bone is called "chest"). The tweener will then tween all bones starting from the given root bone. Then all bones and objects which do not occur in the children list of the root bone will stay at the animation "walk". Here is the code snippet:
 ```
 tweener.setBaseAnimation("walk");
 tweener.getSecondPlayer().setAnimation("walk");
 tweener.getFirstPlayer().setAnimation("shoot");
+tweener.baseBoneName = "chest";
 tweener.setWeight(0f);
 ```
+If you want that the tweener interpolates all objects and bones again, just set `tweener.baseBoneName = null`.
+
 Have a look at [CompositionTest](https://github.com/Trixt0r/spriter/blob/master/SpriterTests/src/com/brashmonkey/spriter/tests/CompositionTest.java).
 
 
