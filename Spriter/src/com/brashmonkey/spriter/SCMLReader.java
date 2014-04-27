@@ -1,7 +1,5 @@
 package com.brashmonkey.spriter;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ public class SCMLReader {
 	protected Data data;
 	
 	/**
-	 * Creates a new SCML reader and will load the given stream.
+	 * Creates a new SCML reader and will parse all objects in the given stream.
 	 * @param stream the stream
 	 */
 	public SCMLReader(InputStream stream){
@@ -31,25 +29,29 @@ public class SCMLReader {
 	}
 	
 	/**
-	 * Creates a new SCML reader and will load the file at the given filename.
-	 * @param filename
+	 * Creates a new SCML reader and will parse the given xml string.
+	 * @param xml the xml string
 	 */
-	public SCMLReader(String filename){
-		this.data = this.load(filename);
+	public SCMLReader(String xml){
+		this.data = this.load(xml);
 	}
 	
 	/**
-	 * Reads the whole given SCML file.
-	 * @param filename Path to SCML file.
-	 * @return instance of {@link Data}.
+	 * Parses the SCML object save in the given xml string and returns the build data object.
+	 * @param xml the xml string
+	 * @return the built data
 	 */
-	protected Data load(String filename){
-		try {
-			return load(new FileInputStream(filename));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
+	protected Data load(String xml){
+		XmlReader reader = new XmlReader();
+		Element root = reader.parse(xml);
+		ArrayList<Element> folders = root.getChildrenByName("folder");
+		ArrayList<Element> entities = root.getChildrenByName("entity");
+		data = new Data(root.get("scml_version"), root.get("generator"),root.get("generator_version"),
+				new ArrayList<Folder>(folders.size()),
+				new ArrayList<Entity>(entities.size()));
+		loadFolders(folders);
+		loadEntities(entities);
+		return data;
 	}
 	
 	/**

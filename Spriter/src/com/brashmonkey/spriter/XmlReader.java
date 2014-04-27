@@ -283,12 +283,12 @@ public class XmlReader {
 			int lineNumber = 1;
 			for (int i = 0; i < p; i++)
 				if (data[i] == '\n') lineNumber++;
-			throw new SerializationException("Error parsing XML on line " + lineNumber + " near: "
+			throw new SpriterException("Error parsing XML on line " + lineNumber + " near: "
 				+ new String(data, p, Math.min(32, pe - p)));
 		} else if (elements.size() != 0) {
 			Element element = elements.get(elements.size()-1);
 			elements.clear();
-			throw new SerializationException("Error parsing XML, unclosed element: " + element.getName());
+			throw new SpriterException("Error parsing XML, unclosed element: " + element.getName());
 		}
 		Element root = this.root;
 		this.root = null;
