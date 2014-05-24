@@ -1,8 +1,5 @@
 package com.brashmonkey.spriter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Represents all the data which necessary to animate a Spriter generated SCML file.
@@ -13,20 +10,17 @@ import java.util.List;
  */
 public class Data {
 
-	final List<Folder> folders;
-    final List<Entity> entities;
+	final Folder[] folders;
+    final Entity[] entities;
+    private int folderPointer = 0, entityPointer = 0;
     public final String scmlVersion, generator, generatorVersion;
     
-    Data(String scmlVersion, String generator, String generatorVersion){
-    	this(scmlVersion, generator, generatorVersion, new ArrayList<Folder>(), new ArrayList<Entity>());
-    }
-    
-    Data(String scmlVersion, String generator, String generatorVersion, List<Folder> folders, List<Entity> entities){
+    Data(String scmlVersion, String generator, String generatorVersion, int folders, int entities){
     	this.scmlVersion = scmlVersion;
     	this.generator = generator;
     	this.generatorVersion = generatorVersion;
-    	this.folders = folders;
-    	this.entities = entities;
+    	this.folders = new Folder[folders];
+    	this.entities = new Entity[entities];
     }
     
     /**
@@ -34,7 +28,7 @@ public class Data {
      * @param folder the folder to add
      */
     void addFolder(Folder folder){
-    	this.folders.add(folder);
+    	this.folders[folderPointer++] = folder;
     }
     
     /**
@@ -42,7 +36,7 @@ public class Data {
      * @param entity the entity to add
      */
     void addEntity(Entity entity){
-    	this.entities.add(entity);
+    	this.entities[entityPointer++] = entity;
     }
     
     /**
@@ -73,7 +67,7 @@ public class Data {
      * @return the {@link Folder} instance at the given index
      */
     Folder getFolder(int index){
-    	return this.folders.get(index);
+    	return this.folders[index];
     }
     
     /**
@@ -83,7 +77,7 @@ public class Data {
      * @throws {@link IndexOutOfBoundsException} if the index is out of range 
      */
     public Entity getEntity(int index){
-    	return this.entities.get(index);
+    	return this.entities[index];
     }
     
     /**

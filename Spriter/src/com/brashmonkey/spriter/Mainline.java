@@ -1,8 +1,5 @@
 package com.brashmonkey.spriter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Represents a mainline in a Spriter SCML file.
  * A mainline holds only keys and occurs only once in an animation.
@@ -13,14 +10,11 @@ import java.util.List;
  */
 public class Mainline {
 
-    public final List<Key> keys;
-
-    public Mainline(){
-    	this(new ArrayList<Key>());
-    }
+    final Key[] keys;
+    private int keyPointer = 0;
     
-    public Mainline(List<Key> keys){
-    	this.keys = keys;
+    public Mainline(int keys){
+    	this.keys = new Key[keys];
     }
     
     public String toString(){
@@ -31,6 +25,10 @@ public class Mainline {
     	return toReturn;
     }
     
+    public void addKey(Key key){
+    	this.keys[keyPointer++] = key;
+    }
+    
     /**
      * Returns a {@link Key} at the given index.
      * @param index the index of the key
@@ -38,7 +36,7 @@ public class Mainline {
      * @throws IndexOutOfBoundsException if index is out of range
      */
     public Key getKey(int index){
-    	return this.keys.get(index);
+    	return this.keys[index];
     }
     
     /**
@@ -48,7 +46,7 @@ public class Mainline {
      * The first key is returned if no key was found.
      */
     public Key getKeyBeforeTime(int time){
-    	Key found = this.keys.get(0);
+    	Key found = this.keys[0];
     	for(Key key: this.keys){
     		if(key.time <= time) found = key;
     		else break;
@@ -66,20 +64,17 @@ public class Mainline {
     public static class Key{
     	
     	public final int id, time;
-    	final List<BoneRef> boneRefs;
-    	final List<ObjectRef> objectRefs;
+    	final BoneRef[] boneRefs;
+    	final ObjectRef[] objectRefs;
+    	private int bonePointer = 0, objectPointer = 0;
     	public final Curve curve;
     	
-    	public Key(int id, int time, Curve curve){
-    		this(id, time, curve, new ArrayList<BoneRef>(), new ArrayList<ObjectRef>());
-    	}
-    	
-    	public Key(int id, int time, Curve curve, List<BoneRef> boneRefs, List<ObjectRef> objectRefs){
+    	public Key(int id, int time, Curve curve, int boneRefs, int objectRefs){
     		this.id = id;
     		this.time = time;
     		this.curve = curve;
-    		this.boneRefs = boneRefs;
-    		this.objectRefs = objectRefs;
+    		this.boneRefs = new BoneRef[boneRefs];
+    		this.objectRefs = new ObjectRef[objectRefs];
     	}
     	
     	/**
@@ -87,7 +82,7 @@ public class Mainline {
     	 * @param ref the reference to add
     	 */
     	public void addBoneRef(BoneRef ref){
-    		this.boneRefs.add(ref);
+    		this.boneRefs[bonePointer++] = ref;
     	}
     	
     	/**
@@ -95,7 +90,7 @@ public class Mainline {
     	 * @param ref the reference to add
     	 */
     	public void addObjectRef(ObjectRef ref){
-    		this.objectRefs.add(ref);
+    		this.objectRefs[objectPointer++] = ref;
     	}
     	
     	/**
@@ -104,18 +99,18 @@ public class Mainline {
     	 * @return the bone reference or null if no reference exists with the given index
     	 */
     	public BoneRef getBoneRef(int index){
-    		if(index < 0 || index >= this.boneRefs.size()) return null;
-    		else return this.boneRefs.get(index);
+    		if(index < 0 || index >= this.boneRefs.length) return null;
+    		else return this.boneRefs[index];
     	}
     	
     	/**
     	 * Returns a {@link ObjectRef} with the given index.
-    	 * @param i the index of the object reference
+    	 * @param index the index of the object reference
     	 * @return the object reference or null if no reference exists with the given index
     	 */
-    	public ObjectRef getObjectRef(int i){
-    		if(i < 0 || i >= this.objectRefs.size()) return null;
-    		else return this.objectRefs.get(i);
+    	public ObjectRef getObjectRef(int index){
+    		if(index < 0 || index >= this.objectRefs.length) return null;
+    		else return this.objectRefs[index];
     	}
     	
     	/**

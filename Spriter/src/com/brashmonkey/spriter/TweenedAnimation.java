@@ -59,7 +59,7 @@ public class TweenedAnimation extends Animation{
 	 * @param entity the entity animations have to be part of
 	 */
 	public TweenedAnimation(Entity entity) {
-		super(-1, "__interpolatedAnimation__", 0, true);
+		super(new Mainline(0), -1, "__interpolatedAnimation__", 0, true, entity.getAnimationWithMostTimelines().timelines());
 		this.entity = entity;
 		this.curve = new Curve();
 		this.setUpTimelines();
@@ -120,9 +120,9 @@ public class TweenedAnimation extends Animation{
 	
 	private void tweenBoneRefs(BoneRef base, Bone root){
     	int startIndex = base == null ? -1 : base.id-1;
-    	int length = super.currentKey.boneRefs.size();
+    	int length = super.currentKey.boneRefs.length;
 		for(int i = startIndex+1; i < length; i++){
-			BoneRef ref = currentKey.boneRefs.get(i);
+			BoneRef ref = currentKey.boneRefs[i];
 			if(base == ref || ref.parent == base) this.update(ref, root, 0);
 			if(base == ref.parent) this.tweenBoneRefs(ref, root);
 		}
@@ -180,7 +180,7 @@ public class TweenedAnimation extends Animation{
 		Animation maxAnim = this.entity.getAnimationWithMostTimelines();
 		int max = maxAnim.timelines();
 		for(int i = 0; i < max; i++){
-			Timeline t = new Timeline(i, maxAnim.getTimeline(i).name, maxAnim.getTimeline(i).objectInfo);
+			Timeline t = new Timeline(i, maxAnim.getTimeline(i).name, maxAnim.getTimeline(i).objectInfo, 1);
 			addTimeline(t);
 		}
 		prepare();

@@ -1,8 +1,5 @@
 package com.brashmonkey.spriter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.brashmonkey.spriter.Entity.ObjectInfo;
 
 /**
@@ -13,24 +10,21 @@ import com.brashmonkey.spriter.Entity.ObjectInfo;
  */
 public class Timeline {
 
-    public final List<Key> keys;
+    public final Key[] keys;
+    private int keyPointer = 0;
     public final int id;
     public final String name;
     public final ObjectInfo objectInfo;
     
-    Timeline(int id, String name, ObjectInfo objectInfo){
-    	this(id, name, objectInfo, new ArrayList<Key>());
-    }
-    
-    Timeline(int id, String name, ObjectInfo objectInfo, List<Key> keys){
+    Timeline(int id, String name, ObjectInfo objectInfo, int keys){
     	this.id = id;
     	this.name = name;
     	this.objectInfo = objectInfo;
-    	this.keys = keys;
+    	this.keys = new Key[keys];
     }
     
     void addKey(Key key){
-    	this.keys.add(key);
+    	this.keys[keyPointer++] = key;
     }
     
     /**
@@ -40,7 +34,7 @@ public class Timeline {
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public Key getKey(int index){
-    	return this.keys.get(index);
+    	return this.keys[index];
     }
     
     public String toString(){

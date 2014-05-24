@@ -3,7 +3,7 @@ package com.brashmonkey.spriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 import com.brashmonkey.spriter.Entity.*;
 import com.brashmonkey.spriter.Mainline.Key.*;
@@ -47,8 +47,7 @@ public class SCMLReader {
 		ArrayList<Element> folders = root.getChildrenByName("folder");
 		ArrayList<Element> entities = root.getChildrenByName("entity");
 		data = new Data(root.get("scml_version"), root.get("generator"),root.get("generator_version"),
-				new ArrayList<Folder>(folders.size()),
-				new ArrayList<Entity>(entities.size()));
+				folders.size(),	entities.size());
 		loadFolders(folders);
 		loadEntities(entities);
 		return data;
@@ -66,8 +65,7 @@ public class SCMLReader {
 			ArrayList<Element> folders = root.getChildrenByName("folder");
 			ArrayList<Element> entities = root.getChildrenByName("entity");
 			data = new Data(root.get("scml_version"), root.get("generator"),root.get("generator_version"),
-					new ArrayList<Folder>(folders.size()),
-					new ArrayList<Entity>(entities.size()));
+					folders.size(),	entities.size());
 			loadFolders(folders);
 			loadEntities(entities);
 		} catch (IOException e) {
@@ -83,8 +81,9 @@ public class SCMLReader {
 	protected void loadFolders(ArrayList<Element> folders){
 		for(int i = 0; i < folders.size(); i++){
 			Element repo = folders.get(i);
-			Folder folder = new Folder(repo.getInt("id"), repo.get("name", "no_name_"+i));
-			loadFiles(repo.getChildrenByName("file"), folder);
+			ArrayList<Element> files = repo.getChildrenByName("file");
+			Folder folder = new Folder(repo.getInt("id"), repo.get("name", "no_name_"+i), files.size());
+			loadFiles(files, folder);
 			data.addFolder(folder);
 		}
 	}
@@ -116,9 +115,7 @@ public class SCMLReader {
 			ArrayList<Element> charMaps = e.getChildrenByName("character_map");
 			ArrayList<Element> animations = e.getChildrenByName("animation");
 			Entity entity = new Entity(e.getInt("id"), e.get("name"),
-					new ArrayList<Animation>(animations.size()),
-					new ArrayList<CharacterMap>(charMaps.size()),
-					new ArrayList<ObjectInfo>(infos.size()));
+					animations.size(), charMaps.size(), infos.size());
 			data.addEntity(entity);
 			loadObjectInfos(infos, entity);
 			loadCharacterMaps(charMaps, entity);
@@ -178,23 +175,16 @@ public class SCMLReader {
 		for(int i = 0; i < animations.size(); i++){
 			Element a = animations.get(i);
 			ArrayList<Element> timelines = a.getChildrenByName("timeline");
-			Animation animation = new Animation(a.getInt("id"), a.get("name"), a.getInt("length"), a.getBoolean("looping", true),
-					new ArrayList<Timeline>(timelines.size()));
+			Element mainline = a.getChildByName("mainline");
+			ArrayList<Element> mainlineKeys = mainline.getChildrenByName("key");
+			Animation animation = new Animation(new Mainline(mainlineKeys.size()),
+									  a.getInt("id"), a.get("name"), a.getInt("length"), 
+									  a.getBoolean("looping", true),timelines.size());
 			entity.addAnimation(animation);
-			loadMainline(a.getChildByName("mainline"), animation);
+			loadMainlineKeys(mainlineKeys, animation.mainline);
 			loadTimelines(timelines, animation, entity);
 			animation.prepare();
 		}
-	}
-	
-	/**
-	 * Creates a new mainline and injects it to the given {@link Animation} object.
-	 * @param mainline the mainline to load
-	 * @param animation the animation the mainline contains
-	 */
-	protected void loadMainline(Element mainline, Animation animation){
-		Mainline main = animation.mainline;
-		loadMainlineKeys(mainline.getChildrenByName("key"),main);
 	}
 	
 	/**
@@ -203,7 +193,7 @@ public class SCMLReader {
 	 * @param main the mainline
 	 */
 	protected void loadMainlineKeys(ArrayList<Element> keys, Mainline main){
-		for(int i = 0; i < keys.size(); i++){
+		for(int i = 0; i < main.keys.length; i++){
 			Element k = keys.get(i);
 			ArrayList<Element> objectRefs = k.getChildrenByName("object_ref");
 			ArrayList<Element> boneRefs = k.getChildrenByName("bone_ref");
@@ -211,9 +201,8 @@ public class SCMLReader {
 			curve.setType(Curve.getType(k.get("curve_type","linear")));
 			curve.constraints.set(k.getFloat("c1", 0f),k.getFloat("c2", 0f),k.getFloat("c3", 0f),k.getFloat("c4", 0f));
 			Mainline.Key key = new Mainline.Key(k.getInt("id"), k.getInt("time", 0), curve,
-					new ArrayList<BoneRef>(boneRefs.size()),
-					new ArrayList<ObjectRef>(objectRefs.size()));
-			main.keys.add(key);
+					boneRefs.size(), objectRefs.size());
+			main.addKey(key);
 			loadRefs(objectRefs, boneRefs, key);
 		}
 	}
@@ -236,7 +225,7 @@ public class SCMLReader {
 							o.getInt("key"), key.getBoneRef(o.getInt("parent", -1)), o.getInt("z_index",0));
 			key.addObjectRef(objectRef);
 		}
-		Collections.sort(key.objectRefs);
+		Arrays.sort(key.objectRefs);
 	}
 	
 	/**
@@ -253,7 +242,7 @@ public class SCMLReader {
 			ObjectType type = ObjectType.getObjectInfoFor(t.get("object_type", "sprite"));
 			ObjectInfo info = entity.getInfo(name);
 			if(info == null) info = new ObjectInfo(name, type, new Dimension(0,0));
-			Timeline timeline = new Timeline(t.getInt("id"), name, info, new ArrayList<Timeline.Key>(keys.size()));
+			Timeline timeline = new Timeline(t.getInt("id"), name, info, keys.size());
 			animation.addTimeline(timeline);
 			loadTimelineKeys(keys, timeline);
 		}

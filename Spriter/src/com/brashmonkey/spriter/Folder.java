@@ -1,30 +1,24 @@
 package com.brashmonkey.spriter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Represents a folder in a Spriter SCML file.
  * A folder has at least an {@link #id}, {@link #name} and {@link #files} may be empty.
- * An instance of this class holds a {@link List} of {@link File} instances.
+ * An instance of this class holds an array of {@link File} instances.
  * Specific {@link File} instances can be accessed via the corresponding methods, i.e getFile().
  * @author Trixt0r
  *
  */
 public class Folder {
 
-    final List<File> files;
-    public final Integer id;
+    final File[] files;
+    private int filePointer = 0;
+    public final int id;
     public final String name;
     
-    Folder(int id, String name){
-    	this(id, name, new ArrayList<File>());
-    }
-    
-    Folder(int id, String name, List<File> files){
+    Folder(int id, String name, int files){
     	this.id = id;
     	this.name = name;
-    	this.files = files;
+    	this.files = new File[files];
     }
     
     /**
@@ -32,7 +26,7 @@ public class Folder {
      * @param file the file to add
      */
     void addFile(File file){
-    	this.files.add(file);
+    	this.files[filePointer++] = file;
     }
     
     /**
@@ -41,7 +35,7 @@ public class Folder {
      * @return the file with the given name
      */
     public File getFile(int index){
-    	return files.get(index);
+    	return files[index];
     }
     
     /**

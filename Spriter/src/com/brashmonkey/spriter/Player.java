@@ -528,7 +528,7 @@ public class Player {
 	 */
 	public void unmapObjects(BoneRef base){
 		int start = base == null ? -1 : base.id-1;
-    	for(int i = start+1; i < getCurrentKey().boneRefs.size(); i++){
+    	for(int i = start+1; i < getCurrentKey().boneRefs.length; i++){
     		BoneRef ref = getCurrentKey().getBoneRef(i);
     		if(ref.parent != base && base != null) continue;
 			Bone parent = ref.parent == null ? this.root : this.unmappedTweenedKeys[ref.parent.timeline].object();
@@ -934,7 +934,7 @@ public class Player {
 	 * @return the bone iterator
 	 */
 	public Iterator<Bone> boneIterator(){
-		return this.boneIterator(this.getCurrentKey().boneRefs.get(0));
+		return this.boneIterator(this.getCurrentKey().boneRefs[0]);
 	}
 	
 	/**
@@ -952,7 +952,7 @@ public class Player {
 	 * @return the object iterator
 	 */
 	public Iterator<Object> objectIterator(){
-		return this.objectIterator(this.getCurrentKey().objectRefs.get(0));
+		return this.objectIterator(this.getCurrentKey().objectRefs[0]);
 	}
 	
 	/**
@@ -974,12 +974,12 @@ public class Player {
 		int index = 0;
 		@Override
 		public boolean hasNext() {
-			return index < getCurrentKey().objectRefs.size();
+			return index < getCurrentKey().objectRefs.length;
 		}
 
 		@Override
 		public Object next() {
-			return unmappedTweenedKeys[getCurrentKey().objectRefs.get(index++).timeline].object();
+			return unmappedTweenedKeys[getCurrentKey().objectRefs[index++].timeline].object();
 		}
 
 		@Override
@@ -998,12 +998,12 @@ public class Player {
 		int index = 0;
 		@Override
 		public boolean hasNext() {
-			return index < getCurrentKey().boneRefs.size();
+			return index < getCurrentKey().boneRefs.length;
 		}
 
 		@Override
 		public Bone next() {
-			return unmappedTweenedKeys[getCurrentKey().boneRefs.get(index++).timeline].object();
+			return unmappedTweenedKeys[getCurrentKey().boneRefs[index++].timeline].object();
 		}
 
 		@Override

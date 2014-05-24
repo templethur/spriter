@@ -15,26 +15,25 @@ public class Entity {
 
     public final int id;
     public final String name;
-    private final List<Animation> animations;
+    private final Animation[] animations;
+    private int animationPointer = 0;
     private final HashMap<String, Animation> namedAnimations;
-    private final List<CharacterMap> characterMaps;
-    private final List<ObjectInfo> objectInfos;
+    private final CharacterMap[] characterMaps;
+    private int charMapPointer = 0;
+    private final ObjectInfo[] objectInfos;
+    private int objInfoPointer = 0;
 	
-	Entity(int id, String name){
-		this(id, name, new ArrayList<Animation>(),  new ArrayList<CharacterMap>(), new ArrayList<Entity.ObjectInfo>());
-	}
-	
-	Entity(int id, String name, List<Animation> animations, List<CharacterMap> characterMaps, List<ObjectInfo> objectInfos){
+	Entity(int id, String name, int animations, int characterMaps, int objectInfos){
 		this.id = id;
 		this.name = name;
-		this.animations = animations;
-		this.characterMaps = characterMaps;
-		this.objectInfos = objectInfos;
+		this.animations = new Animation[animations];
+		this.characterMaps = new CharacterMap[characterMaps];
+		this.objectInfos = new ObjectInfo[objectInfos];
 		this.namedAnimations = new HashMap<String, Animation>();
 	}
 	
 	void addAnimation(Animation anim){
-		this.animations.add(anim);
+		this.animations[animationPointer++] = anim;
 		this.namedAnimations.put(anim.name, anim);
 	}
 	
@@ -45,7 +44,7 @@ public class Entity {
 	 * @throws IndexOutOfBoundsException if the index is out of range
 	 */
 	public Animation getAnimation(int index){
-		return this.animations.get(index);
+		return this.animations[index];
 	}
 	
 	/**
@@ -62,7 +61,7 @@ public class Entity {
 	 * @return the number of animations
 	 */
 	public int animations(){
-		return this.animations.size();
+		return this.animations.length;
 	}
 	
 	/**
@@ -71,7 +70,9 @@ public class Entity {
 	 * @return true if the given animation is in this entity, false otherwise.
 	 */
 	public boolean containsAnimation(Animation anim){
-		return this.animations.contains(anim);
+		for(Animation a: this.animations)
+			if(a == anim) return true;
+		return false;
 	}
 	
 	/**
@@ -98,11 +99,11 @@ public class Entity {
     }
     
     void addCharacterMap(CharacterMap map){
-    	this.characterMaps.add(map);
+    	this.characterMaps[charMapPointer++] = map;
     }
     
     void addInfo(ObjectInfo info){
-    	this.objectInfos.add(info);
+    	this.objectInfos[objInfoPointer++] = info;
     }
     
     /**
@@ -112,7 +113,7 @@ public class Entity {
      * @throws IndexOutOfBoundsException if index is out of range
      */
     public ObjectInfo getInfo(int index){
-    	return this.objectInfos.get(index);
+    	return this.objectInfos[index];
     }
     
     /**

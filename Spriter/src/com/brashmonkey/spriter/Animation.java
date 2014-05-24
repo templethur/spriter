@@ -1,9 +1,6 @@
 package com.brashmonkey.spriter;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import com.brashmonkey.spriter.Mainline.Key;
 import com.brashmonkey.spriter.Mainline.Key.BoneRef;
@@ -20,7 +17,8 @@ import com.brashmonkey.spriter.Timeline.Key.Object;
 public class Animation {
 
     public final Mainline mainline;
-    private final List<Timeline> timelines;
+    private final Timeline[] timelines;
+    private int timelinePointer = 0;
     private final HashMap<String, Timeline> nameToTimeline;
     public final int id, length;
     public final String name;
@@ -29,32 +27,16 @@ public class Animation {
 	Timeline.Key[] tweenedKeys, unmappedTweenedKeys;
 	private boolean prepared;
     
-    public Animation(Mainline mainline, int id, String name, int length, boolean looping){
-    	this(mainline, id, name, length, looping, new ArrayList<Timeline>());
-    }
-    
-    public Animation(int id, String name, int length, boolean looping, List<Timeline> timelines){
-    	this(new Mainline(), id, name, length, looping, timelines);
-    }
-    
-    public Animation(Mainline mainline, int id, String name, int length, boolean looping, List<Timeline> timelines){
+    public Animation(Mainline mainline, int id, String name, int length, boolean looping, int timelines){
     	this.mainline = mainline;
     	this.id = id;
     	this.name = name;
     	this.length = length;
     	this.looping = looping;
-    	this.timelines = timelines;
+    	this.timelines = new Timeline[timelines];
     	this.prepared = false;
     	this.nameToTimeline = new HashMap<String, Timeline>();
     	//this.currentKey = mainline.getKey(0);
-    }
-    
-    public Animation(Mainline mainline, int id, String name, int length){
-    	this(mainline, id, name, length, true);
-    }
-    
-    public Animation(int id, String name, int length, boolean looping){
-    	this(new Mainline(), id, name, length, looping);
     }
     
     /**
@@ -64,7 +46,7 @@ public class Animation {
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public Timeline getTimeline(int index){
-    	return this.timelines.get(index);
+    	return this.timelines[index];
     }
     
     /**
@@ -77,7 +59,7 @@ public class Animation {
     }
     
     void addTimeline(Timeline timeline){
-    	this.timelines.add(timeline);
+    	this.timelines[timelinePointer++] = timeline;
     	this.nameToTimeline.put(timeline.name, timeline);
     }
     
@@ -86,7 +68,7 @@ public class Animation {
      * @return the number of time lines
      */
     public int timelines(){
-    	return timelines.size();
+    	return timelines.length;
     }
     
     public String toString(){
@@ -123,7 +105,7 @@ public class Animation {
 		//Get the timelines, the refs pointing to
 		Timeline timeline = getTimeline(ref.timeline);
 		Timeline.Key key = timeline.getKey(ref.key);
-		Timeline.Key nextKey = timeline.getKey((ref.key+1)%timeline.keys.size());
+		Timeline.Key nextKey = timeline.getKey((ref.key+1)%timeline.keys.length);
 		int currentTime = key.time;
 		int nextTime = nextKey.time;
 		if(nextTime < currentTime){
@@ -180,7 +162,7 @@ public class Animation {
     	return found;
 	}
 	
-	Timeline getSimilarTimeline(BoneRef ref, Collection<Timeline> coveredTimelines){
+	/*Timeline getSimilarTimeline(BoneRef ref, Collection<Timeline> coveredTimelines){
 		if(ref.parent == null) return null;
     	for(BoneRef boneRef: this.currentKey.objectRefs){
     		Timeline t = this.getTimeline(boneRef.timeline);
@@ -198,7 +180,7 @@ public class Animation {
     			return t;
     	}
     	return null;
-	}
+	}*/
 	
 	/**
 	 * Prepares this animation to set this animation in any time state.
@@ -206,8 +188,8 @@ public class Animation {
 	 */
 	public void prepare(){
 		if(this.prepared) return;
-		this.tweenedKeys = new Timeline.Key[timelines.size()];
-		this.unmappedTweenedKeys = new Timeline.Key[timelines.size()];
+		this.tweenedKeys = new Timeline.Key[timelines.length];
+		this.unmappedTweenedKeys = new Timeline.Key[timelines.length];
 		
 		for(int i = 0; i < this.tweenedKeys.length; i++){
 			this.tweenedKeys[i] = new Timeline.Key(i);
@@ -215,7 +197,7 @@ public class Animation {
 			this.tweenedKeys[i].setObject(new Timeline.Key.Object(new Point(0,0)));
 			this.unmappedTweenedKeys[i].setObject(new Timeline.Key.Object(new Point(0,0)));
 		}
-		if(mainline.keys.size() > 0) currentKey = mainline.getKey(0);
+		if(mainline.keys.length > 0) currentKey = mainline.getKey(0);
 		this.prepared = true;
 	}
 

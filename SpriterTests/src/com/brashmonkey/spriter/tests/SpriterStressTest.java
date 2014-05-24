@@ -42,6 +42,7 @@ public class SpriterStressTest {
 			
 			private void addPlayer(){
 				Player p =  Spriter.newPlayer(files[MathUtils.random(files.length-1)], 0);
+				p.copyObjects = false;
 				p.speed = 1+MathUtils.random(60);
 				p.setPosition(-Gdx.graphics.getWidth()/2f + MathUtils.random((float)Gdx.graphics.getWidth()),
 						-Gdx.graphics.getHeight()/2f + MathUtils.random((float)Gdx.graphics.getHeight()));
