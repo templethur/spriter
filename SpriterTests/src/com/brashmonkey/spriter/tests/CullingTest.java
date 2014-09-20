@@ -55,7 +55,7 @@ public class CullingTest {
 						drawingQueue.addLast(obj);
 				}
 				
-				drawer.draw(this.drawingQueue.iterator(), player.characterMap);//Draw only objects in the queue
+				drawer.draw(this.drawingQueue.iterator(), player.characterMaps);//Draw only objects in the queue
 				//drawer.drawBoxes(player);
 				drawer.drawObjectBoxes(player, this.drawingQueue.iterator());
 				
