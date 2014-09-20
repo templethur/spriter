@@ -20,7 +20,7 @@ import com.brashmonkey.spriter.Timeline.Key.Object;
  * flipped with {@link #flip(boolean, boolean)} and rotated {@link #setAngle(float)}.
  * A Player has various methods for runtime object manipulation such as {@link #setBone(String, Bone)} or {@link #setObject(String, Bone)}.
  * Events like the ending of an animation can be observed with the {@link PlayerListener} interface.
- * Character maps can be changed on the fly, just by assigning a character map to {@link #characterMap}, setting it to <code>null</code> will remove the current character map.
+ * Character maps can be changed on the fly, just by assigning a character maps to {@link #characterMaps}, setting it to <code>null</code> will remove the current character map.
  * 
  * @author Trixt0r
  *
@@ -40,7 +40,7 @@ public class Player {
 	private final HashMap<Object, Timeline.Key> objToTimeline = new HashMap<Object, Timeline.Key>();
 	private float angle;
 	private boolean dirty = true;
-	public CharacterMap characterMap;
+	public CharacterMap[] characterMaps;
 	private Rectangle rect;
 	public final Box prevBBox;
 	private BoneIterator boneIterator;

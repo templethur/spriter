@@ -176,7 +176,7 @@ public abstract class Drawer<R> {
 	 * @param player the player to draw
 	 */
 	public void draw(Player player){
-		this.draw(player, player.characterMap);
+		this.draw(player, player.characterMaps);
 	}
 	
 	/**
@@ -184,8 +184,8 @@ public abstract class Drawer<R> {
 	 * @param player the player to draw
 	 * @param map the character map to draw
 	 */
-	public void draw(Player player, CharacterMap map){
-		this.draw(player.objectIterator(), map);
+	public void draw(Player player, CharacterMap[] maps){
+		this.draw(player.objectIterator(), maps);
 	}
 	
 	/**
@@ -193,11 +193,15 @@ public abstract class Drawer<R> {
 	 * @param it the iterator iterating over the objects to draw
 	 * @param map the character map to draw
 	 */
-	public void draw(Iterator<Timeline.Key.Object> it, CharacterMap map){
+	public void draw(Iterator<Timeline.Key.Object> it, CharacterMap[] maps){
 		while(it.hasNext()){
 			Timeline.Key.Object object = it.next();
 			if(object.ref.hasFile()){
-				if(map != null) object.ref.set(map.get(object.ref));
+				if(maps != null){
+					for(CharacterMap map: maps)
+						if(map != null)
+							object.ref.set(map.get(object.ref));
+				}
 				this.draw(object);
 			}
 		}
