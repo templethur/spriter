@@ -21,6 +21,10 @@ import com.brashmonkey.spriter.Loader;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
 import com.brashmonkey.spriter.Timeline.Key.Object;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Java2DTest extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -31,7 +35,13 @@ public class Java2DTest extends JFrame{
 	AffineTransform identity = new AffineTransform();
 	
 	public Java2DTest(){
-		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
+                String xmlSCML = null;
+                try {
+                    xmlSCML = new String(Files.readAllBytes(Paths.get("SpriterTests/assets/monster/basic_002.scml")));
+                } catch (IOException ex) {
+                    Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+		Data data = new SCMLReader(xmlSCML).getData();
 		player = new Player(data.getEntity(0));
 		player.setPosition(640, 360);
 		this.loader = new Loader<BufferedImage>(data) {
@@ -46,7 +56,7 @@ public class Java2DTest extends JFrame{
 				return null;
 			}
 		};
-		this.loader.load("assets/monster");
+		this.loader.load("SpriterTests/assets/monster");
 		
 		MainLoop loop = new MainLoop();
 		loop.setDoubleBuffered(true);
