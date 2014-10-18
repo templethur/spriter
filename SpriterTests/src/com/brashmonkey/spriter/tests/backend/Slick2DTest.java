@@ -14,6 +14,11 @@ import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
 import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.Timeline.Key.Object;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Slick2DTest extends BasicGame{
 	
@@ -29,7 +34,13 @@ public class Slick2DTest extends BasicGame{
     @Override
     public void init(final GameContainer gc) throws SlickException {
     	
-		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
+                String xmlSCML = null;
+                try {
+                    xmlSCML = new String(Files.readAllBytes(Paths.get("SpriterTests/assets/monster/basic_002.scml")));
+                } catch (IOException ex) {
+                    Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+		Data data = new SCMLReader(xmlSCML).getData();
 		player = new Player(data.getEntity(0));
 		player.setPosition(640, 480);
     	final Graphics g = gc.getGraphics();
