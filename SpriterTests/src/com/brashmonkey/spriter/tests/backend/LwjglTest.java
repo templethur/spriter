@@ -1,5 +1,26 @@
 package com.brashmonkey.spriter.tests.backend;
 
+import com.badlogic.gdx.Gdx;
+import com.brashmonkey.spriter.Data;
+import com.brashmonkey.spriter.Drawer;
+import com.brashmonkey.spriter.FileReference;
+import com.brashmonkey.spriter.Loader;
+import com.brashmonkey.spriter.Player;
+import com.brashmonkey.spriter.SCMLReader;
+import com.brashmonkey.spriter.Timeline.Key.Object;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
@@ -9,35 +30,25 @@ import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex2f;
-
-import java.io.IOException;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.ResourceLoader;
 
-import com.brashmonkey.spriter.Drawer;
-import com.brashmonkey.spriter.FileReference;
-import com.brashmonkey.spriter.Loader;
-import com.brashmonkey.spriter.Player;
-import com.brashmonkey.spriter.SCMLReader;
-import com.brashmonkey.spriter.Data;
-import com.brashmonkey.spriter.Timeline.Key.Object;
 
-
-public class LwjglTest {
+public class  LwjglTest {
 
 	private Loader<Texture> loader;
 	private Drawer<Texture> drawer;
 	private Player player;
 	
 	public LwjglTest(){
-		Data data = new SCMLReader("assets/monster/basic_002.scml").getData();
+                String xmlSCML = null;
+                try {
+                    xmlSCML = new String(Files.readAllBytes(Paths.get("SpriterTests/assets/monster/basic_002.scml")));
+                } catch (IOException ex) {
+                    Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+		Data data = new SCMLReader(xmlSCML).getData();
 		player = new Player(data.getEntity(0));
 		player.setPosition(640, 360);
 		loader = new Loader<Texture>(data){
@@ -143,7 +154,7 @@ public class LwjglTest {
 		}
 		
 		initGL();
-		loader.load("assets/monster");
+		loader.load("SpriterTests/assets/monster");
 		
 		getDelta();
 		lastFPS = getTime(); 
@@ -196,8 +207,8 @@ public class LwjglTest {
 	    long time = getTime();
 	    int delta = (int) (time - lastFrame);
 	    lastFrame = time;
- 
-	    return delta;
+ 	
+    return delta;
 	}
  
 	/**
