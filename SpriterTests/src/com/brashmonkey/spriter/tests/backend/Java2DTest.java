@@ -35,12 +35,12 @@ public class Java2DTest extends JFrame{
 	AffineTransform identity = new AffineTransform();
 	
 	public Java2DTest(){
-                String xmlSCML = null;
-                try {
-                    xmlSCML = new String(Files.readAllBytes(Paths.get("SpriterTests/assets/monster/basic_002.scml")));
-                } catch (IOException ex) {
-                    Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
-                }
+	    String xmlSCML = null;
+	    try {
+	        xmlSCML = new String(Files.readAllBytes(Paths.get("assets/monster/basic_002.scml")));
+	    } catch (IOException ex) {
+	        Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 		Data data = new SCMLReader(xmlSCML).getData();
 		player = new Player(data.getEntity(0));
 		player.setPosition(640, 360);
@@ -56,7 +56,7 @@ public class Java2DTest extends JFrame{
 				return null;
 			}
 		};
-		this.loader.load("SpriterTests/assets/monster");
+		this.loader.load("assets/monster");
 		
 		MainLoop loop = new MainLoop();
 		loop.setDoubleBuffered(true);

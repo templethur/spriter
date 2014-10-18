@@ -1,6 +1,5 @@
 package com.brashmonkey.spriter.tests.backend;
 
-import com.badlogic.gdx.Gdx;
 import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.Drawer;
 import com.brashmonkey.spriter.FileReference;
@@ -8,9 +7,6 @@ import com.brashmonkey.spriter.Loader;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
 import com.brashmonkey.spriter.Timeline.Key.Object;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,12 +38,12 @@ public class  LwjglTest {
 	private Player player;
 	
 	public LwjglTest(){
-                String xmlSCML = null;
-                try {
-                    xmlSCML = new String(Files.readAllBytes(Paths.get("SpriterTests/assets/monster/basic_002.scml")));
-                } catch (IOException ex) {
-                    Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        String xmlSCML = null;
+        try {
+            xmlSCML = new String(Files.readAllBytes(Paths.get("assets/monster/basic_002.scml")));
+        } catch (IOException ex) {
+            Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
 		Data data = new SCMLReader(xmlSCML).getData();
 		player = new Player(data.getEntity(0));
 		player.setPosition(640, 360);
@@ -154,7 +150,7 @@ public class  LwjglTest {
 		}
 		
 		initGL();
-		loader.load("SpriterTests/assets/monster");
+		loader.load("assets/monster");
 		
 		getDelta();
 		lastFPS = getTime(); 

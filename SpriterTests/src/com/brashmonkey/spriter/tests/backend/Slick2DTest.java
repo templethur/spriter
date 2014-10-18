@@ -33,13 +33,12 @@ public class Slick2DTest extends BasicGame{
  
     @Override
     public void init(final GameContainer gc) throws SlickException {
-    	
-                String xmlSCML = null;
-                try {
-                    xmlSCML = new String(Files.readAllBytes(Paths.get("SpriterTests/assets/monster/basic_002.scml")));
-                } catch (IOException ex) {
-                    Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        String xmlSCML = null;
+        try {
+            xmlSCML = new String(Files.readAllBytes(Paths.get("assets/monster/basic_002.scml")));
+        } catch (IOException ex) {
+            Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
 		Data data = new SCMLReader(xmlSCML).getData();
 		player = new Player(data.getEntity(0));
 		player.setPosition(640, 480);
