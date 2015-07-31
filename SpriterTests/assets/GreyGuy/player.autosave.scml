@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b10">
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r4.1">
     <folder id="0" name="torso">
         <file id="0" name="torso/p_torso_idle.png" width="88" height="88" pivot_x="0.911111" pivot_y="0.555556"/>
         <file id="1" name="torso/p_torso_walk.png" width="88" height="88" pivot_x="0.911111" pivot_y="0.555556"/>
@@ -109,7 +109,7 @@
         <character_map id="2" name="left_hand_open">
             <map folder="3" file="0" target_folder="3" target_file="3"/>
         </character_map>
-        <animation id="0" name="idle" length="4000">
+        <animation id="0" name="idle" length="4000" interval="100">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -1801,7 +1801,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="1" name="shoot" length="2000">
+        <animation id="1" name="shoot" length="2000" interval="100">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -2649,7 +2649,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="2" name="walk" length="1000">
+        <animation id="2" name="walk" length="1000" interval="100">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -3260,7 +3260,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="3" name="crouch_down" length="250" looping="false">
+        <animation id="3" name="crouch_down" length="250" interval="100" looping="false">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -3567,7 +3567,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="4" name="stand_up" length="350" looping="false">
+        <animation id="4" name="stand_up" length="350" interval="100" looping="false">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -4032,7 +4032,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="5" name="crouch_idle" length="2525" looping="false">
+        <animation id="5" name="crouch_idle" length="2525" interval="100" looping="false">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -4323,7 +4323,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="6" name="jump_start" length="300" looping="false">
+        <animation id="6" name="jump_start" length="300" interval="100" looping="false">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -4711,7 +4711,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="7" name="fall_start" length="312" looping="false">
+        <animation id="7" name="fall_start" length="312" interval="100" looping="false">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -5054,7 +5054,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="8" name="jump_loop" length="588">
+        <animation id="8" name="jump_loop" length="588" interval="100">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>
@@ -5850,7 +5850,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="9" name="hit_0" length="390">
+        <animation id="9" name="hit_0" length="390" interval="100">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="15" key="0"/>

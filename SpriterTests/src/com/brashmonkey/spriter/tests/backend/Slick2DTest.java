@@ -35,7 +35,7 @@ public class Slick2DTest extends BasicGame{
     public void init(final GameContainer gc) throws SlickException {
         String xmlSCML = null;
         try {
-            xmlSCML = new String(Files.readAllBytes(Paths.get("assets/monster/basic_002.scml")));
+            xmlSCML = new String(Files.readAllBytes(Paths.get("C:\\Users\\trixt_000\\Desktop\\player\\player2.scml")));
         } catch (IOException ex) {
             Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -58,7 +58,7 @@ public class Slick2DTest extends BasicGame{
     		
     	};
     	
-    	loader.load("assets/monster");
+    	loader.load("C:\\Users\\trixt_000\\Desktop\\player");
     	
     	this.drawer = new Drawer<Image>(loader){
 			@Override
@@ -82,10 +82,10 @@ public class Slick2DTest extends BasicGame{
 			public void draw(Object object) {
 				Image image = loader.get(object.ref);
 				float newPivotX = (image.getWidth() * object.pivot.x);
-				float newX = object.position.x - newPivotX*Math.signum(object.scale.x);;
+				float newX = object.position.x - newPivotX*object.scale.x;
 
 				float newPivotY = (image.getHeight() * object.pivot.y);
-				float newY = (gc.getHeight() - object.position.y) - (image.getHeight() - newPivotY)*Math.signum(object.scale.y);
+				float newY = (gc.getHeight() - object.position.y) - (image.getHeight() - newPivotY)*object.scale.y;
 				
 				g.rotate(object.position.x, (gc.getHeight() - object.position.y), - object.angle);
 				image.setAlpha(object.alpha);

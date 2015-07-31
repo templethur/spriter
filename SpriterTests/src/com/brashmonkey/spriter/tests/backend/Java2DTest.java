@@ -37,7 +37,7 @@ public class Java2DTest extends JFrame{
 	public Java2DTest(){
 	    String xmlSCML = null;
 	    try {
-	        xmlSCML = new String(Files.readAllBytes(Paths.get("assets/monster/basic_002.scml")));
+	        xmlSCML = new String(Files.readAllBytes(Paths.get("C:\\Users\\trixt_000\\Desktop\\player\\player2.scml")));
 	    } catch (IOException ex) {
 	        Logger.getLogger(LwjglTest.class.getName()).log(Level.SEVERE, null, ex);
 	    }
@@ -56,7 +56,7 @@ public class Java2DTest extends JFrame{
 				return null;
 			}
 		};
-		this.loader.load("assets/monster");
+		this.loader.load("C:\\Users\\trixt_000\\Desktop\\player");
 		
 		MainLoop loop = new MainLoop();
 		loop.setDoubleBuffered(true);
@@ -145,9 +145,9 @@ public class Java2DTest extends JFrame{
 
 			BufferedImage sprite = loader.get(object.ref);
 			float newPivotX = sprite.getWidth() * object.pivot.x;
-			float newX = object.position.x - newPivotX*Math.signum(object.scale.x);
+			float newX = object.position.x - newPivotX*object.scale.x;
 			float newPivotY = sprite.getHeight() * object.pivot.y;
-			float newY = object.position.y - newPivotY*Math.signum(object.scale.y);
+			float newY = object.position.y - newPivotY*object.scale.y;
 			graphics.rotate(Math.toRadians(object.angle), object.position.x, object.position.y);
 			int height = -(int)(sprite.getHeight()*object.scale.y);
 			graphics.drawImage(sprite, (int)newX, (int)newY-height, (int)(sprite.getWidth()*object.scale.x), height, null);
