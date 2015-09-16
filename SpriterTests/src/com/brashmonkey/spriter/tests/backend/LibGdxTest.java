@@ -57,7 +57,7 @@ public class LibGdxTest implements ApplicationListener{
 	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		player.update();
+		player.update(Gdx.graphics.getDeltaTime());
 		
 		batch.begin();
 			drawer.draw(player);

@@ -36,8 +36,8 @@ public class AttachmentTest {
 				addInputProcessor(new InputAdapter(){
 					public boolean touchDown(int x, int y, int p, int b){
 						if(b == Buttons.RIGHT){
-							if(monster.speed == 0) monster.speed = 17;
-							else monster.speed = 0;
+							if(monster.speed == 0f) monster.speed = 1.13f;
+							else monster.speed = 0f;
 						}
 						return false;
 					}
@@ -76,7 +76,7 @@ public class AttachmentTest {
 				
 				information = "Click on a bone or object to attack the grey guy to a part of the monster. Right click to pause the animation of the monster. "
 						+ "\n Currently attached to: "+monster.getNameFor(attach.getParent());
-				Spriter.updateAndDraw();
+				Spriter.updateAndDraw(Gdx.graphics.getDeltaTime());
 				if(b != null){
 					Spriter.drawer().setColor(1, 0, 0, 1);
 					Spriter.drawer().drawBox(monster.getBox(b));

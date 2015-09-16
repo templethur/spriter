@@ -100,7 +100,7 @@ public class Slick2DTest extends BasicGame{
     public void update(GameContainer gc, int delta)
 			throws SlickException
     {
-    	player.update();
+    	player.update((float)delta / 1000f);
     }
  
     public void render(GameContainer gc, Graphics g) throws SlickException

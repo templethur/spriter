@@ -104,7 +104,7 @@ public class TestBase implements ApplicationListener{
 		renderer.begin(ShapeType.Line);
 		
 		for(Player player: players)
-			player.update();
+			player.update(Gdx.graphics.getDeltaTime());
 		for(Player player: players)
 			drawer.draw(player);
 			

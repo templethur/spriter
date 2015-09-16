@@ -47,7 +47,7 @@ public class CullingTest {
 					camera.unproject(mouse);
 					player.setPosition(mouse.x, mouse.y);
 				}
-				player.update();
+				player.update(Gdx.graphics.getDeltaTime());
 				Iterator<Object> it = player.objectIterator();
 				while(it.hasNext()){
 					Object obj = it.next();

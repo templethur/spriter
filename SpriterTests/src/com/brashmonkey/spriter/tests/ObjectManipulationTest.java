@@ -35,7 +35,7 @@ public class ObjectManipulationTest {
 				v.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
 				camera.unproject(v);
 				
-				player.update();//Update the player before manipulating objects
+				player.update(Gdx.graphics.getDeltaTime());//Update the player before manipulating objects
 				
 				if(Gdx.input.isButtonPressed(Buttons.LEFT)){
 					player.setBone("torso", v.x, v.y);//Set the torso to the mouse position

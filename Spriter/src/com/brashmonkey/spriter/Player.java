@@ -30,7 +30,7 @@ public class Player {
 	protected Entity entity;
 	Animation animation;
 	int time;
-	public int speed;
+	public float speed;
 	Timeline.Key[] tweenedKeys, unmappedTweenedKeys;
 	private Timeline.Key[] tempTweenedKeys, tempUnmappedTweenedKeys;
 	private List<PlayerListener> listeners;
@@ -55,7 +55,7 @@ public class Player {
 	public Player(Entity entity){
 		this.boneIterator = new BoneIterator();
 		this.objectIterator = new ObjectIterator();
-		this.speed = 15;
+		this.speed = 1f;
 		this.rect = new Rectangle(0,0,0,0);
 		this.prevBBox = new Box();
 		this.listeners = new ArrayList<PlayerListener>();
@@ -64,9 +64,12 @@ public class Player {
 	
 	/**
 	 * Updates this player.
-	 * This means the current time gets increased by {@link #speed} and is applied to the current animation.
+	 * This means the current time gets increased by {@link #speed} times {@link #deltaTime} and is applied to the current animation.
 	 */
-	public void update(){
+	public void update(float deltaTime){
+
+		time += speed * deltaTime * 1000f;
+		
 		for(PlayerListener listener: listeners)
 			listener.preProcess(this);
 		if(dirty) this.updateRoot();
@@ -92,7 +95,8 @@ public class Player {
 		
 		for(PlayerListener listener: listeners)
 			listener.postProcess(this);
-		this.increaseTime();
+		
+		this.checkTime();
 	}
 	
 	private void copyObjects(){
@@ -104,8 +108,7 @@ public class Player {
 		}
 	}
 	
-	private void increaseTime(){
-		time += speed;
+	private void checkTime(){
 		if(time > animation.length){
 			time = time-animation.length;
 			for(PlayerListener listener: listeners)
@@ -592,7 +595,7 @@ public class Player {
 		this.animation = animation;
 		int tempTime = this.time;
 		this.time = 0;
-		this.update();
+		this.update(0f);
 		this.time = tempTime;
 		for(PlayerListener listener: listeners)
 			listener.animationChanged(prevAnim, animation);
@@ -689,10 +692,7 @@ public class Player {
 	 */
 	public Player setTime(int time){
 		this.time = time;
-		int prevSpeed = this.speed;
-		this.speed = 0;
-		this.increaseTime();
-		this.speed = prevSpeed;
+		this.checkTime();
 		return this;
 	}
 	

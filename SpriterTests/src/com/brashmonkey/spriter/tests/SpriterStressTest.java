@@ -25,9 +25,9 @@ public class SpriterStressTest {
 			
 			public void render(){
 				if(Gdx.input.isKeyPressed(Keys.SPACE))
-					Spriter.updateAndDraw();
+					Spriter.updateAndDraw(Gdx.graphics.getDeltaTime());
 				else
-					Spriter.update();
+					Spriter.update(Gdx.graphics.getDeltaTime());
 				
 				//if(Gdx.input.isKeyPressed(Keys.SPACE))
 					//Spriter.draw();
@@ -43,7 +43,7 @@ public class SpriterStressTest {
 			private void addPlayer(){
 				Player p =  Spriter.newPlayer(files[MathUtils.random(files.length-1)], 0);
 				p.copyObjects = false;
-				p.speed = 1+MathUtils.random(60);
+				p.speed = MathUtils.random(4f);
 				p.setPosition(-Gdx.graphics.getWidth()/2f + MathUtils.random((float)Gdx.graphics.getWidth()),
 						-Gdx.graphics.getHeight()/2f + MathUtils.random((float)Gdx.graphics.getHeight()));
 				p.setAngle(MathUtils.random(360f));

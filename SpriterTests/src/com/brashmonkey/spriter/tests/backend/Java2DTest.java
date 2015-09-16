@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.badlogic.gdx.Gdx;
 import com.brashmonkey.spriter.Data;
 import com.brashmonkey.spriter.Drawer;
 import com.brashmonkey.spriter.FileReference;
@@ -21,6 +22,7 @@ import com.brashmonkey.spriter.Loader;
 import com.brashmonkey.spriter.Player;
 import com.brashmonkey.spriter.SCMLReader;
 import com.brashmonkey.spriter.Timeline.Key.Object;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
@@ -90,7 +92,7 @@ public class Java2DTest extends JFrame{
 						
 						@Override
 						public void run() {
-							player.update();
+							player.update(Gdx.graphics.getDeltaTime());
 							repaint();
 						}
 					});

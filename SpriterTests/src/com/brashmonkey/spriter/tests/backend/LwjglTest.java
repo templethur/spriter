@@ -126,7 +126,7 @@ public class  LwjglTest {
 	}
 	
 	public void draw(){
-		player.update();
+		player.update((float)getDelta() / 1000f);
 		drawer.draw(player);
 	}
 	

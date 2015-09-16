@@ -38,7 +38,7 @@ public class AtlasTest extends ApplicationAdapter{
 	public void render(){
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		this.player.update();
+		this.player.update(Gdx.graphics.getDeltaTime());
 		
 		this.batch.begin();
 		this.drawer.draw(player);

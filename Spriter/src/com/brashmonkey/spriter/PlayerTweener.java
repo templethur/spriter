@@ -44,21 +44,22 @@ public class PlayerTweener extends Player{
 	/**
 	 * Tweens the current set players.
 	 * This method will update the set players if {@link #updatePlayers} is <code>true</code>.
+	 * @param deltaTime the time elapsed since last update.
 	 * @throws SpriterException if no bone with {@link #baseBoneName} exists
 	 */
 	@Override
-	public void update(){
+	public void update(float deltaTime){
 		if(updatePlayers){
-			player1.update();
-			player2.update();
+			player1.update(deltaTime);
+			player2.update(deltaTime);
 		}
 		anim.setAnimations(player1.animation, player2.animation);
-		super.update();
+		super.update(deltaTime);
 		if(baseBoneName != null){
 			int index = anim.onFirstMainLine()? player1.getBoneIndex(baseBoneName) : player2.getBoneIndex(baseBoneName);
 			if(index == -1) throw new SpriterException("A bone with name \""+baseBoneName+"\" does no exist!");
 			anim.base = anim.getCurrentKey().getBoneRef(index);
-			super.update();
+			super.update(deltaTime);
 		}
 	}
 	

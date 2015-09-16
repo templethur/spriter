@@ -30,7 +30,7 @@ public class CollisionTest {
 			
 			public void create(){
 				player = new Player(data.getEntity(0));//createPlayer(data.getEntity(0));
-				player.speed = 0;
+				player.speed = 0f;
 				
 				addInputProcessor(new AnimationSpeedTest.AnimationSpeedChanger(player));
 				addInputProcessor(new InputAdapter(){
@@ -56,7 +56,7 @@ public class CollisionTest {
 				mouse.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
 				camera.unproject(mouse);
 				
-				player.update();
+				player.update(Gdx.graphics.getDeltaTime());
 				
 				if(b != null){
 					b.position.set(mouse.x+offset.x, mouse.y+offset.y);

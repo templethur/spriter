@@ -61,7 +61,7 @@ public class InverseKinematicsTest {
 				if(Gdx.input.isButtonPressed(Buttons.LEFT) && b!= null) resolver.mapIKObject(ikObject, b);
 				else resolver.unmapIKObject(ikObject);
 				
-				player.update();
+				player.update(Gdx.graphics.getDeltaTime());
 				
 				ikObject.x = mouse.x;
 				ikObject.y = mouse.y;

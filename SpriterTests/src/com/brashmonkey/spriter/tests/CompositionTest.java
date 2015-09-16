@@ -24,7 +24,7 @@ public class CompositionTest {
 				 tweener.baseBoneName = "chest";
 				 tweener.setWeight(0f);
 				 
-				 tweener.getFirstPlayer().speed = 50;
+				 tweener.getFirstPlayer().speed = 3f;
 				 
 				 tweener.setBaseAnimation("walk");
 				 addInputProcessor(new AnimationSwitchTest.AnimationSwitcher(tweener.getSecondPlayer()));
